@@ -7,7 +7,7 @@
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 block-beta
@@ -81,8 +81,8 @@ block-beta
     
     block:cloud:7
         columns 7
-        Firebase["🔥 Firebase<br/>Realtime DB"]:3
-        PyAny["🐍 PythonAnywhere<br/>XGBoost + Flask"]:4
+        Firebase[" Firebase<br/>Realtime DB"]:3
+        PyAny[" PythonAnywhere<br/>XGBoost + Flask"]:4
     end
     
     FS_In --> P34
@@ -114,14 +114,14 @@ block-beta
 | **Relay 1 — Inlet Valve** | GPIO 26 | Screw terminal 6 | Active LOW |
 | **Relay 2 — Fixture 1 Valve** | GPIO 27 | Screw terminal 7 | Active LOW |
 | **Relay 3 — Fixture 2 Valve** | GPIO 14 | Screw terminal 8 | Active LOW |
-| **Relay 4 — Fixture 3 Valve** | GPIO 12 | Screw terminal 9 | ⚠️ **Boot pin** — use pull-down resistor |
+| **Relay 4 — Fixture 3 Valve** | GPIO 12 | Screw terminal 9 |  **Boot pin** — use pull-down resistor |
 | **Relay 5 — Fixture 4 Valve** | GPIO 13 | Screw terminal 10 | Active LOW |
 | **OLED SDA** | GPIO 21 | I²C header | Connect to OLED SDA |
 | **OLED SCL** | GPIO 22 | I²C header | Connect to OLED SCL |
 | **Buzzer** | GPIO 4 | GPIO header | Active buzzer (+ leg to GPIO, - to GND) |
 | **Status LED** | GPIO 2 | Onboard | Built-in LED (active HIGH) |
 | **RGB LED** | GPIO 5 | GPIO header | Use transistor driver or RGB module |
-| **SD Card CS** | GPIO 5 | SPI header | ⚠️ Conflict with RGB — use different pin or mux |
+| **SD Card CS** | GPIO 5 | SPI header |  Conflict with RGB — use different pin or mux |
 | **SD Card MOSI** | GPIO 23 | SPI header | |
 | **SD Card MISO** | GPIO 19 | SPI header | |
 | **SD Card SCK** | GPIO 18 | SPI header | |
@@ -185,7 +185,7 @@ YF-S201 Flow Sensor
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 block-beta
@@ -227,7 +227,7 @@ block-beta
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 block-beta

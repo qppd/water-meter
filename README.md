@@ -1,10 +1,10 @@
-# 💧 Water Meter with Leak Detection & Anomaly Detection System
+#  Water Meter with Leak Detection & Anomaly Detection System
 
 > **A Capstone / Research Project** — Smart Water Monitoring System that detects leaks, anomalies, and per-fixture consumption using ESP32, Firebase, PythonAnywhere, and Machine Learning (XGBoost).
 
 ---
 
-## 🎯 Project Overview
+##  Project Overview
 
 A complete IoT system that monitors water consumption across multiple fixtures in a building, detects leaks in real-time, and identifies anomalous usage patterns using machine learning.
 
@@ -20,20 +20,20 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 
 ### Key Features
 
-- ✅ **1 Inlet + 4 Fixture Flow Sensors** — total consumption + per-fixture monitoring
-- ✅ **Fixture-Level Leak Detection** — exactly which fixture is leaking
-- ✅ **Real-time Firebase Sync** — data streamed via [Firebase-ESP-Client](https://github.com/mobizt/Firebase-ESP-Client)
-- ✅ **XGBoost ML Model** — detects leaks, anomalies, and usage patterns (server-side)
-- ✅ **Isolation Forest** — unsupervised anomaly detection for unknown patterns
-- ✅ **PythonAnywhere Backend** — connects to Firebase via Pyrebase4
-- ✅ **Check Valves** — prevent backflow between fixtures
-- ✅ **Web Dashboard** — real-time monitoring via PythonAnywhere web app
-- ✅ **Solenoid Valve Control** — automatic shutoff on leak detection
-- ✅ **Local Data Logging** — SD card backup when offline
+-  **1 Inlet + 4 Fixture Flow Sensors** — total consumption + per-fixture monitoring
+-  **Fixture-Level Leak Detection** — exactly which fixture is leaking
+-  **Real-time Firebase Sync** — data streamed via [Firebase-ESP-Client](https://github.com/mobizt/Firebase-ESP-Client)
+-  **XGBoost ML Model** — detects leaks, anomalies, and usage patterns (server-side)
+-  **Isolation Forest** — unsupervised anomaly detection for unknown patterns
+-  **PythonAnywhere Backend** — connects to Firebase via Pyrebase4
+-  **Check Valves** — prevent backflow between fixtures
+-  **Web Dashboard** — real-time monitoring via PythonAnywhere web app
+-  **Solenoid Valve Control** — automatic shutoff on leak detection
+-  **Local Data Logging** — SD card backup when offline
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -55,7 +55,7 @@ A complete IoT system that monitors water consumption across multiple fixtures i
                                ↓ (HTTPS/SSE stream)
 ┌──────────────────────────────────────────────────────────────────┐
 │                      CLOUD LAYER                                  │
-│  🔥 Firebase Realtime Database                                    │
+│   Firebase Realtime Database                                    │
 │     - /readings/{device_id}/{timestamp} → raw sensor data        │
 │     - /alerts/{alert_id} → leak events                           │
 │     - /commands/{device_id} → valve control from dashboard       │
@@ -63,7 +63,7 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 └──────────────────────────────────────────────────────────────────┘
                                ↓ (Pyrebase4 stream + REST)
 ┌──────────────────────────────────────────────────────────────────┐
-│                      PYTHONANYWHERE (🐍 Backend)                   │
+│                      PYTHONANYWHERE ( Backend)                   │
 │  • Pyrebase4 — Firebase listener (real-time stream)               │
 │  • XGBoost Model — leak classification (normal/minor/major)      │
 │  • Isolation Forest — unsupervised anomaly detection             │
@@ -75,7 +75,7 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 
 ---
 
-## 📚 Complete Documentation
+##  Complete Documentation
 
 | Document | Description |
 |----------|-------------|
@@ -95,7 +95,7 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 
 ---
 
-## 🧠 ML Model Summary
+##  ML Model Summary
 
 **Primary:** [XGBoost](./docs/ml-model.md) — gradient-boosted decision trees
 - 9 input features (flow rate, duration, time patterns, fixture ID, etc.)
@@ -109,7 +109,7 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 
 ---
 
-## 🛠️ Quick Start
+##  Quick Start
 
 ```bash
 # 1. Clone the repository
@@ -139,7 +139,7 @@ See [Setup Guide](./docs/setup.md) for complete step-by-step instructions.
 
 ---
 
-## 📦 Hardware Requirements (Minimum)
+##  Hardware Requirements (Minimum)
 
 | Item | Qty | Estimated Cost (₱) |
 |------|-----|-------------------|
@@ -155,7 +155,7 @@ See [Setup Guide](./docs/setup.md) for complete step-by-step instructions.
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 water-meter/
@@ -203,7 +203,7 @@ water-meter/
 
 ---
 
-## 🧑‍🏫 For Students
+## ‍ For Students
 
 This project is designed as a **complete capstone / thesis project**. See:
 
@@ -214,10 +214,10 @@ This project is designed as a **complete capstone / thesis project**. See:
 
 ---
 
-## 📄 License
+##  License
 
 MIT
 
-## 👨‍💻 Author
+## ‍ Author
 
-[qppd](https://github.com/qppd) — Quezon Province, Philippines 🇵🇭
+[qppd](https://github.com/qppd) — Quezon Province, Philippines 

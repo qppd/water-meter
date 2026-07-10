@@ -376,7 +376,7 @@ listener = FirebaseListener()
 </head>
 <body>
     <div class="container py-4">
-        <h1>💧 Water Meter Monitor</h1>
+        <h1> Water Meter Monitor</h1>
         <p class="text-muted">Device: {{ device_id }} | <span id="status">Loading...</span></p>
         
         <div class="row" id="sensor-cards">
@@ -392,7 +392,7 @@ listener = FirebaseListener()
             </div>
             <div class="col-md-4">
                 <div class="card p-3" id="alerts-card">
-                    <h5 class="card-title">🚨 Active Alerts</h5>
+                    <h5 class="card-title"> Active Alerts</h5>
                     <div id="alerts-list">No active alerts</div>
                 </div>
             </div>
@@ -425,11 +425,11 @@ listener = FirebaseListener()
                     container.innerHTML = '';
                     
                     const sensors = [
-                        {id: 'inlet', name: 'Main Inlet', icon: '🚰'},
-                        {id: 'fixture_1', name: 'Kitchen Sink', icon: '🍳'},
-                        {id: 'fixture_2', name: 'Toilet', icon: '🚽'},
-                        {id: 'fixture_3', name: 'Wash Basin', icon: '🧼'},
-                        {id: 'fixture_4', name: 'Shower', icon: '🚿'}
+                        {id: 'inlet', name: 'Main Inlet', icon: ''},
+                        {id: 'fixture_1', name: 'Kitchen Sink', icon: ''},
+                        {id: 'fixture_2', name: 'Toilet', icon: ''},
+                        {id: 'fixture_3', name: 'Wash Basin', icon: ''},
+                        {id: 'fixture_4', name: 'Shower', icon: ''}
                     ];
                     
                     sensors.forEach(s => {

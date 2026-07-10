@@ -12,14 +12,14 @@
 
 | Criteria | XGBoost | Random Forest |
 |----------|---------|---------------|
-| **Accuracy (tabular data)** | ✅ **95–98%** | 92–95% |
-| **Training speed** | ✅ 2–3× faster | Slower (many trees) |
+| **Accuracy (tabular data)** |  **95–98%** | 92–95% |
+| **Training speed** |  2–3× faster | Slower (many trees) |
 | **Model size** | ~500 KB (JSON) | ~5 MB (pickle) |
-| **Calibrated probabilities** | ✅ Better confidence scores | Tends to be overconfident |
-| **Overfitting control** | ✅ Built-in regularization | Needs careful tuning |
-| **Feature importance** | ✅ Native + SHAP | Gini importance only |
-| **PythonAnywhere support** | ✅ Pre-installed via `pip install xgboost` | ✅ Pre-installed |
-| **Inference speed** | ✅ < 1ms | < 5ms |
+| **Calibrated probabilities** |  Better confidence scores | Tends to be overconfident |
+| **Overfitting control** |  Built-in regularization | Needs careful tuning |
+| **Feature importance** |  Native + SHAP | Gini importance only |
+| **PythonAnywhere support** |  Pre-installed via `pip install xgboost` |  Pre-installed |
+| **Inference speed** |  < 1ms | < 5ms |
 
 **Verdict:** XGBoost wins for tabular time-series data with clear decision boundaries like water consumption patterns.
 

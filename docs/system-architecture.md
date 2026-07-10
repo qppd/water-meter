@@ -15,7 +15,7 @@ The system uses 1 inlet flow sensor to measure total consumption and 4 fixture f
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 graph TB

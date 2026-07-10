@@ -7,7 +7,7 @@
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -52,7 +52,7 @@ flowchart TD
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart LR
@@ -103,7 +103,7 @@ flowchart LR
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -126,7 +126,7 @@ flowchart TD
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -169,7 +169,7 @@ flowchart TD
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -177,14 +177,14 @@ flowchart TD
     B --> C[Class Probabilities]
     C --> D{argmax class}
     
-    D -->|normal<br/>confidence > 0.80| E[✅ Normal Usage]
-    D -->|minor_leak<br/>confidence > 0.70| F[⚠️ Minor Leak]
-    D -->|major_leak<br/>confidence > 0.85| G[🚨 Major Leak]
-    D -->|low confidence<br/>< 0.70| H[❓ Uncertain]
+    D -->|normal<br/>confidence > 0.80| E[ Normal Usage]
+    D -->|minor_leak<br/>confidence > 0.70| F[ Minor Leak]
+    D -->|major_leak<br/>confidence > 0.85| G[ Major Leak]
+    D -->|low confidence<br/>< 0.70| H[ Uncertain]
     
     H --> I[Isolation Forest<br/>Anomaly Score]
     I --> J{Anomaly?}
-    J -->|score > threshold| K[⚠️ Anomaly Detected]
+    J -->|score > threshold| K[ Anomaly Detected]
     J -->|normal| L[Wait for more data]
     
     F --> M{Consecutive count}
@@ -209,7 +209,7 @@ flowchart TD
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -245,7 +245,7 @@ flowchart TD
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -278,24 +278,24 @@ flowchart TD
 </p>
 
 <details>
-<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+<summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart LR
-    A[🌊 Water Flow]:::physical --> B[🔌 YF-S201<br/>Flow Sensor]:::physical
-    B --> C[⚡ Pulse<br/>Interrupt]:::firmware
-    C --> D[📊 Feature<br/>Extraction]:::firmware
-    D --> E[🔥 Firebase<br/>ESP-Client]:::firmware
-    E --> F[☁️ Firebase<br/>Realtime DB]:::cloud
-    F --> G[🐍 Pyrebase4<br/>Listener]:::backend
-    G --> H[🧠 XGBoost<br/>Inference]:::ml
-    G --> I[🔍 Isolation<br/>Forest]:::ml
-    H --> J[⚠️ Alert<br/>Engine]:::backend
+    A[ Water Flow]:::physical --> B[ YF-S201<br/>Flow Sensor]:::physical
+    B --> C[ Pulse<br/>Interrupt]:::firmware
+    C --> D[ Feature<br/>Extraction]:::firmware
+    D --> E[ Firebase<br/>ESP-Client]:::firmware
+    E --> F[ Firebase<br/>Realtime DB]:::cloud
+    F --> G[ Pyrebase4<br/>Listener]:::backend
+    G --> H[ XGBoost<br/>Inference]:::ml
+    G --> I[ Isolation<br/>Forest]:::ml
+    H --> J[ Alert<br/>Engine]:::backend
     I --> J
-    J --> K[📱 Telegram<br/>Notification]:::user
-    F --> L[🌐 Web<br/>Dashboard]:::user
-    F --> M[📡 ESP32<br/>Command Stream]:::firmware
-    M --> N[🔧 Valve<br/>Controller]:::firmware
+    J --> K[ Telegram<br/>Notification]:::user
+    F --> L[ Web<br/>Dashboard]:::user
+    F --> M[ ESP32<br/>Command Stream]:::firmware
+    M --> N[ Valve<br/>Controller]:::firmware
     
     classDef physical fill:#e1f5fe,stroke:#0288d1
     classDef firmware fill:#fff3e0,stroke:#f57c00

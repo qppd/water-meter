@@ -72,7 +72,7 @@ Check [BOM.md](./bom.md) for complete list with Shopee/Lazada links. Minimum ess
 ### Step 2.2: Install Python
 
 1. Download Python 3.9+ from python.org
-2. **Important:** Check ✅ **"Add Python to PATH"** during installation
+2. **Important:** Check  **"Add Python to PATH"** during installation
 3. Verify:
    ```bash
    python --version
@@ -188,8 +188,8 @@ Once the test circuit works, connect all sensors:
 
 | Sensor | GPIO | Pull-up (10kΩ to 3.3V) |
 |--------|------|------------------------|
-| Inlet | 34 | ✅ Required (input-only pin) |
-| Fixture 1 | 35 | ✅ Required (input-only pin) |
+| Inlet | 34 |  Required (input-only pin) |
+| Fixture 1 | 35 |  Required (input-only pin) |
 | Fixture 2 | 32 | Recommended |
 | Fixture 3 | 33 | Recommended |
 | Fixture 4 | 25 | Recommended |
@@ -258,7 +258,7 @@ For testing without actual plumbing:
 
 1. Connect ESP32 via USB cable
 2. In VS Code, click the **PlatformIO icon** (alien head in sidebar)
-3. Click **Build** (✓ checkmark) or press Ctrl+Alt+B
+3. Click **Build** ( checkmark) or press Ctrl+Alt+B
 4. Wait for compilation to finish
 5. Click **Upload** (→ arrow) or press Ctrl+Alt+U
 6. If upload fails:

@@ -109,10 +109,10 @@ After calibration, verify accuracy:
 
 | Accuracy | Error Range | Impact on Leak Detection |
 |----------|-------------|-------------------------|
-| ✅ Excellent | < ±2% | Reliable leak detection |
-| ✅ Good | ±2% – ±5% | Minor false positive risk |
-| ⚠️ Acceptable | ±5% – ±10% | May miss small leaks |
-| ❌ Needs work | > ±10% | Unreliable for leak detection |
+|  Excellent | < ±2% | Reliable leak detection |
+|  Good | ±2% – ±5% | Minor false positive risk |
+|  Acceptable | ±5% – ±10% | May miss small leaks |
+|  Needs work | > ±10% | Unreliable for leak detection |
 
 **Formula:**
 ```
