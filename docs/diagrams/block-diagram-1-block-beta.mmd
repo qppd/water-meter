@@ -1,0 +1,86 @@
+block-beta
+    columns 7
+    
+    block:plumbing:7
+        columns 7
+        
+        Inlet["Main Water<br/>Supply"]:1
+        FS_In["Inlet Flow<br/>Sensor"]:1
+        CV_In["Check<br/>Valve"]:1
+        Joint["Junction"]:1
+        Fixtures["To Fixtures<br/>1–4"]:3
+    end
+    
+    space:7
+    
+    block:fixtures:7
+        columns 7
+        F1["Fixture 1<br/>Sensor"]:1
+        F2["Fixture 2<br/>Sensor"]:1
+        F3["Fixture 3<br/>Sensor"]:1
+        F4["Fixture 4<br/>Sensor"]:1
+        CV1["Check<br/>Vlv"] CV2["Check<br/>Vlv"] CV3["Check<br/>Vlv"]
+    end
+    
+    space:7
+    
+    block:esp32:7
+        columns 7
+        
+        block:pins:7
+            columns 7
+            P34["GPIO 34"] P35["GPIO 35"] P32["GPIO 32"] P33["GPIO 33"] P25["GPIO 25"] Pins_Spacer:1 Pins_Spacer2:1
+        end
+        
+        block:mcu:7
+            columns 7
+            MCU["ESP32 38-Pin<br/>CP2102<br/>Xtensa LX6<br/>WiFi + BLE"]:7
+        end
+        
+        block:peripherals:7
+            columns 7
+            OLED_SCR["OLED 128×64<br/>I²C (GPIO 21/22)"]:2
+            Buzzer["Buzzer<br/>GPIO 4"]:1
+            RGB["RGB LED<br/>GPIO 5"]:2
+            SD["SD Card<br/>SPI<br/>GPIO 18/19/23"]:2
+        end
+        
+        P34 --> MCU
+        P35 --> MCU
+        P32 --> MCU
+        P33 --> MCU
+        P25 --> MCU
+        
+        MCU --> OLED_SCR
+        MCU --> Buzzer
+        MCU --> RGB
+        MCU --> SD
+    end
+    
+    space:7
+    
+    block:actuators:7
+        columns 7
+        Relay["4-Ch Relay<br/>Module<br/>GPIO 26/27/14/12/13"]:3
+        SV["Solenoid Valves<br/>×4 (or ×5)"]:4
+    end
+    
+    space:7
+    
+    block:cloud:7
+        columns 7
+        Firebase["🔥 Firebase<br/>Realtime DB"]:3
+        PyAny["🐍 PythonAnywhere<br/>XGBoost + Flask"]:4
+    end
+    
+    FS_In --> P34
+    F1 --> P35
+    F2 --> P32
+    F3 --> P33
+    F4 --> P25
+    
+    MCU --> Relay
+    Relay --> SV
+    
+    MCU --> Firebase
+    Firebase --> PyAny

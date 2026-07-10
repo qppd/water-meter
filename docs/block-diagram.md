@@ -2,6 +2,13 @@
 
 ## System Block Diagram
 
+<p align="center">
+  <img src="diagrams/block-diagram-1-block-beta.svg" alt="System Block Diagram" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+
 ```mermaid
 block-beta
     columns 7
@@ -91,6 +98,8 @@ block-beta
     Firebase --> PyAny
 ```
 
+</details>
+
 ---
 
 ## Pin Connections (ESP32 38-Pin with Expansion Board)
@@ -171,6 +180,13 @@ YF-S201 Flow Sensor
 
 ## Power Distribution
 
+<p align="center">
+  <img src="diagrams/block-diagram-2-block-beta.svg" alt="Power Distribution" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+
 ```mermaid
 block-beta
     columns 5
@@ -198,11 +214,20 @@ block-beta
     AC --> Valves12
 ```
 
+</details>
+
 > **Note:** Solenoid valves typically require 12V / 1A minimum. Use a separate 12V power supply if including automatic shutoff valves. Do NOT power valves from the ESP32 5V rail.
 
 ---
 
 ## Component Layout (Enclosure)
+
+<p align="center">
+  <img src="diagrams/block-diagram-3-block-beta.svg" alt="Component Layout" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 block-beta
@@ -224,6 +249,8 @@ block-beta
         PSU2["5V Adapter<br/>(mounted)"]:2
     end
 ```
+
+</details>
 
 > **Enclosure:** Use an ABS project box (200×120×70mm) with cable glands for waterproof sensor cable entry.
 

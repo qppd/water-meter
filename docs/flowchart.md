@@ -2,6 +2,13 @@
 
 ## 1. Main System Flow (High-Level)
 
+<p align="center">
+  <img src="diagrams/flowchart-1-flowchart.svg" alt="Main System Flow" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
+
 ```mermaid
 flowchart TD
     A[Power On] --> B[ESP32 Initialization]
@@ -36,7 +43,16 @@ flowchart TD
     T --> I
 ```
 
+</details>
+
 ## 2. Firebase Data Flow (ESP32 → Firebase → PythonAnywhere)
+
+<p align="center">
+  <img src="diagrams/flowchart-2-flowchart.svg" alt="Firebase Data Flow" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart LR
@@ -78,7 +94,16 @@ flowchart LR
     end
 ```
 
+</details>
+
 ## 3. Pulse Interrupt Flow (ESP32 ISR)
+
+<p align="center">
+  <img src="diagrams/flowchart-3-flowchart.svg" alt="Pulse Interrupt Flow" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -92,7 +117,16 @@ flowchart TD
     F --> H
 ```
 
+</details>
+
 ## 4. Feature Extraction Flow (PythonAnywhere)
+
+<p align="center">
+  <img src="diagrams/flowchart-4-flowchart.svg" alt="Feature Extraction Flow" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -126,7 +160,16 @@ flowchart TD
     F --> G[← XGBoost + Isolation Forest]
 ```
 
+</details>
+
 ## 5. XGBoost ML Inference Flow
+
+<p align="center">
+  <img src="diagrams/flowchart-5-flowchart.svg" alt="XGBoost ML Inference Flow" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -157,7 +200,16 @@ flowchart TD
     Q --> S[Write Valve Command<br/>→ /commands/{id}]
 ```
 
+</details>
+
 ## 6. Valve Control Flow (ESP32)
+
+<p align="center">
+  <img src="diagrams/flowchart-6-flowchart.svg" alt="Valve Control Flow" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -184,7 +236,16 @@ flowchart TD
     K --> L[Acknowledge to Firebase<br/>→ valve_state_updated]
 ```
 
+</details>
+
 ## 7. Local Leak Rules (ESP32 Fallback — No ML)
+
+<p align="center">
+  <img src="diagrams/flowchart-7-flowchart.svg" alt="Local Leak Rules" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -208,7 +269,16 @@ flowchart TD
     L -->|No| N[No Leak]
 ```
 
+</details>
+
 ## 8. Data Flow Diagram (Full System)
+
+<p align="center">
+  <img src="diagrams/flowchart-8-flowchart.svg" alt="Data Flow Diagram" width="90%">
+</p>
+
+<details>
+<summary><b>📐 Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
 flowchart LR
@@ -234,3 +304,5 @@ flowchart LR
     classDef ml fill:#fce4ec,stroke:#c62828
     classDef user fill:#fffde7,stroke:#f9a825
 ```
+
+</details>

@@ -1,0 +1,78 @@
+graph TB
+    subgraph "Plumbing Layer"
+        A[Main Water Supply] --> B["Inlet Flow Sensor<br/>YF-S201"]
+        B --> C[Check Valve]
+        C --> D[Junction]
+        D --> E1[Fixture 1 Sensor]
+        D --> E2[Fixture 2 Sensor]
+        D --> E3[Fixture 3 Sensor]
+        D --> E4[Fixture 4 Sensor]
+        E1 --> CV1[Check Valve] --> F1[Fixture 1]
+        E2 --> CV2[Check Valve] --> F2[Fixture 2]
+        E3 --> CV3[Check Valve] --> F3[Fixture 3]
+        E4 --> CV4[Check Valve] --> F4[Fixture 4]
+    end
+
+    subgraph "ESP32 Edge Layer"
+        direction TB
+        Sensors["5× Flow Sensor<br/>Pulse Counters<br/>(ISR + Debounce)"]
+        Features["Feature Extractor<br/>flow_rate, volume,<br/>duration, time, ratio"]
+        FirebaseClient["Firebase-ESP-Client<br/>Stream + Write"]
+        LocalCtrl["Local Leak Rules<br/>Valve Control<br/>OLED Display"]
+        SDCard["SD Card Logger<br/>(Offline Backup)"]
+        
+        Sensors --> Features
+        Features --> FirebaseClient
+        Features --> LocalCtrl
+        Sensors --> SDCard
+    end
+
+    subgraph "Firebase Realtime DB"
+        direction TB
+        Readings["/readings/{device_id}/{ts}<br/>Raw sensor data"]
+        Alerts["/alerts/{alert_id}<br/>Leak events"]
+        Commands["/commands/{device_id}<br/>Valve control"]
+        Models["/models/{version}<br/>ML metadata"]
+    end
+
+    subgraph "PythonAnywhere Backend"
+        direction TB
+        Pyrebase["Pyrebase4 Listener<br/>(Stream + REST)"]
+        XGB["XGBoost Classifier<br/>normal / minor_leak / major_leak"]
+        ISO["Isolation Forest<br/>Unsupervised Anomaly Detection"]
+        Flask["Flask Web App<br/>Dashboard + API"]
+        AlertEngine["Alert Engine<br/>Email / Telegram"]
+        Retrain["Daily Retrain Pipeline"]
+        
+        Pyrebase --> XGB
+        Pyrebase --> ISO
+        XGB --> Flask
+        ISO --> Flask
+        Flask --> AlertEngine
+        Flask --> Retrain
+    end
+
+    subgraph "User Layer"
+        Dashboard["Web Dashboard<br/>Real-time Charts"]
+        Notif["Telegram / Email<br/>Alerts"]
+        ValveCmd["Remote Valve<br/>Control"]
+    end
+
+    B --> Sensors
+    E1 --> Sensors
+    E2 --> Sensors
+    E3 --> Sensors
+    E4 --> Sensors
+    
+    FirebaseClient --> Readings
+    FirebaseClient --> Alerts
+    Commands --> FirebaseClient
+    
+    Readings --> Pyrebase
+    Alerts --> Pyrebase
+    Commands --> Pyrebase
+    
+    Flask --> Dashboard
+    AlertEngine --> Notif
+    Dashboard --> ValveCmd
+    ValveCmd --> Commands

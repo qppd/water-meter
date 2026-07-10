@@ -1,0 +1,29 @@
+flowchart TD
+    A[Raw Firebase Data] --> B[Parse JSON]
+    B --> C["For each fixture:<br/>extract raw metrics"]
+    C --> D[Compute Features]
+    
+    D --> D1["flow_rate (L/min)"]
+    D --> D2["duration_seconds"]
+    D --> D3["hour_of_day"]
+    D --> D4["day_of_week"]
+    D --> D5["fixture_id (encoded)"]
+    D --> D6["inlet_to_fixture_ratio"]
+    D --> D7["rate_variance (10s window)"]
+    D --> D8["is_night_time"]
+    D --> D9["rolling_avg_1min"]
+    D --> D10["pulse_trend (slope)"]
+    
+    D1 --> E["Feature Vector<br/>(9–12 features)"]
+    D2 --> E
+    D3 --> E
+    D4 --> E
+    D5 --> E
+    D6 --> E
+    D7 --> E
+    D8 --> E
+    D9 --> E
+    D10 --> E
+    
+    E --> F[Scale / Normalize]
+    F --> G[← XGBoost + Isolation Forest]

@@ -1,0 +1,37 @@
+flowchart LR
+    subgraph "ESP32 (Firebase-ESP-Client)"
+        A[Read Sensors] --> B["Build JSON\nPayload"]
+        B --> C["Firebase.pushJSON\n→ /readings/{id}/{ts}"]
+        D["Firebase.stream\n← /commands/{id}"]
+        D --> E{"New Command?"}
+        E -->|close valve| F[Set Relay LOW]
+        E -->|open valve| G[Set Relay HIGH]
+        E -->|calibrate| H[Enter Calibration Mode]
+    end
+    
+    subgraph "Firebase Realtime DB"
+        C --> I[("/readings")]
+        J[("/commands")] --> D
+        K[("/alerts")] --> L
+        M[("/models")] --> N
+    end
+    
+    subgraph "PythonAnywhere (Pyrebase4)"
+        O["Pyrebase4 Stream\nListener"] --> I
+        O --> P[Extract Features]
+        P --> Q[XGBoost Inference]
+        P --> R["Isolation Forest\nAnomaly Score"]
+        Q --> S{"Leak?"}
+        R --> S
+        S -->|Yes| T["Write Alert\n→ /alerts/{id}"]
+        T --> K
+        S -->|No| U[Log Normal Reading]
+        T --> V["Send Notification\nTelegram / Email"]
+    end
+    
+    subgraph "User"
+        W[Web Dashboard] --> M
+        W --> I
+        X[Telegram Alert] --> V
+        Y[User Command] --> J
+    end

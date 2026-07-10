@@ -1,0 +1,22 @@
+flowchart LR
+    A[🌊 Water Flow]:::physical --> B["🔌 YF-S201<br/>Flow Sensor"]:::physical
+    B --> C["⚡ Pulse<br/>Interrupt"]:::firmware
+    C --> D["📊 Feature<br/>Extraction"]:::firmware
+    D --> E["🔥 Firebase<br/>ESP-Client"]:::firmware
+    E --> F["☁️ Firebase<br/>Realtime DB"]:::cloud
+    F --> G["🐍 Pyrebase4<br/>Listener"]:::backend
+    G --> H["🧠 XGBoost<br/>Inference"]:::ml
+    G --> I["🔍 Isolation<br/>Forest"]:::ml
+    H --> J["⚠️ Alert<br/>Engine"]:::backend
+    I --> J
+    J --> K["📱 Telegram<br/>Notification"]:::user
+    F --> L["🌐 Web<br/>Dashboard"]:::user
+    F --> M["📡 ESP32<br/>Command Stream"]:::firmware
+    M --> N["🔧 Valve<br/>Controller"]:::firmware
+    
+    classDef physical fill:#e1f5fe,stroke:#0288d1
+    classDef firmware fill:#fff3e0,stroke:#f57c00
+    classDef cloud fill:#e8f5e9,stroke:#388e3c
+    classDef backend fill:#f3e5f5,stroke:#7b1fa2
+    classDef ml fill:#fce4ec,stroke:#c62828
+    classDef user fill:#fffde7,stroke:#f9a825

@@ -1,0 +1,24 @@
+block-beta
+    columns 5
+    
+    AC["220V AC<br/>Outlet"]:1
+    
+    PSU["5V 2A<br/>USB Adapter"]:2
+    
+    ESPV["ESP32 VIN<br/>(5V)"]:1
+    
+    RelayV["Relay Module<br/>VCC (5V)"]:1
+    
+    SensorV["Flow Sensors<br/>VCC (5V)"]:1
+    
+    OLEDV["OLED/SD<br/>3.3V (regulator)"]:1
+    
+    Valves12["Solenoid Valves<br/>12V (separate PSU)"]:1
+    
+    AC --> PSU
+    PSU --> ESPV
+    PSU --> RelayV
+    PSU --> SensorV
+    PSU --> OLEDV
+    
+    AC --> Valves12

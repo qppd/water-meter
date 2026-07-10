@@ -1,0 +1,9 @@
+flowchart TD
+    A["Pulse from\nFlow Sensor N"] --> B[ISR Triggered]
+    B --> C[Read millis]
+    C --> D{"Millis - lastPulseTime > 5ms?"}
+    D -->|Yes valid pulse| E["Increment pulseCount[N]"]
+    D -->|No bounce| F[Ignore]
+    E --> G["Update lastPulseTime[N]"]
+    G --> H["Return to Main Loop"]
+    F --> H
