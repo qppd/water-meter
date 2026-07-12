@@ -119,16 +119,3 @@
 | [Cytron Technologies](https://shopee.ph/cytrontechnologies) | Shopee | 4.9 | Robotics, IoT, sensors |
 | [DIY Electronics](https://shopee.ph/diy_electronics) | Shopee | 4.7 | General electronics |
 | [Handson Technology](https://www.lazada.com.ph/shop/handsome-technology/) | Lazada | 4.8 | Sensors, power supplies |
-
----
-
-## Budget-Saving Tips
-
-1. **Buy the ESP32 Starter Kit** (~₱650) from Makerlab — includes ESP32, breadboard, LEDs, resistors, jumpers — cheaper than buying separately
-2. **Skip solenoid valves** for v1 — just detect leaks and alert (manual shutoff)
-3. **Skip OLED** — use the web dashboard / Pi touchscreen instead
-4. **Use an old phone charger** instead of buying a new 5V adapter
-5. **Use a shoebox** instead of ABS enclosure for prototype
-6. **Buy fittings locally** at Ace Hardware / True Value / local hardware store (cheaper than online + shipping)
-7. **A laptop without RPi** works for proof-of-concept (just run flask) — upgrade only when needed
-8. **Sigma / Shopee sale days** (8.8, 9.9, 11.11) — can save 20–50% on electronics
