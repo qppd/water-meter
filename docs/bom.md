@@ -57,11 +57,13 @@
 | # | Item | Qty | Unit (₱) | Total (₱) | Link |
 |---|------|-----|----------|-----------|------|
 | 20 | **5-Channel Relay Module** 5V (optocoupler, active LOW, for 5 valves) | 1 | ₱350 | ₱350 | [Makerlab Shopee](https://shopee.ph/search?keyword=5%20channel%20relay%20makerlab) |
-| 21 | **Solenoid Valve** 1/2" NC 12V (or Motorized Ball Valve) | 5 | ₱350 | ₱1,750 | [Shopee Hardware](https://shopee.ph/search?keyword=solenoid%20valve%201%2F2%2012v) |
+| 21 | **Latching Solenoid Valve** 1/2" NC 12V (pulse to open/close, zero holding current) | 5 | ₱350 | ₱1,750 | [Lazada Search](https://www.lazada.com.ph/search/?q=latching%20solenoid%20valve%2012v%201%2F2) / [Shopee Search](https://shopee.ph/search?keyword=latching%20solenoid%20valve%2012v%201%2F2) |
 | 22 | **1N4007 Diode** (flyback protection for relays) | 10 | ₱3 | ₱30 | [Makerlab Shopee](https://shopee.ph/search?keyword=1n4007%20makerlab) |
 | 23 | **TIP120 Darlington Transistor** (solenoid driver) | 5 | ₱25 | ₱125 | [Makerlab Shopee](https://shopee.ph/search?keyword=tip120%20makerlab) |
 
 **Valve Control Subtotal:** **₱2,225**
+
+> **Note:** Latching solenoid valves only need a pulse to switch state (no continuous power to hold). Requires H-bridge or dual-coil drive circuit — adjust driver circuitry accordingly.
 
 ---
 
@@ -97,7 +99,7 @@
 | Tier | Category | ₱ | Notes |
 |------|----------|---|-------|
 | **MVP** | Core + breadboard + power | **~₱2,410** | ESP32 + 1 sensor + web dashboard (prove concept) |
-| **Standard** | All ESP32-side components + enclosure | **~₱6,915** | Full 5-sensor system with valves |
+| **Standard** | All ESP32-side components + enclosure | **~₱6,915** | Full 5-sensor system with latching valves |
 | **Complete** | Standard + Pi backend (already owned) | **~₱6,915** | Production-ready with ML backend (Pi hardware excluded) |
 
 > **Note:** Raspberry Pi, touchscreen, PSU, HDMI, and SD card are **already purchased** — excluded from cost totals above.
