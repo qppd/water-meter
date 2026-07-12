@@ -80,13 +80,27 @@
 
 ---
 
+## Already Purchased (Not in BOM)
+
+| Item | Qty | Notes |
+|------|-----|-------|
+| **Raspberry Pi 4/5** | 1 | Runs Flask + ML backend |
+| **Official Raspberry Pi Touchscreen LCD** (7" 800×480) | 1 | Dashboard display |
+| **Official Raspberry Pi Power Supply** (5V 3A USB-C) | 1 | Powers Pi + screen |
+| **HDMI Cable** (micro-HDMI to HDMI) | 1 | Pi to external monitor |
+| **Micro SD Card** 32GB Class 10 (A1/A2) | 1 | OS + data storage |
+
+---
+
 ## Total Cost Summary
 
 | Tier | Category | ₱ | Notes |
 |------|----------|---|-------|
-| **MVP** | Core + breadboard + power | **~₱2,410** | ESP32 + 1 sensor + OLED (prove concept) |
-| **Standard** | All components + enclosure | **~₱6,915** | Full 5-sensor system with valves |
-| **Complete** | Full system + Raspberry Pi (one-time) | **~₱9,415** | Production-ready with ML backend |
+| **MVP** | Core + breadboard + power | **~₱2,410** | ESP32 + 1 sensor + web dashboard (prove concept) |
+| **Standard** | All ESP32-side components + enclosure | **~₱6,915** | Full 5-sensor system with valves |
+| **Complete** | Standard + Pi backend (already owned) | **~₱6,915** | Production-ready with ML backend (Pi hardware excluded) |
+
+> **Note:** Raspberry Pi, touchscreen, PSU, HDMI, and SD card are **already purchased** — excluded from cost totals above.
 
 ---
 
@@ -112,7 +126,7 @@
 
 1. **Buy the ESP32 Starter Kit** (~₱650) from Makerlab — includes ESP32, breadboard, LEDs, resistors, jumpers — cheaper than buying separately
 2. **Skip solenoid valves** for v1 — just detect leaks and alert (manual shutoff)
-3. **Skip OLED** — use the web dashboard instead
+3. **Skip OLED** — use the web dashboard / Pi touchscreen instead
 4. **Use an old phone charger** instead of buying a new 5V adapter
 5. **Use a shoebox** instead of ABS enclosure for prototype
 6. **Buy fittings locally** at Ace Hardware / True Value / local hardware store (cheaper than online + shipping)
