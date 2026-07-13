@@ -43,10 +43,13 @@
 
 | # | Item | Qty | Unit (₱) | Total (₱) | Link |
 |---|------|-----|----------|-----------|------|
-| 16 | **USB to Micro USB Data Cable** (braided, 1m) | 1 | ₱120 | ₱120 | [Makerlab Shopee](https://shopee.ph/search?keyword=micro%20usb%20cable%20makerlab) |
-| 17 | **5V 2A USB Power Adapter** | 1 | ₱150 | ₱150 | [Makerlab Shopee](https://shopee.ph/search?keyword=5v%202a%20adapter%20makerlab) |
+| 16 | **220V AC to 12V 5A Switching Power Supply** (S-60-12, 60W, LRS-50/60-12) | 1 | ₱280 | ₱280 | [Shopee](https://shopee.ph/Switching-Power-Supply-(S-60-12)-12V-5A-60W-LRS-50-5V-10A-12V-4.2A-24V-2.1A-50W-i.18252381.363361010?extraParams=%7B%22display_model_id%22%3A164466543878%2C%22model_selection_logic%22%3A3%7D) |
+| 17 | **12V to 5V Buck Converter** (LM2596S, DC-DC Step-Down Module, USB output) | 1 | ₱65 | ₱65 | [Shopee](https://shopee.ph/24V-12V-to-5V-Buck-Converter-USB-Mobile-Phone-DC-DC-Step-Down-Module-LM2596S-HW-688-HCW-P715-i.18252381.1920327681?extraParams=%7B%22display_model_id%22%3A80023951201%2C%22model_selection_logic%22%3A3%7D) |
+| 18 | **USB to Micro USB Data Cable** (braided, 1m) | 1 | ₱120 | ₱120 | [Makerlab Shopee](https://shopee.ph/search?keyword=micro%20usb%20cable%20makerlab) |
 
-**Power Subtotal:** **₱270**
+**Power Subtotal:** **₱465**
+
+> **Note:** The 12V 5A supply powers both the buck converter (for ESP32 + sensors at 5V) and can directly power 12V components if needed. The LM2596S buck converter steps down 12V → 5V for the ESP32 and flow sensors.
 
 ---
 
@@ -54,12 +57,12 @@
 
 | # | Item | Qty | Unit (₱) | Total (₱) | Link |
 |---|------|-----|----------|-----------|------|
-| 18 | **ABS Project Enclosure Box** 200×120×70mm | 1 | ₱250 | ₱250 | [Makerlab Shopee](https://shopee.ph/search?keyword=project%20enclosure%20box%20abs%20makerlab) |
-| 19 | **Cable Glands** PG9 / PG11 (waterproof entry) | 6 | ₱15 | ₱90 | [Shopee Hardware](https://shopee.ph/search?keyword=cable%20gland%20pg9) |
-| 20 | **Heat Shrink Tube Set** (assorted sizes) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=heat%20shrink%20tube%20makerlab) |
-| 21 | **Cable Ties** 100mm (100pc) | 1 | ₱30 | ₱30 | [Makerlab Shopee](https://shopee.ph/search?keyword=cable%20tie%20makerlab) |
-| 22 | **M3 Screws + Standoffs Kit** (PCB mounting) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=m3%20standoff%20makerlab) |
-| 23 | **Double-sided Tape / Velcro** (mounting sensors) | 1 | ₱30 | ₱30 | [Shopee Hardware](https://shopee.ph/search?keyword=double%20sided%20tape%20heavy%20duty) |
+| 19 | **ABS Project Enclosure Box** 200×120×70mm | 1 | ₱250 | ₱250 | [Makerlab Shopee](https://shopee.ph/search?keyword=project%20enclosure%20box%20abs%20makerlab) |
+| 20 | **Cable Glands** PG9 / PG11 (waterproof entry) | 6 | ₱15 | ₱90 | [Shopee Hardware](https://shopee.ph/search?keyword=cable%20gland%20pg9) |
+| 21 | **Heat Shrink Tube Set** (assorted sizes) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=heat%20shrink%20tube%20makerlab) |
+| 22 | **Cable Ties** 100mm (100pc) | 1 | ₱30 | ₱30 | [Makerlab Shopee](https://shopee.ph/search?keyword=cable%20tie%20makerlab) |
+| 23 | **M3 Screws + Standoffs Kit** (PCB mounting) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=m3%20standoff%20makerlab) |
+| 24 | **Double-sided Tape / Velcro** (mounting sensors) | 1 | ₱30 | ₱30 | [Shopee Hardware](https://shopee.ph/search?keyword=double%20sided%20tape%20heavy%20duty) |
 
 **Enclosure Subtotal:** **₱520**
 
@@ -69,7 +72,7 @@
 
 | # | Item | Qty | Unit (₱) | Total (₱) | Note |
 |---|------|-----|----------|-----------|------|
-| 24 | **Raspberry Pi 4/5** (or 3B+, if on hand) | 1 | ₱2,500 | ₱2,500 | One-time cost, runs Flask + ML locally |
+| 25 | **Raspberry Pi 4/5** (or 3B+, if on hand) | 1 | ₱2,500 | ₱2,500 | One-time cost, runs Flask + ML locally |
 | 25 | **Telegram Bot** (free) | 1 | ₱0 | ₱0 | Alerts via [@BotFather](https://t.me/BotFather) |
 
 **Backend Subtotal:** **₱2,500**
@@ -92,9 +95,9 @@
 
 | Tier | Category | ₱ | Notes |
 |------|----------|---|-------|
-| **MVP** | Core + breadboard + power | **~₱2,030** | ESP32 + 1 sensor (prove concept) |
-| **Standard** | All ESP32-side components + enclosure | **~₱3,570** | Full 4-sensor system |
-| **Complete** | Standard + Raspberry Pi (one-time) | **~₱6,070** | Production-ready with ML backend |
+| **MVP** | Core + breadboard + power | **~₱2,225** | ESP32 + 1 sensor (prove concept) |
+| **Standard** | All ESP32-side components + enclosure | **~₱3,765** | Full 4-sensor system |
+| **Complete** | Standard + Raspberry Pi (one-time) | **~₱6,265** | Production-ready with ML backend |
 
 > **Note:** Raspberry Pi, touchscreen LCD, PSU, HDMI, and SD card are **already purchased** — excluded from cost totals above.
 

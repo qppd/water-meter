@@ -132,20 +132,26 @@ block-beta
     
     AC["220V AC<br/>Outlet"]:1
     
-    PSU["5V 2A<br/>USB Adapter"]:2
+    PSU12["12V 5A<br/>Switching PSU<br/>(S-60-12 / LRS-60-12)"]:2
     
     ESPV["ESP32 VIN<br/>(5V)"]:1
     
     SensorV["Flow Sensors<br/>VCC (5V)"]:1
     
-    AC --> PSU
-    PSU --> ESPV
-    PSU --> SensorV
+    Buck["LM2596S<br/>12V → 5V<br/>Buck Converter"]:1
+    
+    AC --> PSU12
+    PSU12 --> Buck
+    Buck --> ESPV
+    Buck --> SensorV
 ```
 
 </details>
 
-> **Note:** The 12V solenoid valve power supply and LM2596 step-down regulator have been removed from this configuration. Check valves provide backflow prevention; automatic shutoff via solenoid valves is not included in this version.
+> **Power Architecture:**
+> - **220V AC** → **12V 5A Switching Power Supply (S-60-12 / LRS-60-12)** 
+> - **12V** → **LM2596S Buck Converter** → **5V** for ESP32 + Flow Sensors
+> - 12V rail available for future 12V components if needed
 
 ---
 
@@ -165,9 +171,11 @@ block-beta
         
         ESP32Board["ESP32 +<br/>Expansion Board"]:1
         
+        BuckConv["LM2596S<br/>Buck Converter<br/>(12V→5V)"]:1
+        
         Terminal["Terminal Block<br/>Sensor Inputs<br/>(4 sensors)"]:2
         
-        PSU2["5V Adapter<br/>(mounted)"]:2
+        PSU12["12V 5A<br/>PSU (mounted)"]:2
     end
 ```
 
