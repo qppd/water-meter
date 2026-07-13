@@ -14,9 +14,9 @@
 | 2 | **ESP32 38-Pin Expansion Board** (screw terminals, labeled) | 1 | ₱180 | ₱180 | [Makerlab Shopee](https://shopee.ph/search?keyword=esp32%20expansion%20board%20makerlab) |
 | 3 | **YF-S201 Water Flow Sensor** 1/2" thread, Hall-effect | **4** | ₱180 | **₱720** | [Makerlab Shopee](https://shopee.ph/search?keyword=yf-s201%20flow%20sensor%20makerlab) |
 | 4 | **Check Valve** 1/2" Brass / PVC (non-return) | 3 | ₱120 | ₱360 | [Makerlab Shopee](https://shopee.ph/search?keyword=check%20valve%201%2F2%20makerlab) |
-| 4 | **1/2" PVC Pipe Fittings** (tees, elbows, couplers, nipples) | 1 set | ₱250 | ₱250 | [Shopee Hardware](https://shopee.ph/search?keyword=1%2F2%20pvc%20pipe%20fitting%20set) |
-| 5 | **PTFE Thread Seal Tape** (Teflon, 10m roll) | 2 | ₱20 | ₱40 | [Makerlab Shopee](https://shopee.ph/search?keyword=teflon%20tape%20makerlab) |
-| 5 | **PVC Pipe Cement / Glue** (for permanent joints) | 1 | ₱80 | ₱80 | [Shopee Hardware](https://shopee.ph/search?keyword=pvc%20pipe%20cement) |
+| 5 | **1/2" PVC Pipe Fittings** (tees, elbows, couplers, nipples) | 1 set | ₱250 | ₱250 | [Shopee Hardware](https://shopee.ph/search?keyword=1%2F2%20pvc%20pipe%20fitting%20set) |
+| 6 | **PTFE Thread Seal Tape** (Teflon, 10m roll) | 2 | ₱20 | ₱40 | [Makerlab Shopee](https://shopee.ph/search?keyword=teflon%20tape%20makerlab) |
+| 7 | **PVC Pipe Cement / Glue** (for permanent joints) | 1 | ₱80 | ₱80 | [Shopee Hardware](https://shopee.ph/search?keyword=pvc%20pipe%20cement) |
 
 **Core Subtotal:** **₱2,080**
 
@@ -26,10 +26,10 @@
 
 | # | Item | Qty | Unit (₱) | Total (₱) | Link |
 |---|------|-----|----------|-----------|------|
-| 7 | **Perf Board 20×80mm** (for permanent soldering) | 2 | ₱25 | ₱50 | [Makerlab Shopee](https://shopee.ph/search?keyword=perf%20board%2020x80%20makerlab) |
-| 8 | **JST-XH 3-pin Male** (for flow sensor side) | 4 | ₱10 | ₱40 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%203pin%20male%20makerlab) |
-| 9 | **JST-XH 3-pin Female** (for board/perf board side) | 4 | ₱12 | ₱48 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%203pin%20female%20makerlab) |
-| 9 | **Terminal Block 2-pin Blue** (5mm pitch, power input) | 1 | ₱15 | ₱15 | [Makerlab Shopee](https://shopee.ph/search?keyword=terminal%20block%202pin%20blue%20makerlab) |
+| 8 | **Perf Board 20×80mm** (for permanent soldering) | 2 | ₱25 | ₱50 | [Makerlab Shopee](https://shopee.ph/search?keyword=perf%20board%2020x80%20makerlab) |
+| 9 | **JST-XH 3-pin Male** (for flow sensor side) | 4 | ₱10 | ₱40 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%203pin%20male%20makerlab) |
+| 10 | **JST-XH 3-pin Female** (for board/perf board side) | 4 | ₱12 | ₱48 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%203pin%20female%20makerlab) |
+| 11 | **Terminal Block 2-pin Blue** (5mm pitch, power input) | 1 | ₱15 | ₱15 | [Makerlab Shopee](https://shopee.ph/search?keyword=terminal%20block%202pin%20blue%20makerlab) |
 
 **Wiring Subtotal:** **₱163**
 
@@ -41,9 +41,9 @@
 
 | # | Item | Qty | Unit (₱) | Total (₱) | Link |
 |---|------|-----|----------|-----------|------|
-| 13 | **220V AC to 12V 5A Switching Power Supply** (S-60-12, 60W, LRS-50/60-12) | 1 | ₱280 | ₱280 | [Shopee](https://shopee.ph/Switching-Power-Supply-(S-60-12)-12V-5A-60W-LRS-50-5V-10A-12V-4.2A-24V-2.1A-50W-i.18252381.363361010?extraParams=%7B%22display_model_id%22%3A164466543878%2C%22model_selection_logic%22%3A3%7D) |
-| 14 | **12V to 5V Buck Converter** (LM2596S, DC-DC Step-Down Module, USB output) | 1 | ₱65 | ₱65 | [Shopee](https://shopee.ph/24V-12V-to-5V-Buck-Converter-USB-Mobile-Phone-DC-DC-Step-Down-Module-LM2596S-HW-688-HCW-P715-i.18252381.1920327681?extraParams=%7B%22display_model_id%22%3A80023951201%2C%22model_selection_logic%22%3A3%7D) |
-| 13 | **USB to Micro USB Data Cable** (braided, 1m) | 1 | ₱120 | ₱120 | [Makerlab Shopee](https://shopee.ph/search?keyword=micro%20usb%20cable%20makerlab) |
+| 12 | **220V AC to 12V 5A Switching Power Supply** (S-60-12, 60W, LRS-50/60-12) | 1 | ₱280 | ₱280 | [Shopee](https://shopee.ph/Switching-Power-Supply-(S-60-12)-12V-5A-60W-LRS-50-5V-10A-12V-4.2A-24V-2.1A-50W-i.18252381.363361010?extraParams=%7B%22display_model_id%22%3A164466543878%2C%22model_selection_logic%22%3A3%7D) |
+| 13 | **12V to 5V Buck Converter** (LM2596S, DC-DC Step-Down Module, USB output) | 1 | ₱65 | ₱65 | [Shopee](https://shopee.ph/24V-12V-to-5V-Buck-Converter-USB-Mobile-Phone-DC-DC-Step-Down-Module-LM2596S-HW-688-HCW-P715-i.18252381.1920327681?extraParams=%7B%22display_model_id%22%3A80023951201%2C%22model_selection_logic%22%3A3%7D) |
+| 14 | **USB to Micro USB Data Cable** (braided, 1m) | 1 | ₱120 | ₱120 | [Makerlab Shopee](https://shopee.ph/search?keyword=micro%20usb%20cable%20makerlab) |
 
 **Power Subtotal:** **₱465**
 
@@ -55,14 +55,16 @@
 
 | # | Item | Qty | Unit (₱) | Total (₱) | Link |
 |---|------|-----|----------|-----------|------|
-| 14 | **ABS Project Enclosure Box** 200×120×70mm | 1 | ₱250 | ₱250 | [Makerlab Shopee](https://shopee.ph/search?keyword=project%20enclosure%20box%20abs%20makerlab) |
-| 15 | **Cable Glands** PG9 / PG11 (waterproof entry) | 6 | ₱15 | ₱90 | [Shopee Hardware](https://shopee.ph/search?keyword=cable%20gland%20pg9) |
-| 15 | **Heat Shrink Tube Set** (assorted sizes) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=heat%20shrink%20tube%20makerlab) |
-| 15 | **Cable Ties** 100mm (100pc) | 1 | ₱30 | ₱30 | [Makerlab Shopee](https://shopee.ph/search?keyword=cable%20tie%20makerlab) |
-| 16 | **M3 Screws + Standoffs Kit** (PCB mounting) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=m3%20standoff%20makerlab) |
-| 16 | **Double-sided Tape / Velcro** (mounting sensors) | 1 | ₱30 | ₱30 | [Shopee Hardware](https://shopee.ph/search?keyword=double%20sided%20tape%20heavy%20duty) |
+| 15 | **Waterproof ABS Enclosure Box IP67** 175×125×75mm | 1 | ₱280 | ₱280 | [Shopee](https://shopee.ph/Waterproof-Plastic-Enclosure-Box-Electronic-IP67-Project-Instrument-Case-Electrical-Project-Box-ABS-Outdoor-Junction-Box-Housing-i.291988242.6261564475?extraParams=%7B%22display_model_id%22%3A22547988641%2C%22model_selection_logic%22%3A3%7D) |
+| 16 | **Cable Glands** PG9 / PG11 (waterproof entry) | 6 | ₱15 | ₱90 | [Shopee Hardware](https://shopee.ph/search?keyword=cable%20gland%20pg9) |
+| 17 | **Heat Shrink Tube Set** (assorted sizes) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=heat%20shrink%20tube%20makerlab) |
+| 18 | **Cable Ties** 100mm (100pc) | 1 | ₱30 | ₱30 | [Makerlab Shopee](https://shopee.ph/search?keyword=cable%20tie%20makerlab) |
+| 19 | **M3 Screws + Standoffs Kit** (PCB mounting) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=m3%20standoff%20makerlab) |
+| 20 | **Double-sided Tape / Velcro** (mounting sensors) | 1 | ₱30 | ₱30 | [Shopee Hardware](https://shopee.ph/search?keyword=double%20sided%20tape%20heavy%20duty) |
 
-**Enclosure Subtotal:** **₱520**
+**Enclosure Subtotal:** **₱550**
+
+> **Note:** IP67 waterproof enclosure provides excellent protection for outdoor/wet environments. 175×125×75mm size fits ESP32, expansion board, buck converter, terminal block, and perf board with room for cable management.
 
 ---
 
@@ -70,8 +72,8 @@
 
 | # | Item | Qty | Unit (₱) | Total (₱) | Note |
 |---|------|-----|----------|-----------|------|
-| 17 | **Raspberry Pi 4/5** (or 3B+, if on hand) | 1 | ₱2,500 | ₱2,500 | One-time cost, runs Flask + ML locally |
-| 18 | **Telegram Bot** (free) | 1 | ₱0 | ₱0 | Alerts via [@BotFather](https://t.me/BotFather) |
+| 21 | **Raspberry Pi 4/5** (or 3B+, if on hand) | 1 | ₱2,500 | ₱2,500 | One-time cost, runs Flask + ML locally |
+| 22 | **Telegram Bot** (free) | 1 | ₱0 | ₱0 | Alerts via [@BotFather](https://t.me/BotFather) |
 
 **Backend Subtotal:** **₱2,500**
 
@@ -94,8 +96,8 @@
 | Tier | Category | ₱ | Notes |
 |------|----------|---|-------|
 | **MVP** | Core + perf board + power | **~₱1,803** | ESP32 + 1 sensor (prove concept) |
-| **Standard** | All ESP32-side components + enclosure | **~₱3,113** | Full 4-sensor system |
-| **Complete** | Standard + Raspberry Pi (one-time) | **~₱5,613** | Production-ready with ML backend |
+| **Standard** | All ESP32-side components + enclosure | **~₱3,143** | Full 4-sensor system |
+| **Complete** | Standard + Raspberry Pi (one-time) | **~₱5,643** | Production-ready with ML backend |
 
 > **Note:** Raspberry Pi, touchscreen LCD, PSU, HDMI, and SD card are **already purchased** — excluded from cost totals above.
 

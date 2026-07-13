@@ -443,7 +443,7 @@ cp training/scaler.pkl rpi/models/
 ### Permanent Wiring
 
 1. Solder components to perf board (instead of breadboard)
-2. Mount expansion board inside ABS enclosure
+2. Mount expansion board inside **Waterproof ABS Enclosure Box IP67 (175×125×75mm)**
 3. Use cable glands for water sensor cables
 4. Label all wires
 

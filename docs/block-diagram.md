@@ -211,7 +211,7 @@ block-beta
 
 </details>
 
-> **Enclosure:** Use an ABS project box (200×120×70mm) with cable glands for waterproof sensor cable entry.
+> **Enclosure:** Waterproof ABS Enclosure Box IP67 175×125×75mm with cable glands for waterproof sensor cable entry.
 
 ---
 
