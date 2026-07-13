@@ -13,10 +13,10 @@
 | 1 | **ESP32 38-Pin Dev Board** (NodeMCU-32S, CP2102, WiFi + BLE) | 1 | ₱450 | ₱450 | [Makerlab Shopee](https://shopee.ph/search?keyword=esp32%2038pin%20makerlab) |
 | 2 | **ESP32 38-Pin Expansion Board** (screw terminals, labeled) | 1 | ₱180 | ₱180 | [Makerlab Shopee](https://shopee.ph/search?keyword=esp32%20expansion%20board%20makerlab) |
 | 3 | **YF-S201 Water Flow Sensor** 1/2" thread, Hall-effect | **4** | ₱180 | **₱720** | [Makerlab Shopee](https://shopee.ph/search?keyword=yf-s201%20flow%20sensor%20makerlab) |
-| 3 | **Check Valve** 1/2" Brass / PVC (non-return) | 3 | ₱120 | ₱360 | [Makerlab Shopee](https://shopee.ph/search?keyword=check%20valve%201%2F2%20makerlab) |
+| 4 | **Check Valve** 1/2" Brass / PVC (non-return) | 3 | ₱120 | ₱360 | [Makerlab Shopee](https://shopee.ph/search?keyword=check%20valve%201%2F2%20makerlab) |
 | 4 | **1/2" PVC Pipe Fittings** (tees, elbows, couplers, nipples) | 1 set | ₱250 | ₱250 | [Shopee Hardware](https://shopee.ph/search?keyword=1%2F2%20pvc%20pipe%20fitting%20set) |
 | 5 | **PTFE Thread Seal Tape** (Teflon, 10m roll) | 2 | ₱20 | ₱40 | [Makerlab Shopee](https://shopee.ph/search?keyword=teflon%20tape%20makerlab) |
-| 6 | **PVC Pipe Cement / Glue** (for permanent joints) | 1 | ₱80 | ₱80 | [Shopee Hardware](https://shopee.ph/search?keyword=pvc%20pipe%20cement) |
+| 5 | **PVC Pipe Cement / Glue** (for permanent joints) | 1 | ₱80 | ₱80 | [Shopee Hardware](https://shopee.ph/search?keyword=pvc%20pipe%20cement) |
 
 **Core Subtotal:** **₱2,080**
 
@@ -29,9 +29,9 @@
 | 7 | **Perf Board 20×80mm** (for permanent soldering) | 2 | ₱25 | ₱50 | [Makerlab Shopee](https://shopee.ph/search?keyword=perf%20board%2020x80%20makerlab) |
 | 8 | **JST-XH 3-pin Male** (for flow sensor side) | 4 | ₱10 | ₱40 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%203pin%20male%20makerlab) |
 | 9 | **JST-XH 3-pin Female** (for board/perf board side) | 4 | ₱12 | ₱48 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%203pin%20female%20makerlab) |
-| 10 | **Terminal Block 2-pin Blue** (5mm pitch, power input) | 1 | ₱15 | ₱15 | [Makerlab Shopee](https://shopee.ph/search?keyword=terminal%20block%202pin%20blue%20makerlab) |
+| 9 | **Terminal Block 2-pin Blue** (5mm pitch, power input) | 1 | ₱15 | ₱15 | [Makerlab Shopee](https://shopee.ph/search?keyword=terminal%20block%202pin%20blue%20makerlab) |
 
-**Wiring Subtotal:** **₱173**
+**Wiring Subtotal:** **₱163**
 
 > **Note:** JST-XH connectors are purchased **pre-crimped / ready-to-use** — no crimp kit or crimping tool needed. Just solder the female connectors to the perf board and plug in the sensor cables.
 
@@ -93,9 +93,9 @@
 
 | Tier | Category | ₱ | Notes |
 |------|----------|---|-------|
-| **MVP** | Core + perf board + power | **~₱1,963** | ESP32 + 1 sensor (prove concept) |
-| **Standard** | All ESP32-side components + enclosure | **~₱3,273** | Full 4-sensor system |
-| **Complete** | Standard + Raspberry Pi (one-time) | **~₱5,773** | Production-ready with ML backend |
+| **MVP** | Core + perf board + power | **~₱1,803** | ESP32 + 1 sensor (prove concept) |
+| **Standard** | All ESP32-side components + enclosure | **~₱3,113** | Full 4-sensor system |
+| **Complete** | Standard + Raspberry Pi (one-time) | **~₱5,613** | Production-ready with ML backend |
 
 > **Note:** Raspberry Pi, touchscreen LCD, PSU, HDMI, and SD card are **already purchased** — excluded from cost totals above.
 

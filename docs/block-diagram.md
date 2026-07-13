@@ -77,14 +77,27 @@ block-beta
 
 | Component | ESP32 Pin | Expansion Board | Notes |
 |-----------|-----------|-----------------|-------|
-| **Flow Sensor 1 — Inlet** | GPIO 26 | Screw terminal 1 | Direct connection, no pull-up needed |
-| **Flow Sensor 2 — Fixture 1 (Bidet)** | GPIO 25 | Screw terminal 2 | Direct connection |
-| **Flow Sensor 3 — Fixture 2 (Kitchen)** | GPIO 33 | Screw terminal 3 | Direct connection |
-| **Flow Sensor 4 — Fixture 3 (Bathroom Shower)** | GPIO 32 | Screw terminal 4 | Direct connection |
+| **Flow Sensor 1 — Inlet** | GPIO 26 | JST-XH 3-pin Female | Direct connection, no pull-up needed |
+| **Flow Sensor 2 — Fixture 1 (Bidet)** | GPIO 25 | JST-XH 3-pin Female | Direct connection |
+| **Flow Sensor 3 — Fixture 2 (Kitchen)** | GPIO 33 | JST-XH 3-pin Female | Direct connection |
+| **Flow Sensor 4 — Fixture 3 (Bathroom Shower)** | GPIO 32 | JST-XH 3-pin Female | Direct connection |
 
 ---
 
-## Wiring Diagram (Simplified)
+## Wiring Diagram
+
+### Interactive Wiring Diagram (Cirkit Designer)
+**🔗 [View Interactive Wiring Diagram](https://app.cirkitdesigner.com/project/4f173a2b-5656-48ff-b98f-183483fecb1e)**
+
+### Static Wiring Diagram (PNG)
+![Wiring Diagram](../wiring/wmldad.png)
+
+### Wiring Source File
+[Download .ckt file](../wiring/wmldad.ckt) — Open in [Cirkit Designer](https://app.cirkitdesigner.com/)
+
+---
+
+## Simplified Wiring
 
 ```
 ESP32 38-Pin Expansion Board
@@ -116,6 +129,23 @@ YF-S201 Flow Sensor
 ```
 
 > **Important:** The arrow on the sensor body MUST point in the direction of water flow. Installing it backwards will give no readings.
+
+---
+
+## Sensor Wiring (YF-S201)
+
+Each YF-S201 sensor has 3 wires: **Red (VCC)**, **Black (GND)**, **Yellow (Signal)**
+
+| Connection | JST-XH 3-pin | Wire Color | Pin |
+|------------|--------------|------------|-----|
+| VCC | Pin 1 | Red | 5V |
+| GND | Pin 2 | Black | GND |
+| Signal | Pin 3 | Yellow | GPIO (26, 25, 33, 32) |
+
+**Connector Setup:**
+- **Sensor side:** JST-XH 3-pin **Male** (crimped to sensor wires)
+- **Board/perf board side:** JST-XH 3-pin **Female** (soldered to perf board)
+- **Power input:** Terminal Block 2-pin Blue (5mm pitch) for 5V/GND from buck converter
 
 ---
 
@@ -212,3 +242,32 @@ block-beta
 ```
 
 > Flow sensors on **GPIO 26, 25, 33, 32** — direct connection, no pull-up resistors needed.
+
+---
+
+## Wiring Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **Interactive Wiring Diagram** | Cirkit Designer (clickable, zoomable) | [app.cirkitdesigner.com/project/4f173a2b-5656-48ff-b98f-183483fecb1e](https://app.cirkitdesigner.com/project/4f173a2b-5656-48ff-b98f-183483fecb1e) |
+| **Static Wiring Diagram** | PNG image for docs | `../wiring/wmldad.png` |
+| **Cirkit Designer Source** | Editable .ckt file | `../wiring/wmldad.ckt` |
+
+---
+
+## Wiring Summary for 4 Flow Sensors
+
+Each YF-S201 sensor has 3 wires: **Red (VCC)**, **Black (GND)**, **Yellow (Signal)**
+
+| Connection | JST-XH 3-pin | Wire Color | Pin |
+|------------|--------------|------------|-----|
+| VCC | Pin 1 | Red | 5V |
+| GND | Pin 2 | Black | GND |
+| Signal | Pin 3 | Yellow | GPIO (26, 25, 33, 32) |
+
+**Connector Setup:**
+- **Sensor side:** JST-XH 3-pin **Male** (crimped to sensor wires)
+- **Board/perf board side:** JST-XH 3-pin **Female** (soldered to perf board)
+- **Power input:** Terminal Block 2-pin Blue (5mm pitch) for 5V/GND from buck converter
+
+> **Note:** JST-XH connectors are purchased **pre-crimped / ready-to-use** — no crimp kit or crimping tool needed. Just solder the female connectors to the perf board and plug in the sensor cables.

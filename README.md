@@ -159,8 +159,8 @@ See [Setup Guide](./docs/setup.md) for complete step-by-step instructions.
 | ESP32 38-Pin Expansion Board | 1 | ₱180 |
 | YF-S201 Flow Sensor | 4 | ₱720 |
 | Check Valve 1/2" | 3 | ₱360 |
-| Breadboard + Jumpers | 1 set | ₱150 |
-| 5V Power Adapter + USB Cable | 1 | ₱250 |
+| Perf board + soldering | 1 set | ₱115 |
+| USB Micro Data Cable | 1 | ₱100 |
 | **TOTAL** | | **~₱2,110** |
 
 > Full BOM with links, alternatives, and pricing tiers: [BOM.md](./docs/bom.md)
@@ -217,8 +217,9 @@ wmldad/
 ├── model/                    # Trained models
 │   ├── xgboost_model.json
 │   └── isolation_forest.pkl
-├── wiring/                  # CAD, Fritzing, enclosure designs
-│   └── water-meter-wiring.fzz
+├── wiring/                  # Wiring diagrams & enclosure designs
+│   ├── wmldad.png              # Static wiring diagram (PNG)
+│   └── wmldad.ckt              # Cirkit Designer source file
 └── README.md
 ```
 

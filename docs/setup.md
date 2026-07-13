@@ -451,8 +451,8 @@ cp training/scaler.pkl rpi/models/
 
 1. Install sensors in actual plumbing
 2. Perform bucket test on each sensor
-3. Update k-factor values in Firebase config
-4. Verify total consumption matches water bill
+2. Update k-factor values in Firebase config
+3. Verify total consumption matches water bill
 
 ### Monitoring
 
@@ -482,4 +482,75 @@ cp training/scaler.pkl rpi/models/
 # Train ML model (Jupyter Notebook)
 cd training/
 jupyter notebook water_meter_ml_training.ipynb
+```
+
+---
+
+## Wiring Resources
+
+### Interactive Wiring Diagram (Cirkit Designer)
+**🔗 [View Interactive Wiring Diagram](https://app.cirkitdesigner.com/project/4f173a2b-5656-48ff-b98f-183483fecb1e)**
+
+### Static Wiring Diagram (PNG)
+![Wiring Diagram](../wiring/wmldad.png)
+
+### Wiring Source File
+[Download .ckt file](../wiring/wmldad.ckt) — Open in [Cirkit Designer](https://app.cirkitdesigner.com/)
+
+---
+
+## Project Structure Reference
+
+```text
+wmldad/
+├── docs/                     # Complete documentation (14 files)
+│   ├── system-architecture.md
+│   ├── flowchart.md
+│   ├── block-diagram.md
+│   ├── stacks.md
+│   ├── firebase-realtime-db.md
+│   ├── ml-model.md
+│   ├── firmware.md
+│   ├── setup.md
+│   ├── calibration.md
+│   ├── rpi-backend.md
+│   ├── bom.md
+│   ├── troubleshooting.md
+│   └── project-timeline.md
+├── src/                      # ESP32 firmware (Arduino C++ / .ino)
+│   ├── water-meter.ino          # Main Arduino sketch
+│   ├── config.h                 # WiFi, Firebase, sensor config
+│   ├── sensor_manager.h         # 4 sensor ISR management
+│   ├── flow_sensor.h            # Pulse counter class
+│   ├── firebase_client.h        # Firebase-ESP-Client wrapper
+│   ├── local_rules.h            # Offline leak detection
+│   ├── wifi_manager.h           # WiFi connect + reconnect
+│   ├── data_logger.h            # SPIFFS logging
+│   ├── alert_manager.h          # Buzzer + LED alerts
+│   ├── ntp_sync.h               # NTP time sync
+│   ├── ota_updater.h            # OTA firmware updates
+│   └── led_indicator.h          # Status LED patterns
+├── rpi/                  # RPi backend (Flask + ML)
+│   ├── app.py                # Flask web app
+│   ├── firebase_listener.py  # Pyrebase4 polling
+│   ├── ml_inference.py       # XGBoost + Isolation Forest
+│   ├── alert_engine.py       # Notification system
+│   ├── models/               # Trained models
+│   │   ├── xgboost_model.json
+│   │   └── isolation_forest.pkl
+│   ├── templates/            # Jinja2 HTML templates
+│   ├── static/               # CSS, JS, Chart.js
+│   ├── requirements.txt
+│   ├── firebase_config.json  # Pyrebase4 config (gitignored)
+│   └── water-meter.service   # systemd service file
+├── training/                  # ML training notebooks
+│   ├── water_meter_ml_training.ipynb   # Main training notebook (Colab/Jupyter)
+│   └── requirements.txt                # Dependencies for local runs
+├── model/                    # Trained models
+│   ├── xgboost_model.json
+│   └── isolation_forest.pkl
+├── wiring/                  # CAD, Cirkit Designer, enclosure designs
+│   ├── wmldad.ckt
+│   └── wmldad.png
+└── README.md
 ```
