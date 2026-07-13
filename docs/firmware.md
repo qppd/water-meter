@@ -20,8 +20,7 @@ src/
 ├── local_rules.h               # Local leak detection (non-ML fallback)
 ├── wifi_manager.h              # WiFi connect + reconnect
 ├── data_logger.h               # SD card + SPIFFS logging
-├── display_manager.h           # OLED 128×64
-├── alert_manager.h             # Buzzer + RGB LED alerts
+├── indicator_manager.h         # Buzzer + RGB LED alerts
 ├── ntp_sync.h                  # NTP time sync
 ├── ota_updater.h               # OTA firmware updates
 └── led_indicator.h             # Status LED patterns
@@ -43,13 +42,13 @@ void loop() {
         metrics[i] = {rate, volume};
     }
     
-    // 3. Update OLED display
-    displayManager.showMetrics(metrics);
+    // 3. Update status indicators (buzzer + RGB LED)
+    indicatorManager.update(metrics);
     
     // 4. Check local leak rules
     LeakStatus ls = localRules.check(metrics);
     if (ls != LEAK_NONE) {
-        alertManager.activate(ls);
+        indicatorManager.activate(ls);
         // Note: Valve control removed - check valves prevent backflow
     }
     
@@ -347,7 +346,7 @@ These run on the ESP32 when Firebase/ML is unreachable — less accurate but wor
 5. Install libraries via Library Manager (Tools -> Manage Libraries):
    - `Firebase ESP Client` by mobizt
    - `ArduinoJson` by bblanchon
-   - `Adafruit SSD1306` by Adafruit
+   - `Adafruit SSD1306` by Adafruit (for any future display needs)
    - `Adafruit GFX Library` by Adafruit
 
 ### Required Libraries
@@ -356,8 +355,6 @@ These run on the ESP32 when Firebase/ML is unreachable — less accurate but wor
 |---------|---------|---------|
 | Firebase-ESP-Client | 4.4+ | Firebase Realtime DB (push, set, stream) |
 | ArduinoJson | 7+ | JSON payload serialization |
-| Adafruit SSD1306 | 2.5+ | OLED display driver |
-| Adafruit GFX Library | 1.11+ | OLED graphics primitives |
 
 ### Compile and Upload
 

@@ -27,7 +27,7 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 -  **Isolation Forest** — unsupervised anomaly detection for unknown patterns
 -  **RPi Backend** — Flask + Firebase Admin SDK + XGBoost
 -  **Check Valves** — prevent backflow between fixtures
--  **Web Dashboard** — real-time monitoring via RPi Flask dashboard
+-  **Web Dashboard** — real-time monitoring via RPi Flask dashboard (7" touchscreen)
 -  **Local Data Logging** — SD card backup when offline
 
 ---
@@ -47,7 +47,6 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 │  • Pulse Counter (5× interrupts, debounced)                       │
 │  • Local Feature Extraction (flow rate, volume, duration)         │
 │  • Firebase-ESP-Client → Firebase Realtime DB (stream + write)    │
-│  • OLED Display (live readings per fixture)                       │
 │  • SD Card Logger (offline backup)                                │
 └──────────────────────────────────────────────────────────────────┘
                                ↓ (HTTPS/SSE stream)
@@ -184,7 +183,6 @@ wmldad/
 │   ├── local_rules.h            # Offline leak detection
 │   ├── wifi_manager.h           # WiFi connect + reconnect
 │   ├── data_logger.h            # SD card + SPIFFS logging
-│   ├── display_manager.h        # OLED 128x64
 │   ├── alert_manager.h          # Buzzer + LED alerts
 │   ├── ntp_sync.h               # NTP time sync
 │   ├── ota_updater.h            # OTA firmware updates

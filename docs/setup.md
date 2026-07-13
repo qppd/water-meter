@@ -72,8 +72,6 @@ Check [BOM.md](./bom.md) for complete list with Shopee/Lazada links. Minimum ess
 4. Install required libraries via Library Manager (Tools -> Manage Libraries):
    - `Firebase ESP Client` by mobizt
    - `ArduinoJson` by bblanchon
-   - `Adafruit SSD1306` by Adafruit
-   - `Adafruit GFX Library` by Adafruit
 
 ### Step 2.2: Install Python
 
@@ -119,8 +117,8 @@ pip install xgboost scikit-learn pandas numpy joblib flask firebase-admin
 1. In Firebase Console, go to **Build → Realtime Database**
 2. Click **Create Database**
 3. Choose location (closest to you — e.g., `asia-southeast1`)
-4. Start in **test mode** (we'll secure it later)
-5. Click **Enable**
+3. Start in **test mode** (we'll secure it later)
+4. Click **Enable**
 
 ### Step 3.3: Create Authentication (Email/Password)
 
@@ -200,21 +198,15 @@ Once the test circuit works, connect all sensors:
 ### Step 4.4: Connect Peripherals
 
 ```
-OLED:
-  SDA → GPIO 21
-  SCL → GPIO 22
-  VCC → 3.3V
-  GND → GND
-
-Buzzer (Active):
-  Positive → GPIO 4
-  Negative → GND (via 100Ω resistor optional)
-
 RGB LED (optional):
   Red → GPIO 5 (via driver)
   Green → GPIO 18 (via driver)
   Blue → GPIO 19 (via driver)
   Common → GND
+
+Buzzer (Active):
+  Positive → GPIO 4
+  Negative → GND (via 100Ω resistor optional)
 ```
 
 ### Step 4.5: Plumbing Setup
@@ -427,7 +419,7 @@ cp training/scaler.pkl rpi/models/
    }
    ```
 2. ESP32 should respond by entering calibration mode
-3. OLED should show calibration status
+3. 7" LCD should show calibration status
 
 ### Test 5: Offline Mode
 

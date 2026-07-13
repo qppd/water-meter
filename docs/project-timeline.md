@@ -64,9 +64,9 @@ Each week includes:
 
 | Item | Activity |
 |------|----------|
-|  **Goal** | Wire all 5 sensors + OLED + buzzer + SD card |
-|  **Tasks** | • Wire sensors 2–5 to GPIO 35, 32, 33, 25<br/>• Add 10kΩ pull-ups to all sensor lines<br/>• Connect OLED (I²C: GPIO 21/22)<br/>• Connect buzzer (GPIO 4)<br/>• Connect SD card module (SPI GPIO 18/19/23)<br/>• Verify all 5 sensors show readings on OLED |
-|  **Deliverable** | Breadboard with all 5 sensors + OLED showing live readings |
+|  **Goal** | Wire all 5 sensors + buzzer + SD card |
+|  **Tasks** | • Wire sensors 2–5 to GPIO 35, 32, 33, 25<br/>• Add 10kΩ pull-ups to all sensor lines<br/>• Connect buzzer (GPIO 4)<br/>• Connect SD card module (SPI GPIO 18/19/23)<br/>• Verify all 5 sensors show readings |
+|  **Deliverable** | Breadboard with all 5 sensors showing live readings |
 |  **Risk** | GPIO 34 & 35 are input-only — external pull-up REQUIRED. GPIO 12 is boot pin — be careful. |
 
 ### Week 6: Firebase Integration
@@ -231,13 +231,13 @@ Each week includes:
 | ESP32 + Expansion Board | ₱630 |
 | 5× YF-S201 Flow Sensors | ₱900 |
 | Check Valves + PVC Fittings | ₱730 |
-| OLED + Buzzer + LEDs | ₱375 |
+| Buzzer + LEDs | ₱125 |
 | Breadboard + Jumpers + Resistors | ₱375 |
 | Enclosure + Hardware | ₱520 |
 | Power Supplies | ₱400 |
-| **Total Hardware** | **~₱4,330** |
+| **Total Hardware** | **~₱4,280** |
 | Raspberry Pi (4/5) | ₱2,500 |
-| **Grand Total** | **~₱6,830** |
+| **Grand Total** | **~₱6,780** |
 
 >  **Tip:** Request budget from department. Many schools have ₱5,000–₱10,000 capstone budget per group.
 

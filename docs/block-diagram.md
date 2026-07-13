@@ -49,7 +49,6 @@ block-beta
         
         block:peripherals:7
             columns 7
-            OLED_SCR["OLED 128×64<br/>I²C (GPIO 21/22)"]:2
             Buzzer["Buzzer<br/>GPIO 4"]:1
             RGB["RGB LED<br/>GPIO 5"]:2
             SD["SD Card<br/>SPI<br/>GPIO 18/19/23"]:2
@@ -61,7 +60,6 @@ block-beta
         P33 --> MCU
         P25 --> MCU
         
-        MCU --> OLED_SCR
         MCU --> Buzzer
         MCU --> RGB
         MCU --> SD
@@ -98,8 +96,6 @@ block-beta
 | **Flow Sensor 3 — Fixture 2** | GPIO 32 | Screw terminal 3 | Use 10kΩ pull-up to 3.3V |
 | **Flow Sensor 4 — Fixture 3** | GPIO 33 | Screw terminal 4 | Use 10kΩ pull-up to 3.3V |
 | **Flow Sensor 5 — Fixture 4** | GPIO 25 | Screw terminal 5 | Use 10kΩ pull-up to 3.3V |
-| **OLED SDA** | GPIO 21 | I²C header | Connect to OLED SDA |
-| **OLED SCL** | GPIO 22 | I²C header | Connect to OLED SCL |
 | **Buzzer** | GPIO 4 | GPIO header | Active buzzer (+ leg to GPIO, - to GND) |
 | **Status LED** | GPIO 2 | Onboard | Built-in LED (active HIGH) |
 | **RGB LED** | GPIO 5 | GPIO header | Use transistor driver or RGB module |
@@ -123,9 +119,6 @@ ESP32 38-Pin Expansion Board
 │  [33]──10kΩ─┬── YF-S201 Fixture 3 (Yellow)          │
 │  [25]──10kΩ─┬── YF-S201 Fixture 4 (Yellow)          │
 │                                                     │
-│  [21] ──────┬── OLED SDA                            │
-│  [22] ──────┬── OLED SCL                            │
-│                                                     │
 │  [4]  ──────┬── Buzzer (+)                          │
 │  [2]  ──────┬── Built-in LED                        │
 │  [5]  ──────┬── RGB LED (via driver)                │
@@ -137,7 +130,6 @@ ESP32 38-Pin Expansion Board
 │                                                     │
 │  5V  ──────┬── YF-S201 VCC (Red wires)             │
 │  GND ──────┬── All sensor GND (Black wires)        │
-│  GND ──────┬── OLED GND                            │
 │  GND ──────┬── Buzzer GND                          │
 │  GND ──────┬── RGB LED GND                         │
 └─────────────────────────────────────────────────────┘
@@ -182,12 +174,9 @@ block-beta
     
     SensorV["Flow Sensors<br/>VCC (5V)"]:1
     
-    OLEDV["OLED/SD<br/>3.3V (regulator)"]:1
-    
     AC --> PSU
     PSU --> ESPV
     PSU --> SensorV
-    PSU --> OLEDV
     
     AC --> Valves12
     Valves12["(Not used in<br/>current config)"]:1
@@ -217,7 +206,7 @@ block-beta
         
         SDCardM["SD Card<br/>Module"]:1
         
-        OLEDDisp["OLED 128×64<br/>Display"]:1
+        Buzzer["Buzzer<br/>Module"]:1
         
         Terminal["Terminal Block<br/>Sensor Inputs<br/>(5 sensors)"]:2
         
@@ -237,10 +226,10 @@ block-beta
                    ┌─────────────┐
               EN ──┤ 1         38├── VBAT
             GPIO36─┤ 2         37├── GPIO23 (SD MOSI)
-            GPIO39─┤ 3         36├── GPIO22 (OLED SCL)
+            GPIO39─┤ 3         36├── GPIO22 
             GPIO34─┤ 4  E   P  35├── TXD0
             GPIO35─┤ 5  S   3  34├── RXD0
-            GPIO32─┤ 6   P   2  33├── GPIO21 (OLED SDA)
+            GPIO32─┤ 6   P   2  33├── GPIO21 
             GPIO33─┤ 7   3   1  32├── GPIO19 (SD MISO)
             GPIO25─┤ 8   8      31├── GPIO18 (SD SCK)
             GPIO26─┤ 9          30├── GPIO5 (RGB/SD CS)

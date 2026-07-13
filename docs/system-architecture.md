@@ -4,7 +4,7 @@
 
 Smart water monitoring system with **fixture-level leak detection** using **ESP32 → Firebase → RPi → XGBoost ML**.
 
-The system uses 1 inlet flow sensor to measure total consumption and 4 fixture flow sensors to monitor individual water outlets. Data flows from the ESP32 to Firebase Realtime DB via the [Firebase-ESP-Client](https://github.com/mobizt/Firebase-ESP-Client) library (stream + regular calls). A **Raspberry Pi** backend consumes the Firebase data using the Firebase Admin SDK, runs **XGBoost** and **Isolation Forest** ML models, and serves a web dashboard.
+The system uses 1 inlet flow sensor to measure total consumption and 4 fixture flow sensors to monitor individual water outlets. Data flows from the ESP32 to Firebase Realtime DB via the [Firebase-ESP-Client](https://github.com/mobizt/Firebase-ESP-Client) library (stream + regular calls). A **Raspberry Pi** backend consumes the Firebase data using the Firebase Admin SDK, runs **XGBoost** and **Isolation Forest** ML models, and serves a web dashboard on the 7" touchscreen LCD.
 
 ---
 
@@ -36,7 +36,7 @@ graph TB
         Sensors["5× Flow Sensor<br/>Pulse Counters<br/>(ISR + Debounce)"]
         Features["Feature Extractor<br/>flow_rate, volume,<br/>duration, time, ratio"]
         FirebaseClient["Firebase-ESP-Client<br/>Stream + Write"]
-        LocalCtrl["Local Leak Rules<br/>OLED Display"]
+        LocalCtrl["Local Leak Rules"]
         SDCard["SD Card Logger<br/>(Offline Backup)"]
         
         Sensors --> Features
@@ -161,3 +161,4 @@ Step 5: USER ACTION
 | **Isolation Forest + XGBoost** | XGBoost for known leak patterns, Isolation Forest for unknown anomalies |
 | **Check Valves per Fixture** | Prevents backflow contamination between fixtures |
 | **SD Card Backup** | Survives WiFi/Firebase outages — data never lost |
+| **Touchscreen LCD on RPi** | Dashboard display replaces OLED; web UI served locally on RPi |

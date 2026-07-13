@@ -1,6 +1,6 @@
 # Technology Stack — Water Meter with Leak Detection
 
-> **Architecture:** Sensors → ESP32 → Firebase Realtime DB → RPi → XGBoost → Dashboard
+> **Architecture:** Sensors → ESP32 → Firebase Realtime DB → RPi → XGBoost → Dashboard (7" touchscreen LCD on RPi)
 
 ---
 
@@ -12,9 +12,9 @@
 | **ESP32 Expansion Board** | Screw terminals, labeled pinout, breadboard-friendly | 1 | Clean wiring for 5 sensors + peripherals |
 | **YF-S201 Flow Sensor** | 1/2" thread, Hall-effect pulse output, 450 PPL nominal | 5 | Industry-standard for Arduino/ESP32 projects, cheap & reliable |
 | **Check Valve 1/2"** | Brass or PVC, non-return | 4 | Prevents backflow between fixtures (critical for per-fixture monitoring) |
-| **OLED 128×64** | SSD1306, I²C, 0.96" | 1 | Live display of per-fixture readings |
 | **Micro SD Card Module** | SPI interface | 1 | Data backup during WiFi/Firebase outages |
 | **Active Buzzer** | 5V | 1 | Audible alarm on leak detection |
+| **RGB LED Module** | Common cathode | 1 | Visual status indicator (normal/minor/major leak) |
 | **Power Supply** | 5V 2A USB adapter | 1 | Powers ESP32 + sensors |
 | **Breadboard + Jumpers** | 830 points + 65 wires | 1 set | Prototyping |
 | **ABS Project Box** | 200×120×70mm | 1 | Enclosure with cable glands |
@@ -33,7 +33,6 @@
 | **Firebase** | [Firebase-ESP-Client](https://github.com/mobizt/Firebase-ESP-Client) | ≥ 4.4.x | Full Firebase Realtime DB support — push, set, update, stream, auth |
 | **JSON** | ArduinoJson | ≥ 7.x | Payload serialization for Firebase |
 | **SD Card** | SD_MMC / SD (ESP32) | Built-in | Local data backup |
-| **Display** | Adafruit SSD1306 + Adafruit GFX | Latest | OLED graphics |
 | **WiFi** | WiFi.h (Arduino) | Built-in | Station mode, auto-reconnect |
 | **NTP** | NTPClient / configTime() | Built-in | Time sync for timestamped data |
 | **OTA** | ArduinoOTA | Built-in | Over-the-air firmware updates |

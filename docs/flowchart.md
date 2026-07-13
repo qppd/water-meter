@@ -21,7 +21,7 @@ flowchart TD
     
     I --> J[Read All Pulse Counters<br/>Sensors 1–5]
     J --> K[Calculate Flow Metrics<br/>per Fixture]
-    K --> L[Update OLED Display]
+    K --> L[Update Status LEDs / Buzzer]
     L --> M[Apply Local Leak Rules<br/>(non-ML fallback)]
     
     M --> N{Upload Interval?<br/>(5–60s)}
@@ -35,7 +35,7 @@ flowchart TD
     R --> P
     S --> P
     
-    P -->|Yes| T[Execute Command<br/>→ Valve Action / Calibration]
+    P -->|Yes| T[Execute Command<br/>→ Calibration / Reboot]
     P -->|No| I
     
     T --> I
@@ -213,10 +213,10 @@ flowchart TD
     B -->|calibrate| J[Start Calibration<br/>Routine]
     B -->|reboot| I[Reboot ESP32]
     
-    J --> K[Update OLED<br/>+ LED Status]
+    J --> K[Update Status<br/>+ LED Indicators]
     I --> K
     
-    K --> L[Acknowledge to Firebase<br/>→ valve_state_updated]
+    K --> L[Acknowledge to Firebase<br/>→ command_acknowledged]
 ```
 
 </details>
