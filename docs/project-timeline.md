@@ -114,7 +114,7 @@ Each week includes:
 | Item | Activity |
 |------|----------|
 |  **Goal** | Complete data pipeline working: Sensor → ESP32 → Firebase → RPi → ML → Alert |
-|  **Tasks** | • Wire ML inference into Flask app<br/>• Test: simulate leak, verify ML detects it<br/>• Test: alert appears in web dashboard<br/>• Test: Telegram/email notification sent |
+|  **Tasks** | • Wire ML inference into Flask app<br/>• Test: simulate leak, verify ML detects it<br/>• Test: alert appears in web dashboard<br/>• Test: notification sent |
 |  **Deliverable** | Full system working end-to-end with all 4 sensors |
 |  **Risk** | Combine all components one at a time. Test each integration step before adding the next. |
 

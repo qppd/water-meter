@@ -457,7 +457,7 @@ cp training/scaler.pkl rpi/models/
 ### Monitoring
 
 1. Set up dashboard as home page
-2. Configure Telegram bot for mobile alerts
+2. Configure email/webhook alerts for mobile notifications
 3. Set up a cron job on RPi for daily model retraining
 4. Check Firebase usage dashboard monthly
 

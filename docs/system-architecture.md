@@ -57,7 +57,7 @@ graph TB
         XGB["XGBoost Classifier<br/>normal / minor_leak / major_leak"]
         ISO["Isolation Forest<br/>Unsupervised Anomaly Detection"]
         Flask["Flask Web App<br/>Dashboard + API"]
-        AlertEngine["Alert Engine<br/>Email / Telegram"]
+        AlertEngine["Alert Engine<br/>Email / Webhook"]
         Retrain["Daily Retrain Pipeline"]
         
         FBAdmin --> XGB
@@ -70,7 +70,7 @@ graph TB
 
     subgraph "User Layer"
         Dashboard["Web Dashboard<br/>Real-time Charts"]
-        Notif["Telegram / Email<br/>Alerts"]
+        Notif["Notification<br/>Alerts"]
         Cmd["Remote Device<br/>Control"]
     end
 
@@ -127,7 +127,7 @@ Step 4: RPi PROCESSING (polling via Pyrebase4)
 
 Step 5: USER ACTION
         → Dashboard displays real-time readings
-        → Telegram / Email alert sent
+        → Email / Webhook alert sent
         → User sends command → /commands/{device_id}
         → ESP32 Firebase listener receives command → executes action
 ```
@@ -145,7 +145,7 @@ Step 5: USER ACTION
 | User → Dashboard | HTTP/WebSocket | HTTPS | Flask + JavaScript |
 | Dashboard → Commands | Write to /commands | HTTPS | Fetch API |
 | RPi → Firebase | HTTPS (Alert write) | JSON | On leak detection |
-| RPi → Telegram | HTTPS (Bot API) | Form | On leak alert |
+| RPi → Notification | HTTPS (Email/Webhook) | Form/JSON | On leak alert |
 | **Remote → RPi** | **HTTPS (port forward)** | **HTML/JSON** | **On demand** |
 
 ---

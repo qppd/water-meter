@@ -208,7 +208,10 @@ Written on device registration, updated by ESP32.
         "pulse_per_liter": 450,
         "leak_confirm_count": 3,
         "continuous_flow_minutes": 30,
-        "confidence_threshold": 0.80
+        "confidence_threshold": 0.80,
+        "alert_notification": true,
+        "auto_shutoff": false,
+        "night_mode_quiet": false
       },
       "created_at": "2026-06-01T00:00:00Z"
     }
@@ -269,8 +272,7 @@ Dashboard-adjustable device parameters.
       "leak_confirm_count": 3,
       "continuous_flow_minutes": 30,
       "confidence_threshold": 0.80,
-      "alert_telegram": true,
-      "alert_email": false,
+      "alert_notification": true,
       "auto_shutoff": false,
       "night_mode_quiet": false
     }
@@ -424,7 +426,7 @@ def process_reading(data):
         alerts_ref.push(alert_data, id_token)
         
         # Send notification
-        alert_engine.send_telegram(alert_data)
+        alert_engine.send_notification(alert_data)
 
 def send_command(command):
     """Send command to ESP32 via Firebase"""

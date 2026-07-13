@@ -146,9 +146,8 @@ void setupFirebase() {
 | Firebase → ESP32 | SSE (stream) | JSON | Real-time |
 | Firebase → RPi | Poll (HTTP) | REST (Pyrebase4) | On load / every 5s |
 | RPi → Firebase | HTTPS (REST) | JSON | On ML result |
-| RPi → Dashboard | HTTP (Flask) | HTML/JSON | On page load |
 | RPi → Firebase | HTTPS (Alert write) | JSON | On leak detection |
-| RPi → Telegram | HTTPS (Bot API) | Form | On leak alert |
+| RPi → Notification | HTTPS (Email/Webhook) | Form/JSON | On leak alert |
 | **Remote → RPi** | **HTTPS (port forward)** | **HTML/JSON** | **On demand** |
 
 ---

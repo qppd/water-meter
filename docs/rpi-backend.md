@@ -209,7 +209,7 @@ rpi/
 ├── app.py                 # Main Flask application
 ├── firebase_listener.py   # Pyrebase4 polling
 ├── ml_inference.py        # XGBoost + Isolation Forest inference
-├── alert_engine.py        # Notification system (Telegram, Email)
+├── alert_engine.py        # Notification system (Email, Webhook)
 ├── models/                # Trained ML models
 │   ├── xgboost_leak_model.json
 │   ├── isolation_forest.pkl
@@ -257,8 +257,11 @@ detector = LeakDetector(
     scaler_path="models/scaler.pkl"
 )
 alert_engine = AlertEngine(
-    telegram_token=os.getenv("TELEGRAM_BOT_TOKEN"),
-    telegram_chat_id=os.getenv("TELEGRAM_CHAT_ID")
+    email_smtp_host=os.getenv("EMAIL_SMTP_HOST"),
+    email_smtp_port=int(os.getenv("EMAIL_SMTP_PORT", "587")),
+    email_user=os.getenv("EMAIL_USER"),
+    email_password=os.getenv("EMAIL_PASSWORD"),
+    webhook_url=os.getenv("WEBHOOK_URL")
 )
 
 # Start background listener
@@ -377,7 +380,7 @@ class FirebaseListener:
             self.alerts_ref.push(alert_data, self.id_token)
             
             # Send notification
-            alert_engine.send_telegram(alert_data)
+            alert_engine.send_notification(alert_data)
             
     def get_latest_reading(self):
         readings = self.readings_ref.order_by_key().limit_to_last(1).get(self.id_token)
@@ -456,7 +459,7 @@ class LeakDetector:
 
 ---
 
-### alert_engine.py — Notifications
+### alert_engine.py — Notifications (Email, Webhook)
 
 ```python
 import requests
@@ -464,51 +467,94 @@ import smtplib
 from email.mime.text import MIMEText
 
 class AlertEngine:
-    def __init__(self, telegram_token=None, telegram_chat_id=None):
-        self.telegram_token = telegram_token
-        self.telegram_chat_id = telegram_chat_id
+    def __init__(self, email_smtp_host=None, email_smtp_port=587,
+                 email_user=None, email_password=None, webhook_url=None):
+        self.email_smtp_host = email_smtp_host
+        self.email_smtp_port = email_smtp_port
+        self.email_user = email_user
+        self.email_password = email_password
+        self.webhook_url = webhook_url
         
-    def send_telegram(self, alert_data):
-        if not self.telegram_token or not self.telegram_chat_id:
+    def send_notification(self, alert_data):
+        """Send alert via all configured channels"""
+        # Send webhook (Discord, Slack, etc.)
+        if self.webhook_url:
+            self.send_webhook(alert_data)
+        
+        # Send email
+        if self.email_smtp_host and self.email_user:
+            self.send_email(alert_data)
+        
+    def send_webhook(self, alert_data):
+        """Send webhook notification (Discord, Slack, custom)"""
+        if not self.webhook_url:
             return
             
+        message = {
+            "text": f"🚨 Water Meter Alert: {alert_data['alert_type']}",
+            "attachments": [{
+                "color": "warning" if alert_data['alert_type'] == 'minor_leak' else "danger",
+                "fields": [
+                    {"title": "Type", "value": alert_data['alert_type'], "short": True},
+                    {"title": "Confidence", "value": f"{alert_data.get('confidence', 0):.2f}", "short": True},
+                    {"title": "Fixture", "value": alert_data.get('fixture_name', 'Unknown'), "short": True},
+                    {"title": "Time", "value": alert_data['timestamp'], "short": True}
+                ]
+            }]
+        }
+        
+        requests.post(self.webhook_url, json=message)
+        
+    def send_email(self, alert_data, to_email=None):
+        if not self.email_smtp_host or not self.email_user:
+            return
+            
+        to = to_email or self.email_user
+        
         message = f"""
-🚨 *Water Meter Alert*
-*Type:* {alert_data['alert_type']}
-*Confidence:* {alert_data.get('confidence', 0):.2f}
-*Fixture:* {alert_data.get('fixture_name', 'Unknown')}
-*Time:* {alert_data['timestamp']}
+Water Meter Alert
+
+Type: {alert_data['alert_type']}
+Confidence: {alert_data.get('confidence', 0):.2f}
+Fixture: {alert_data.get('fixture_name', 'Unknown')}
+Time: {alert_data['timestamp']}
         """
         
-        url = f"https://api.telegram.org/bot{self.telegram_token}/sendMessage"
-        data = {
-            "chat_id": self.telegram_chat_id,
-            "text": message,
-            "parse_mode": "Markdown"
-        }
-        requests.post(url, data=data)
+        msg = MIMEText(message)
+        msg['Subject'] = f"🚨 Water Meter Alert: {alert_data['alert_type']}"
+        msg['From'] = self.email_user
+        msg['To'] = to
         
-    def send_email(self, alert_data, to_email):
-        # Configure with your SMTP settings
-        pass
+        with smtplib.SMTP(self.email_smtp_host, self.email_smtp_port) as server:
+            server.starttls()
+            server.login(self.email_user, self.email_password)
+            server.send_message(msg)
 ```
 
 ---
 
-## Telegram Bot Setup
+## Email / Webhook Setup
 
-1. Open Telegram, search for **@BotFather**
-2. Send `/newbot` → follow prompts
-3. Save the **API token**
-4. Get your **Chat ID**:
-   - Send a message to your bot
-   - Visit: `https://api.telegram.org/bot<TOKEN>/getUpdates`
-   - Find `"chat":{"id":123456789}`
-5. Add to environment:
-   ```bash
-   export TELEGRAM_BOT_TOKEN="your_token_here"
-   export TELEGRAM_CHAT_ID="123456789"
-   ```
+### 1. Email (SMTP)
+
+Configure in environment variables or `.env`:
+```bash
+export EMAIL_SMTP_HOST="smtp.gmail.com"
+export EMAIL_SMTP_PORT="587"
+export EMAIL_USER="your-email@gmail.com"
+export EMAIL_PASSWORD="your-app-password"
+```
+
+> **Gmail:** Use App Password (not regular password). Generate at: https://myaccount.google.com/apppasswords
+
+### 2. Webhook (Discord, Slack, Custom)
+
+```bash
+export WEBHOOK_URL="https://discord.com/api/webhooks/..."
+```
+
+**Discord:** Create webhook in Server Settings → Integrations → Webhooks → New Webhook  
+**Slack:** Create incoming webhook at: https://api.slack.com/messaging/webhooks
 
 ---
 

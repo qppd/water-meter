@@ -73,7 +73,6 @@
 | # | Item | Qty | Unit (₱) | Total (₱) | Note |
 |---|------|-----|----------|-----------|------|
 | 21 | **Raspberry Pi 4/5** (or 3B+, if on hand) | 1 | ₱2,500 | ₱2,500 | One-time cost, runs Flask + ML locally |
-| 22 | **Telegram Bot** (free) | 1 | ₱0 | ₱0 | Alerts via [@BotFather](https://t.me/BotFather) |
 
 **Backend Subtotal:** **₱2,500**
 
