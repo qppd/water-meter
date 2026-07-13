@@ -1,4 +1,4 @@
-#  Water Meter with Leak Detection & Anomaly Detection System
+#  WMLDAD
 
 > **A Capstone / Research Project** — Smart Water Monitoring System that detects leaks, anomalies, and per-fixture consumption using ESP32, Firebase, Raspberry Pi, and Machine Learning (XGBoost).
 
