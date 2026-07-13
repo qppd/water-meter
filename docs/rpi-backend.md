@@ -209,7 +209,7 @@ rpi/
 ├── app.py                 # Main Flask application
 ├── firebase_listener.py   # Pyrebase4 polling
 ├── ml_inference.py        # XGBoost + Isolation Forest inference
-├── alert_engine.py        # Notification system (in-app, webhook)
+├── alert_engine.py        # In-app notification system
 ├── models/                # Trained ML models
 │   ├── xgboost_leak_model.json
 │   ├── isolation_forest.pkl
@@ -256,9 +256,7 @@ detector = LeakDetector(
     iforest_path="models/isolation_forest.pkl",
     scaler_path="models/scaler.pkl"
 )
-alert_engine = AlertEngine(
-    webhook_url=os.getenv("WEBHOOK_URL")
-)
+alert_engine = AlertEngine()
 
 # Start background listener
 listener.start()
@@ -455,58 +453,28 @@ class LeakDetector:
 
 ---
 
-### alert_engine.py — Notifications (In-App, Webhook)
+### alert_engine.py — In-App Notifications
 
 ```python
-import requests
-
 class AlertEngine:
-    def __init__(self, webhook_url=None):
-        self.webhook_url = webhook_url
+    def __init__(self):
+        # In-app notifications are handled by writing to Firebase /alerts
+        # The web dashboard polls /alerts and displays alerts in real-time
+        # No external dependencies needed
+        pass
         
     def send_notification(self, alert_data):
-        """Send alert via all configured channels"""
-        # Send webhook (Discord, Slack, custom endpoint)
-        if self.webhook_url:
-            self.send_webhook(alert_data)
+        """
+        In-app notification: Alert is written to Firebase /alerts/{device_id}
+        The web dashboard (Flask + JavaScript) polls /alerts and displays
+        the alert immediately on the 7" touchscreen and web interface.
         
-        # In-app notification: alert is written to Firebase /alerts
-        # The web dashboard polls /alerts and displays in real-time
-        # No additional code needed here for in-app alerts
-            
-    def send_webhook(self, alert_data):
-        """Send webhook notification (Discord, Slack, custom)"""
-        if not self.webhook_url:
-            return
-            
-        message = {
-            "text": f"🚨 Water Meter Alert: {alert_data['alert_type']}",
-            "attachments": [{
-                "color": "warning" if alert_data['alert_type'] == 'minor_leak' else "danger",
-                "fields": [
-                    {"title": "Type", "value": alert_data['alert_type'], "short": True},
-                    {"title": "Confidence", "value": f"{alert_data.get('confidence', 0):.2f}", "short": True},
-                    {"title": "Fixture", "value": alert_data.get('fixture_name', 'Unknown'), "short": True},
-                    {"title": "Time", "value": alert_data['timestamp'], "short": True}
-                ]
-            }]
-        }
-        
-        requests.post(self.webhook_url, json=message)
+        This is already handled by firebase_listener.process_reading()
+        which pushes alerts to Firebase.
+        """
+        # In-app notification is automatic via Firebase
+        pass
 ```
-
----
-
-## Webhook Setup (Optional)
-
-For external notifications (Discord, Slack, custom endpoint):
-
-```bash
-export WEBHOOK_URL="https://discord.com/api/webhooks/..."
-```
-
-**Discord:** Create webhook in Server Settings → Integrations → Webhooks → New Webhook  
-**Slack:** Create incoming webhook at: https://api.slack.com/messaging/webhooks
 
 ---
 

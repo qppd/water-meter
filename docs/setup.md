@@ -443,7 +443,7 @@ cp training/scaler.pkl rpi/models/
 ### Permanent Wiring
 
 1. Solder components to perf board (instead of breadboard)
-2. Mount expansion board inside **Waterproof ABS Enclosure Box IP67 (175×125×75mm)**
+2. Mount expansion board inside ABS enclosure
 3. Use cable glands for water sensor cables
 4. Label all wires
 
@@ -451,13 +451,13 @@ cp training/scaler.pkl rpi/models/
 
 1. Install sensors in actual plumbing
 2. Perform bucket test on each sensor
-2. Update k-factor values in Firebase config
-3. Verify total consumption matches water bill
+3. Update k-factor values in Firebase config
+4. Verify total consumption matches water bill
 
 ### Monitoring
 
 1. Set up dashboard as home page
-2. Configure email/webhook alerts for mobile notifications
+2. Configure in-app alerts (via Firebase /alerts)
 3. Set up a cron job on RPi for daily model retraining
 4. Check Firebase usage dashboard monthly
 
@@ -534,7 +534,7 @@ wmldad/
 │   ├── app.py                # Flask web app
 │   ├── firebase_listener.py  # Pyrebase4 polling
 │   ├── ml_inference.py       # XGBoost + Isolation Forest
-│   ├── alert_engine.py       # Notification system
+│   ├── alert_engine.py       # In-app notification system
 │   ├── models/               # Trained models
 │   │   ├── xgboost_model.json
 │   │   └── isolation_forest.pkl

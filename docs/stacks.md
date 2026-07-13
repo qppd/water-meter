@@ -147,7 +147,7 @@ void setupFirebase() {
 | Firebase → RPi | Poll (HTTP) | REST (Pyrebase4) | On load / every 5s |
 | RPi → Firebase | HTTPS (REST) | JSON | On ML result |
 | RPi → Firebase | HTTPS (Alert write) | JSON | On leak detection |
-| RPi → Notification | HTTPS (Webhook) | Form/JSON | On leak alert |
+| RPi → Notification | In-app (Firebase /alerts) | JSON | On leak alert |
 | **Remote → RPi** | **HTTPS (port forward)** | **HTML/JSON** | **On demand** |
 
 ---
@@ -170,7 +170,7 @@ void setupFirebase() {
 
 | Requirement | Chosen | Alternatives Considered | Why This Won |
 |-------------|--------|------------------------|--------------|
-| Firebase | Custom Node.js server, Supabase, AWS IoT | Managed, free tier, SSE streaming, ESP32 library |
+| Firebase | Custom Node.js server, Supabase, AWS IoT | Managed real-time DB, built-in auth, no server maintenance |
 | Firebase-ESP-Client | HTTP client, MQTT, Blynk | Full Firebase API (stream + write), well-maintained |
 | **Pyrebase4** | firebase-admin | Email/Password auth, client-style API, works on RPi |
 | XGBoost | Random Forest, LightGBM, CNN | Best for tabular time-series |
@@ -178,3 +178,13 @@ void setupFirebase() {
 | RPi (Raspberry Pi) | Heroku, Railway, cloud VPS | One-time cost, no monthly fees, full local control |
 | ESP32 38-pin NodeMCU-32S | 30-pin, ESP32-C3, ESP8266 | More GPIOs for 4 sensors + peripherals |
 | **Port Forwarding + DDNS** | Tailscale, ngrok, Cloudflare Tunnel | No third-party dependency, standard router feature |
+
+---
+
+## Stack Summary
+
+- **ESP32**: Arduino + Firebase-ESP-Client → 4 flow sensors → Firebase Realtime DB (stream + write)
+- **Firebase**: Email/Password auth, Realtime DB, Security Rules
+- **RPi**: Flask + Pyrebase4 (polling) + XGBoost + Isolation Forest → Dashboard + Alerts
+- **Dashboard**: 7" touchscreen (local) + remote via port forwarding
+- **Alerts**: In-app (Firebase /alerts) + optional webhook
