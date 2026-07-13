@@ -147,7 +147,7 @@ void setupFirebase() {
 | Firebase → RPi | Poll (HTTP) | REST (Pyrebase4) | On load / every 5s |
 | RPi → Firebase | HTTPS (REST) | JSON | On ML result |
 | RPi → Firebase | HTTPS (Alert write) | JSON | On leak detection |
-| RPi → Notification | HTTPS (Email/Webhook) | Form/JSON | On leak alert |
+| RPi → Notification | HTTPS (Webhook) | Form/JSON | On leak alert |
 | **Remote → RPi** | **HTTPS (port forward)** | **HTML/JSON** | **On demand** |
 
 ---

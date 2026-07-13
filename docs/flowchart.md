@@ -95,14 +95,14 @@ Anomaly Score]
 → /alerts/{id}]
         U --> L
         T -->|No| V[Log Normal Reading]
-        U --> W[Send Notification
-Email / Webhook]
+        U --> W[In-App Notification
+(Web Dashboard)]
     end
     
     subgraph "User"
         X[Web Dashboard] --> N
         X --> J
-        Y[Notification] --> W
+        Y[In-App Alert] --> W
         Z[User Command] --> K
     end
 ```
@@ -217,8 +217,8 @@ Anomaly Score]
     N --> Q
     P --> Q
     
-    Q --> R[Send Notification
-Email / Webhook]
+    Q --> R[In-App Notification
+(Web Dashboard)]
     Q --> S[Write Command
 → /commands/{id}]
 ```
@@ -323,8 +323,8 @@ Forest]:::ml
     H --> J[ Alert
 Engine]:::backend
     I --> J
-    J --> K[ Notification
-Email / Webhook]:::user
+    J --> K[ In-App
+Notification]:::user
     F --> L[ Web
 Dashboard]:::user
     F --> M[ ESP32

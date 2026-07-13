@@ -57,7 +57,7 @@ graph TB
         XGB["XGBoost Classifier<br/>normal / minor_leak / major_leak"]
         ISO["Isolation Forest<br/>Unsupervised Anomaly Detection"]
         Flask["Flask Web App<br/>Dashboard + API"]
-        AlertEngine["Alert Engine<br/>Email / Webhook"]
+        AlertEngine["Alert Engine<br/>In-App + Webhook"]
         Retrain["Daily Retrain Pipeline"]
         
         FBAdmin --> XGB
@@ -70,7 +70,7 @@ graph TB
 
     subgraph "User Layer"
         Dashboard["Web Dashboard<br/>Real-time Charts"]
-        Notif["Notification<br/>Alerts"]
+        Notif["In-App + Webhook<br/>Alerts"]
         Cmd["Remote Device<br/>Control"]
     end
 
@@ -127,7 +127,7 @@ Step 4: RPi PROCESSING (polling via Pyrebase4)
 
 Step 5: USER ACTION
         → Dashboard displays real-time readings
-        → Email / Webhook alert sent
+        → In-app alert displayed on 7" touchscreen + webhook
         → User sends command → /commands/{device_id}
         → ESP32 Firebase listener receives command → executes action
 ```
@@ -145,7 +145,7 @@ Step 5: USER ACTION
 | User → Dashboard | HTTP/WebSocket | HTTPS | Flask + JavaScript |
 | Dashboard → Commands | Write to /commands | HTTPS | Fetch API |
 | RPi → Firebase | HTTPS (Alert write) | JSON | On leak detection |
-| RPi → Notification | HTTPS (Email/Webhook) | Form/JSON | On leak alert |
+| RPi → Notification | HTTPS (Webhook) | Form/JSON | On leak alert |
 | **Remote → RPi** | **HTTPS (port forward)** | **HTML/JSON** | **On demand** |
 
 ---
@@ -162,3 +162,41 @@ Step 5: USER ACTION
 | **Check Valves per Fixture** | Prevents backflow contamination between fixtures |
 | **SPIFFS Backup** | Survives WiFi/Firebase outages — data never lost |
 | **Port Forwarding + DDNS** | Remote access anywhere with internet; standard router feature |
+
+---
+
+## Hardware Summary
+
+| Component | Qty | Purpose |
+|-----------|-----|---------|
+| ESP32 38-Pin Dev Board (NodeMCU-32S) | 1 | Main MCU |
+| ESP32 38-Pin Expansion Board | 1 | Screw terminals for wiring |
+| YF-S201 Flow Sensor | 4 | 1 inlet + 3 fixtures |
+| Check Valve 1/2" | 3 | One per fixture (backflow prevention) |
+| 12V 5A Switching PSU (S-60-12 / LRS-60-12) | 1 | Mains power → 12V |
+| LM2596S Buck Converter | 1 | 12V → 5V for ESP32 + sensors |
+| Waterproof ABS Enclosure IP67 (175×125×75mm) | 1 | Outdoor protection |
+| Raspberry Pi 4/5 + 7" Touchscreen LCD | 1 | Local dashboard + ML backend |
+
+---
+
+## Power Architecture
+
+```
+220V AC Outlet
+    │
+    ▼
+12V 5A Switching PSU (S-60-12 / LRS-60-12)
+    │
+    ├──► 12V Rail (future 12V components)
+    │
+    ▼
+LM2596S Buck Converter (12V → 5V)
+    │
+    ├──► ESP32 VIN (5V)
+    │
+    ▼
+Flow Sensors VCC (5V)
+```
+
+> All sensors connect directly to GPIO (26, 25, 33, 32) — no pull-up resistors or capacitors needed (YF-S201 outputs digital pulses).

@@ -209,7 +209,7 @@ rpi/
 ├── app.py                 # Main Flask application
 ├── firebase_listener.py   # Pyrebase4 polling
 ├── ml_inference.py        # XGBoost + Isolation Forest inference
-├── alert_engine.py        # Notification system (Email, Webhook)
+├── alert_engine.py        # Notification system (in-app, webhook)
 ├── models/                # Trained ML models
 │   ├── xgboost_leak_model.json
 │   ├── isolation_forest.pkl
@@ -257,10 +257,6 @@ detector = LeakDetector(
     scaler_path="models/scaler.pkl"
 )
 alert_engine = AlertEngine(
-    email_smtp_host=os.getenv("EMAIL_SMTP_HOST"),
-    email_smtp_port=int(os.getenv("EMAIL_SMTP_PORT", "587")),
-    email_user=os.getenv("EMAIL_USER"),
-    email_password=os.getenv("EMAIL_PASSWORD"),
     webhook_url=os.getenv("WEBHOOK_URL")
 )
 
@@ -459,32 +455,25 @@ class LeakDetector:
 
 ---
 
-### alert_engine.py — Notifications (Email, Webhook)
+### alert_engine.py — Notifications (In-App, Webhook)
 
 ```python
 import requests
-import smtplib
-from email.mime.text import MIMEText
 
 class AlertEngine:
-    def __init__(self, email_smtp_host=None, email_smtp_port=587,
-                 email_user=None, email_password=None, webhook_url=None):
-        self.email_smtp_host = email_smtp_host
-        self.email_smtp_port = email_smtp_port
-        self.email_user = email_user
-        self.email_password = email_password
+    def __init__(self, webhook_url=None):
         self.webhook_url = webhook_url
         
     def send_notification(self, alert_data):
         """Send alert via all configured channels"""
-        # Send webhook (Discord, Slack, etc.)
+        # Send webhook (Discord, Slack, custom endpoint)
         if self.webhook_url:
             self.send_webhook(alert_data)
         
-        # Send email
-        if self.email_smtp_host and self.email_user:
-            self.send_email(alert_data)
-        
+        # In-app notification: alert is written to Firebase /alerts
+        # The web dashboard polls /alerts and displays in real-time
+        # No additional code needed here for in-app alerts
+            
     def send_webhook(self, alert_data):
         """Send webhook notification (Discord, Slack, custom)"""
         if not self.webhook_url:
@@ -504,50 +493,13 @@ class AlertEngine:
         }
         
         requests.post(self.webhook_url, json=message)
-        
-    def send_email(self, alert_data, to_email=None):
-        if not self.email_smtp_host or not self.email_user:
-            return
-            
-        to = to_email or self.email_user
-        
-        message = f"""
-Water Meter Alert
-
-Type: {alert_data['alert_type']}
-Confidence: {alert_data.get('confidence', 0):.2f}
-Fixture: {alert_data.get('fixture_name', 'Unknown')}
-Time: {alert_data['timestamp']}
-        """
-        
-        msg = MIMEText(message)
-        msg['Subject'] = f"🚨 Water Meter Alert: {alert_data['alert_type']}"
-        msg['From'] = self.email_user
-        msg['To'] = to
-        
-        with smtplib.SMTP(self.email_smtp_host, self.email_smtp_port) as server:
-            server.starttls()
-            server.login(self.email_user, self.email_password)
-            server.send_message(msg)
 ```
 
 ---
 
-## Email / Webhook Setup
+## Webhook Setup (Optional)
 
-### 1. Email (SMTP)
-
-Configure in environment variables or `.env`:
-```bash
-export EMAIL_SMTP_HOST="smtp.gmail.com"
-export EMAIL_SMTP_PORT="587"
-export EMAIL_USER="your-email@gmail.com"
-export EMAIL_PASSWORD="your-app-password"
-```
-
-> **Gmail:** Use App Password (not regular password). Generate at: https://myaccount.google.com/apppasswords
-
-### 2. Webhook (Discord, Slack, Custom)
+For external notifications (Discord, Slack, custom endpoint):
 
 ```bash
 export WEBHOOK_URL="https://discord.com/api/webhooks/..."
