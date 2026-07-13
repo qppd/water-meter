@@ -2,8 +2,7 @@
 
 > **Hardware:** Raspberry Pi 3B+/4/5  
 > **OS:** Raspberry Pi OS (64-bit) Bookworm  
-> **Stack:** Flask + **Pyrebase4** + XGBoost + Isolation Forest  
-> **Remote Access:** Port forwarding + Dynamic DNS
+> **Stack:** Flask + Pyrebase4 + XGBoost + Isolation Forest
 
 ---
 
@@ -21,13 +20,18 @@ source venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Upload Firebase config
-#    Copy firebase_config.json to this directory
+# 4. Copy Firebase config
+cp firebase_config.json rpi/
 
-# 5. Run Flask app
+# 5. Set environment variables
+export FIREBASE_EMAIL="esp32@your-project.iam.gserviceaccount.com"
+export FIREBASE_PASSWORD="your-strong-password"
+export DEVICE_ID="wm_001"
+
+# 6. Run Flask app
 python app.py
 
-# 6. Test: Open browser to http://<rpi-ip>:5000/
+# 7. Test: Open browser to http://<rpi-ip>:5000/
 ```
 
 ---
@@ -40,7 +44,7 @@ python app.py
 # Update system
 sudo apt update && sudo apt upgrade -y
 
-# Install Python 3.9+ and venv
+# Install Python 3.11+ and venv
 sudo apt install -y python3 python3-venv python3-pip
 
 # Enable SSH (for headless access)
@@ -368,7 +372,7 @@ class FirebaseListener:
                 "timestamp": datetime.utcnow().isoformat() + "Z",
                 "confidence": result.get('confidence', 0),
                 "fixture_index": data.get('fixture_index', -1),
-                "valve_action": "monitoring"
+                "action": "monitoring"
             }
             self.alerts_ref.push(alert_data, self.id_token)
             
@@ -508,70 +512,7 @@ class AlertEngine:
 
 ---
 
-## Dashboard Templates
-
-### templates/dashboard.html
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Water Meter Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-6">Water Meter Dashboard</h1>
-        
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <div class="bg-white p-4 rounded shadow">
-                <h3 class="text-gray-500">Inlet</h3>
-                <p id="inlet-rate" class="text-2xl font-bold">0.0 L/min</p>
-            </div>
-            <div class="bg-white p-4 rounded shadow">
-                <h3 class="text-gray-500">Kitchen</h3>
-                <p id="fix1-rate" class="text-2xl font-bold">0.0 L/min</p>
-            </div>
-            <div class="bg-white p-4 rounded shadow">
-                <h3 class="text-gray-500">Toilet</h3>
-                <p id="fix2-rate" class="text-2xl font-bold">0.0 L/min</p>
-            </div>
-            <div class="bg-white p-4 rounded shadow">
-                <h3 class="text-gray-500">Basin</h3>
-                <p id="fix3-rate" class="text-2xl font-bold">0.0 L/min</p>
-            </div>
-            <div class="bg-white p-4 rounded shadow">
-                <h3 class="text-gray-500">Shower</h3>
-                <p id="fix4-rate" class="text-2xl font-bold">0.0 L/min</p>
-            </div>
-        </div>
-        
-        <canvas id="flowChart" class="bg-white rounded shadow"></canvas>
-    </div>
-    
-    <script>
-        // Fetch data every 5 seconds
-        setInterval(fetchData, 5000);
-        fetchData();
-        
-        function fetchData() {
-            fetch('/api/latest')
-                .then(r => r.json())
-                .then(data => updateUI(data));
-        }
-        
-        function updateUI(data) {
-            // Update readings...
-        }
-    </script>
-</body>
-</html>
-```
-
----
-
-## Remote Access: Port Forwarding + Dynamic DNS
+## Remote Access: Port Forwarding + DDNS
 
 ### 1. Router Port Forwarding
 
@@ -583,7 +524,7 @@ class AlertEngine:
 | **Protocol** | TCP |
 
 **Example (TP-Link/Asus/Netgear):**
-1. Access router admin page (usually 192.168.1.1 or 192.168.0.1)
+1. Access router admin (usually 192.168.1.1 or 192.168.0.1)
 2. Go to **Advanced → NAT Forwarding → Port Forwarding / Virtual Server**
 3. Add rule:
    - Service Name: `WaterMeter`
@@ -611,32 +552,35 @@ crontab -e
 # */5 * * * * curl "https://www.duckdns.org/update?domains=yourdomain&token=yourtoken&ip="
 ```
 
-**Option B: No-IP (Free tier)**
-```bash
-# Install noip2 client
-sudo apt install noip2
-# Configure: sudo noip2 -C
-```
-
-**Option C: Cloudflare Tunnel (Best for HTTPS)**
+**Option B: Cloudflare Tunnel (Best for HTTPS)**
 ```bash
 # Install cloudflared
 wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64.deb
 sudo dpkg -i cloudflared-linux-arm64.deb
-# Authenticate: cloudflared tunnel login
-# Create tunnel: cloudflared tunnel create water-meter
-# Route: cloudflared tunnel route dns water-meter yourdomain.com
+
+# Authenticate
+cloudflared tunnel login
+
+# Create tunnel
+cloudflared tunnel create water-meter
+
+# Route DNS
+cloudflared tunnel route dns water-meter yourdomain.com
+
 # Run as service
+sudo cloudflared service install
 ```
 
 ### 4. Access from Anywhere
 
-After port forwarding + DDNS:
-
 - **Local:** `http://<rpi-local-ip>:5000/`
-- **Remote:** `http://yourdomain.duckdns.org:8443/` or `https://yourdomain.com` (if Cloudflare Tunnel)
+- **Remote (Port Forward):** `http://<your-public-ip>:8443/`
+- **Remote (DDNS + Port Forward):** `http://yourdomain.duckdns.org:8443/`
+- **Remote (Cloudflare Tunnel):** `https://yourdomain.com/`
 
-### 5. Security Considerations
+---
+
+## Security Considerations
 
 | Measure | Implementation |
 |---------|----------------|

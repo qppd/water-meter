@@ -20,10 +20,9 @@ src/
 ├── local_rules.h               # Local leak detection (non-ML fallback)
 ├── wifi_manager.h              # WiFi connect + reconnect
 ├── data_logger.h               # SPIFFS logging
-├── indicator_manager.h         # Buzzer + RGB LED alerts
 ├── ntp_sync.h                  # NTP time sync
 ├── ota_updater.h               # OTA firmware updates
-└── led_indicator.h             # Status LED patterns
+└── led_indicator.h             # Status LED patterns (built-in LED on GPIO 2)
 ```
 
 ---
@@ -42,29 +41,25 @@ void loop() {
         metrics[i] = {rate, volume};
     }
     
-    // 3. Update status indicators (buzzer + RGB LED)
-    indicatorManager.update(metrics);
-    
-    // 4. Check local leak rules
+    // 3. Check local leak rules
     LeakStatus ls = localRules.check(metrics);
     if (ls != LEAK_NONE) {
-        indicatorManager.activate(ls);
-        // Note: Valve control removed - check valves prevent backflow
+        // Status indication via built-in LED (GPIO 2)
     }
     
-    // 5. Check Firebase stream for commands
+    // 4. Check Firebase stream for commands
     firebaseClient.processStream();
     
-    // 6. Upload to Firebase (if interval reached)
+    // 5. Upload to Firebase (if interval reached)
     if (millis() - lastUpload > UPLOAD_INTERVAL_MS) {
         firebaseClient.uploadReading(metrics);
         lastUpload = millis();
     }
     
-    // 7. Restart WiFi if disconnected
+    // 6. Restart WiFi if disconnected
     wifiManager.ensureConnected();
     
-    // 8. Small delay to prevent watchdog reset
+    // 7. Small delay to prevent watchdog reset
     delay(100);
 }
 ```
@@ -200,12 +195,12 @@ struct SensorConfig {
     const char* fixture_name;
 };
 
-// Pin configuration
+// Pin configuration - updated to actual GPIOs
 SensorConfig sensors[NUM_SENSORS] = {
-    {34, "inlet", "Main Inlet"},
-    {35, "fix1", "Bidet"},
-    {32, "fix2", "Kitchen"},
-    {33, "fix3", "Bathroom Shower"}
+    {26, "inlet", "Main Inlet"},
+    {25, "fix1", "Bidet"},
+    {33, "fix2", "Kitchen"},
+    {32, "fix3", "Bathroom Shower"}
 };
 
 // ISR-safe variables (volatile + IRAM)
@@ -224,7 +219,7 @@ void IRAM_ATTR pulseCounterISR(void* arg) {
 
 void SensorManager::begin() {
     for (int i = 0; i < NUM_SENSORS; i++) {
-        pinMode(sensors[i].gpio, INPUT);  // GPIO 34/35 are input-only — external pull-up required
+        pinMode(sensors[i].gpio, INPUT);
         attachInterruptArg(
             digitalPinToInterrupt(sensors[i].gpio),
             pulseCounterISR,
@@ -272,8 +267,7 @@ alerts/{device_id}/
     confidence: 0.87
     flow_rate: 0.3
     duration: 300
-    valve_action: "monitoring"
-    valve_state: "open"
+    action: "monitoring"
     timestamp: "2026-07-10T12:05:00Z"
     resolved: false
 ```

@@ -28,17 +28,14 @@
 |---|------|-----|----------|-----------|------|
 | 8 | **Breadboard 830 Points** + 65 Jumper Wires | 1 set | ₱150 | ₱150 | [Makerlab Shopee](https://shopee.ph/search?keyword=breadboard%20jumper%20wires%20makerlab) |
 | 9 | **Jumper Wires M-M / M-F** (additional 40pc) | 1 | ₱65 | ₱65 | [Makerlab Shopee](https://shopee.ph/search?keyword=jumper%20wire%2040pcs%20makerlab) |
-| 10 | **Resistor Kit 1/4W** (assorted, 200pc) | 1 | ₱80 | ₱80 | [Makerlab Shopee](https://shopee.ph/search?keyword=resistor%20kit%20200pcs%20makerlab) |
-| 11 | **10kΩ Resistor** (pull-ups for 4 sensors, extra) | 10 | ₱2 | ₱20 | [Makerlab Shopee](https://shopee.ph/search?keyword=10k%20resistor%20makerlab) |
-| 12 | **100nF Ceramic Capacitor** (decoupling per sensor) | 10 | ₱3 | ₱30 | [Makerlab Shopee](https://shopee.ph/search?keyword=ceramic%20capacitor%20makerlab) |
-| 13 | **Perf Board 7×9cm** (for permanent soldering) | 2 | ₱35 | ₱70 | [Makerlab Shopee](https://shopee.ph/search?keyword=perf%20board%20makerlab) |
-| 14 | **JST-XH Connector Kit** (2/3/4/5/6-pin assorted, with crimp pins & housing) | 1 set | ₱120 | ₱120 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%20connector%20kit%20makerlab) |
-| 15 | **JST-XH 2-pin** (for flow sensor power/signal) | 10 pairs | ₱8 | ₱80 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%202pin%20makerlab) |
-| 16 | **JST-XH 4-pin** (for sensor bundles) | 5 sets | ₱12 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%204pin%20makerlab) |
-| 17 | **JST-XH 5-pin** (for expansion board connections) | 5 sets | ₱15 | ₱75 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%205pin%20makerlab) |
-| 18 | **Dupont Crimp Pin Kit** (male+female pins, housing) | 1 | ₱80 | ₱80 | [Makerlab Shopee](https://shopee.ph/search?keyword=dupont%20crimp%20kit%20makerlab) |
+| 10 | **Perf Board 7×9cm** (for permanent soldering) | 2 | ₱35 | ₱70 | [Makerlab Shopee](https://shopee.ph/search?keyword=perf%20board%20makerlab) |
+| 11 | **JST-XH Connector Kit** (2/3/4/5/6-pin assorted, with crimp pins & housing) | 1 set | ₱120 | ₱120 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%20connector%20kit%20makerlab) |
+| 12 | **JST-XH 2-pin** (for flow sensor power/signal) | 10 pairs | ₱8 | ₱80 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%202pin%20makerlab) |
+| 13 | **JST-XH 4-pin** (for sensor bundles) | 5 sets | ₱12 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%204pin%20makerlab) |
+| 14 | **JST-XH 5-pin** (for expansion board connections) | 5 sets | ₱15 | ₱75 | [Makerlab Shopee](https://shopee.ph/search?keyword=jst-xh%205pin%20makerlab) |
+| 15 | **Dupont Crimp Pin Kit** (male+female pins, housing) | 1 | ₱80 | ₱80 | [Makerlab Shopee](https://shopee.ph/search?keyword=dupont%20crimp%20kit%20makerlab) |
 
-**Wiring Subtotal:** **₱810**
+**Wiring Subtotal:** **₱700**
 
 ---
 
@@ -46,59 +43,34 @@
 
 | # | Item | Qty | Unit (₱) | Total (₱) | Link |
 |---|------|-----|----------|-----------|------|
-| 19 | **Allan Superstore 12V 10A Power Supply** | 1 | ₱150 | ₱150 | [Allan Superstore Shopee](https://shopee.ph/Allan-Superstore-12v2a-12v5a-12v10a-12v15a-12v20a-12v30a-Power-Supply-For-Led-Sign-Signage-i.609565947.18030939950?extraParams=%7B%22display_model_id%22%3A191594807415%2C%22model_selection_logic%22%3A3%7D&sp_atk=8b44f1f9-e481-402b-a4b6-b68a26987663&xptdk=8b44f1f9-e481-402b-a4b6-b68a26987663) |
-| 20 | **USB to Micro USB Data Cable** (braided, 1m) | 1 | ₱120 | ₱120 | [Makerlab Shopee](https://shopee.ph/search?keyword=micro%20usb%20cable%20makerlab) |
-| 21 | **LM2596 DC-DC Step-Down Regulator** (optional, 12V→5V) | 1 | ₱100 | ₱100 | [Makerlab Shopee](https://shopee.ph/search?keyword=lm2596%20makerlab) |
-| 22 | **1000µF 25V Electrolytic Capacitor** (power smoothing) | 2 | ₱15 | ₱30 | [Makerlab Shopee](https://shopee.ph/search?keyword=1000uf%20capacitor%20makerlab) |
+| 16 | **USB to Micro USB Data Cable** (braided, 1m) | 1 | ₱120 | ₱120 | [Makerlab Shopee](https://shopee.ph/search?keyword=micro%20usb%20cable%20makerlab) |
+| 17 | **5V 2A USB Power Adapter** | 1 | ₱150 | ₱150 | [Makerlab Shopee](https://shopee.ph/search?keyword=5v%202a%20adapter%20makerlab) |
 
-**Power Subtotal:** **₱400**
+**Power Subtotal:** **₱270**
 
 ---
 
-## 4. Indicators
+## 4. Enclosure & Mounting
 
 | # | Item | Qty | Unit (₱) | Total (₱) | Link |
 |---|------|-----|----------|-----------|------|
-| 23 | **RGB LED Module** (common cathode) | 1 | ₱35 | ₱35 | [Makerlab Shopee](https://shopee.ph/search?keyword=rgb%20led%20module%20makerlab) |
-| 24 | **Active Buzzer Module** 5V | 1 | ₱30 | ₱30 | [Makerlab Shopee](https://shopee.ph/search?keyword=active%20buzzer%20makerlab) |
-| 25 | **LED 5mm Assorted** (red, green, yellow, 10pc each) | 3 sets | ₱20 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=led%205mm%20assorted%20makerlab) |
-
-**Indicators Subtotal:** **₱125**
-
----
-
-## 5. Data Storage & Networking
-
-| # | Item | Qty | Unit (₱) | Total (₱) | Link |
-|---|------|-----|----------|-----------|------|
-| 26 | **Micro SD Card Module** SPI | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=micro%20sd%20card%20module%20makerlab) |
-| 27 | **Micro SD Card** 16GB Class 10 | 1 | ₱180 | ₱180 | [Shopee Hardware](https://shopee.ph/search?keyword=micro%20sd%2016gb%20class10) |
-
-**Storage Subtotal:** **₱240**
-
----
-
-## 6. Enclosure & Mounting
-
-| # | Item | Qty | Unit (₱) | Total (₱) | Link |
-|---|------|-----|----------|-----------|------|
-| 28 | **ABS Project Enclosure Box** 200×120×70mm | 1 | ₱250 | ₱250 | [Makerlab Shopee](https://shopee.ph/search?keyword=project%20enclosure%20box%20abs%20makerlab) |
-| 29 | **Cable Glands** PG9 / PG11 (waterproof entry) | 6 | ₱15 | ₱90 | [Shopee Hardware](https://shopee.ph/search?keyword=cable%20gland%20pg9) |
-| 30 | **Heat Shrink Tube Set** (assorted sizes) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=heat%20shrink%20tube%20makerlab) |
-| 31 | **Cable Ties** 100mm (100pc) | 1 | ₱30 | ₱30 | [Makerlab Shopee](https://shopee.ph/search?keyword=cable%20tie%20makerlab) |
-| 32 | **M3 Screws + Standoffs Kit** (PCB mounting) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=m3%20standoff%20makerlab) |
-| 33 | **Double-sided Tape / Velcro** (mounting sensors) | 1 | ₱30 | ₱30 | [Shopee Hardware](https://shopee.ph/search?keyword=double%20sided%20tape%20heavy%20duty) |
+| 18 | **ABS Project Enclosure Box** 200×120×70mm | 1 | ₱250 | ₱250 | [Makerlab Shopee](https://shopee.ph/search?keyword=project%20enclosure%20box%20abs%20makerlab) |
+| 19 | **Cable Glands** PG9 / PG11 (waterproof entry) | 6 | ₱15 | ₱90 | [Shopee Hardware](https://shopee.ph/search?keyword=cable%20gland%20pg9) |
+| 20 | **Heat Shrink Tube Set** (assorted sizes) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=heat%20shrink%20tube%20makerlab) |
+| 21 | **Cable Ties** 100mm (100pc) | 1 | ₱30 | ₱30 | [Makerlab Shopee](https://shopee.ph/search?keyword=cable%20tie%20makerlab) |
+| 22 | **M3 Screws + Standoffs Kit** (PCB mounting) | 1 | ₱60 | ₱60 | [Makerlab Shopee](https://shopee.ph/search?keyword=m3%20standoff%20makerlab) |
+| 23 | **Double-sided Tape / Velcro** (mounting sensors) | 1 | ₱30 | ₱30 | [Shopee Hardware](https://shopee.ph/search?keyword=double%20sided%20tape%20heavy%20duty) |
 
 **Enclosure Subtotal:** **₱520**
 
 ---
 
-## 7. Raspberry Pi Backend
+## 5. Raspberry Pi Backend
 
 | # | Item | Qty | Unit (₱) | Total (₱) | Note |
 |---|------|-----|----------|-----------|------|
-| 34 | **Raspberry Pi 4/5** (or 3B+, if on hand) | 1 | ₱2,500 | ₱2,500 | One-time cost, runs Flask + ML locally |
-| 35 | **Telegram Bot** (free) | 1 | ₱0 | ₱0 | Alerts via [@BotFather](https://t.me/BotFather) |
+| 24 | **Raspberry Pi 4/5** (or 3B+, if on hand) | 1 | ₱2,500 | ₱2,500 | One-time cost, runs Flask + ML locally |
+| 25 | **Telegram Bot** (free) | 1 | ₱0 | ₱0 | Alerts via [@BotFather](https://t.me/BotFather) |
 
 **Backend Subtotal:** **₱2,500**
 
@@ -120,9 +92,9 @@
 
 | Tier | Category | ₱ | Notes |
 |------|----------|---|-------|
-| **MVP** | Core + breadboard + power | **~₱2,110** | ESP32 + 1 sensor + buzzer (prove concept) |
-| **Standard** | All ESP32-side components + enclosure | **~₱4,175** | Full 4-sensor system |
-| **Complete** | Standard + Raspberry Pi (one-time) | **~₱6,675** | Production-ready with ML backend |
+| **MVP** | Core + breadboard + power | **~₱2,030** | ESP32 + 1 sensor (prove concept) |
+| **Standard** | All ESP32-side components + enclosure | **~₱3,570** | Full 4-sensor system |
+| **Complete** | Standard + Raspberry Pi (one-time) | **~₱6,070** | Production-ready with ML backend |
 
 > **Note:** Raspberry Pi, touchscreen LCD, PSU, HDMI, and SD card are **already purchased** — excluded from cost totals above.
 

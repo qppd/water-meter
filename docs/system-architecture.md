@@ -101,10 +101,10 @@ graph TB
 
 ```
 Step 1: SENSING
-        Inlet Sensor (GPIO 34)  ─┐
-        Fixture 1 Sensor (35)   ─┤  Every 1 second:
-        Fixture 2 Sensor (32)   ─┤  → Read pulse count via ISR
-        Fixture 3 Sensor (33)   ─┘  → Debounce (5ms)
+        Inlet Sensor (GPIO 26)  ─┐
+        Fixture 1 Sensor (25)   ─┤  Every 1 second:
+        Fixture 2 Sensor (33)   ─┤  → Read pulse count via ISR
+        Fixture 3 Sensor (32)   ─┘  → Debounce (5ms)
                                     → Calculate flow rate & volume
 
 Step 2: LOCAL PROCESSING

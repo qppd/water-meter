@@ -53,7 +53,6 @@ Serial.println("Reset reason: " + String(esp_reset_reason()));
 | Sensor not powered | Measure VCC pin | Should be 4.5V–5V |
 | Arrow wrong direction | Arrow on sensor body | Install with flow direction |
 | Air trapped | Bubbles in sensor chamber | Tap sensor, purge air |
-| Pull-up resistor missing | GPIO 34/35 are input-only | Add 10kΩ to 3.3V |
 | Debounce too high | Pulses < 5ms apart missed | Reduce `DEBOUNCE_MS` to 3 |
 | Flow too slow | Minimum ~0.5 L/min | Increase flow rate |
 
@@ -71,10 +70,10 @@ Serial.println("Reset reason: " + String(esp_reset_reason()));
 
 ### Fixture Balance Error
 
-If sum of 4 fixtures doesn't match inlet reading:
+If sum of 3 fixtures doesn't match inlet reading:
 
 ```
-Inlet balance = Inlet volume - (Fixture 1 + 2 + 3 + 4)
+Inlet balance = Inlet volume - (Fixture 1 + 2 + 3)
 Normal: balance < 10% of inlet
 ```
 
@@ -184,8 +183,6 @@ print(result)
 | Water hammer | Fast valve closing | Install water hammer arrestor |
 | Sensor not spinning | Debris in turbine | Remove and clean with soft brush |
 | Check valve stuck | Debris or hard water | Disassemble and clean |
-| Solenoid valve buzzing | Low voltage | Check 12V supply, increase wire gauge |
-| Valve won't close | Relay not activating | Check GPIO pin, test relay manually |
 
 ---
 
@@ -207,7 +204,7 @@ print(result)
 
 ---
 
-## 9. LED Indicator Reference
+## 9. Built-in LED Indicator Reference
 
 | LED Pattern | Meaning |
 |-------------|---------|
@@ -228,11 +225,10 @@ print(result)
 - [ ] Is ESP32 getting power? (LED on?)
 - [ ] Is USB cable a data cable? (not charge-only)
 - [ ] Is Serial Monitor baud set to 115200?
-- [ ] Are pull-up resistors installed on GPIO 34 & 35?
 - [ ] Is the flow sensor arrow pointing WITH the water flow?
 - [ ] Are WiFi SSID and password correct?
 - [ ] Is Firebase Auth (Email/Password) enabled?
-- [ ] Is the Firebase service account key on the RPi?
+- [ ] Is the Firebase config correct on the RPi?
 - [ ] Is the virtual environment activated?
 - [ ] Did you run `pip install -r requirements.txt`?
 - [ ] Are the ML model files in the right path?

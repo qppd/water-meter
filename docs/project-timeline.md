@@ -56,18 +56,18 @@ Each week includes:
 | Item | Activity |
 |------|----------|
 |  **Goal** | Assemble ESP32 with 1 flow sensor and verify reading |
-|  **Tasks** | • Mount ESP32 on expansion board<br/>• Wire 1 YF-S201 sensor to GPIO 34 with pull-up resistor<br/>• Install Arduino IDE, clone repo<br/>• Upload test firmware<br/>• Verify pulse counting via Serial Monitor<br/>• Test with manual switch (touch sensor wire to 3.3V) |
+|  **Tasks** | • Mount ESP32 on expansion board<br/>• Wire 1 YF-S201 sensor to GPIO 26<br/>• Install Arduino IDE, clone repo<br/>• Upload test firmware<br/>• Verify pulse counting via Serial Monitor<br/>• Test with manual switch (touch sensor wire to 3.3V) |
 |  **Deliverable** | Working ESP32 + 1 flow sensor, Serial Monitor showing pulse counts |
-|  **Risk** | Common: wrong GPIO, missing pull-up resistor, charge-only USB cable |
+|  **Risk** | Common: wrong GPIO, charge-only USB cable |
 
-### Week 5: All 4 Sensors + Peripherals
+### Week 5: All 4 Sensors
 
 | Item | Activity |
 |------|----------|
-|  **Goal** | Wire all 4 sensors + buzzer + SPIFFS |
-|  **Tasks** | • Wire sensors 2–4 to GPIO 35, 32, 33<br/>• Add 10kΩ pull-ups to all sensor lines<br/>• Connect buzzer (GPIO 4)<br/>• Verify all 4 sensors show readings |
+|  **Goal** | Wire all 4 sensors and verify all readings |
+|  **Tasks** | • Wire sensors 2–4 to GPIO 25, 33, 32<br/>• Verify all 4 sensors show readings |
 |  **Deliverable** | Breadboard with all 4 sensors showing live readings |
-|  **Risk** | GPIO 34 & 35 are input-only — external pull-up REQUIRED. GPIO 12 is boot pin — be careful. |
+|  **Risk** | The YF-S201 outputs digital pulses directly — no external pull-up needed |
 
 ### Week 6: Firebase Integration
 
@@ -83,7 +83,7 @@ Each week includes:
 | Item | Activity |
 |------|----------|
 |  **Goal** | Local leak detection (non-ML fallback) |
-|  **Tasks** | • Implement local leak rules (inlet balance, continuous flow, drip)<br/>• Connect LED indicators for leak status<br/>• Test: simulate a leak and verify detection<br/>• Test: remote command via Firebase |
+|  **Tasks** | • Implement local leak rules (inlet balance, continuous flow, drip)<br/>• Test: simulate a leak and verify detection<br/>• Test: remote command via Firebase |
 |  **Deliverable** | ESP32 detects leaks locally. Verified with simulated leaks. |
 |  **Risk** | Focus on detection logic first. The system uses check valves for backflow prevention; automatic shutoff via solenoid valves is not included in this version. |
 
@@ -231,10 +231,9 @@ Each week includes:
 | ESP32 + Expansion Board | ₱630 |
 | 4× YF-S201 Flow Sensors | ₱720 |
 | Check Valves + PVC Fittings | ₱610 |
-| Buzzer + LEDs | ₱125 |
 | Breadboard + Jumpers + Resistors | ₱375 |
 | Enclosure + Hardware | ₱520 |
-| Power Supplies | ₱400 |
+| Power Supplies | ₱270 |
 | **Total Hardware** | **~₱3,780** |
 | Raspberry Pi (4/5) | ₱2,500 |
 | **Grand Total** | **~₱6,280** |

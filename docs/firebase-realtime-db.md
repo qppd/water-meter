@@ -155,8 +155,7 @@ Written by **RPi backend (ML-based)** or **ESP32** (local rules).
           "inlet_ratio": 1.3,
           "anomaly_score": null
         },
-        "valve_action": "monitoring",
-        "valve_state": "open",
+        "action": "monitoring",
         "timestamp": "2026-07-10T08:05:00Z",
         "resolved": false,
         "resolved_at": null,
@@ -192,12 +191,11 @@ Written on device registration, updated by ESP32.
       "name": "Ground Floor Water Meter",
       "location": "Quezon Province",
       "sensors": [
-        {"id": 0, "name": "inlet", "fixture": "main_inlet", "pin": 34},
-        {"id": 1, "name": "fix1", "fixture": "bidet", "pin": 35},
-        {"id": 2, "name": "fix2", "fixture": "kitchen", "pin": 32},
-        {"id": 3, "name": "fix3", "fixture": "bathroom_shower", "pin": 33}
+        {"id": 0, "name": "inlet", "fixture": "main_inlet", "pin": 26},
+        {"id": 1, "name": "fix1", "fixture": "bidet", "pin": 25},
+        {"id": 2, "name": "fix2", "fixture": "kitchen", "pin": 33},
+        {"id": 3, "name": "fix3", "fixture": "bathroom_shower", "pin": 32}
       ],
-      "valves": [false, false, false, false],
       "status": {
         "online": true,
         "last_seen": "2026-07-10T08:00:00Z",
@@ -421,7 +419,7 @@ def process_reading(data):
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "confidence": result.get('confidence', 0),
             "fixture_index": data.get('fixture_index', -1),
-            "valve_action": "monitoring"
+            "action": "monitoring"
         }
         alerts_ref.push(alert_data, id_token)
         

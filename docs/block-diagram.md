@@ -18,7 +18,7 @@ block-beta
         FS_In["Inlet Flow<br/>Sensor"]:1
         CV_In["Check<br/>Valve"]:1
         Joint["Junction"]:1
-        Fixtures["To Fixtures<br/>1–4"]:3
+        Fixtures["To Fixtures<br/>1–3"]:3
     end
     
     space:7
@@ -28,7 +28,6 @@ block-beta
         F1["Fixture 1<br/>Sensor"]:1
         F2["Fixture 2<br/>Sensor"]:1
         F3["Fixture 3<br/>Sensor"]:1
-        F4["Fixture 4<br/>Sensor"]:1
         CV1["Check<br/>Vlv"] CV2["Check<br/>Vlv"] CV3["Check<br/>Vlv"]
     end
     
@@ -39,7 +38,7 @@ block-beta
         
         block:pins:7
             columns 7
-            P34["GPIO 34"] P35["GPIO 35"] P32["GPIO 32"] P33["GPIO 33"] P25["GPIO 25"] Pins_Spacer:1 Pins_Spacer2:1
+            P26["GPIO 26"] P25["GPIO 25"] P33["GPIO 33"] P32["GPIO 32"] Pins_Spacer:1 Pins_Spacer2:1 Pins_Spacer3:1
         end
         
         block:mcu:7
@@ -47,22 +46,10 @@ block-beta
             MCU["ESP32 38-Pin<br/>CP2102<br/>Xtensa LX6<br/>WiFi + BLE"]:7
         end
         
-        block:peripherals:7
-            columns 7
-            Buzzer["Buzzer<br/>GPIO 4"]:1
-            RGB["RGB LED<br/>GPIO 5"]:2
-            SD["SD Card<br/>SPI<br/>GPIO 18/19/23"]:2
-        end
-        
-        P34 --> MCU
-        P35 --> MCU
-        P32 --> MCU
-        P33 --> MCU
+        P26 --> MCU
         P25 --> MCU
-        
-        MCU --> Buzzer
-        MCU --> RGB
-        MCU --> SD
+        P33 --> MCU
+        P32 --> MCU
     end
     
     space:7
@@ -73,11 +60,10 @@ block-beta
         RPi[" Raspberry Pi<br/>Flask + ML"]:4
     end
     
-    FS_In --> P34
-    F1 --> P35
-    F2 --> P32
-    F3 --> P33
-    F4 --> P25
+    FS_In --> P26
+    F1 --> P25
+    F2 --> P33
+    F3 --> P32
     
     MCU --> Firebase
     Firebase --> RPi
@@ -91,20 +77,10 @@ block-beta
 
 | Component | ESP32 Pin | Expansion Board | Notes |
 |-----------|-----------|-----------------|-------|
-| **Flow Sensor 1 — Inlet** | GPIO 34 | Screw terminal 1 | Input-only, **use 10kΩ pull-up to 3.3V** |
-| **Flow Sensor 2 — Fixture 1** | GPIO 35 | Screw terminal 2 | Input-only, **use 10kΩ pull-up to 3.3V** |
-| **Flow Sensor 3 — Fixture 2** | GPIO 32 | Screw terminal 3 | Use 10kΩ pull-up to 3.3V |
-| **Flow Sensor 4 — Fixture 3** | GPIO 33 | Screw terminal 4 | Use 10kΩ pull-up to 3.3V |
-| **Flow Sensor 5 — Fixture 4** | GPIO 25 | Screw terminal 5 | Use 10kΩ pull-up to 3.3V |
-| **Buzzer** | GPIO 4 | GPIO header | Active buzzer (+ leg to GPIO, - to GND) |
-| **Status LED** | GPIO 2 | Onboard | Built-in LED (active HIGH) |
-| **RGB LED** | GPIO 5 | GPIO header | Use transistor driver or RGB module |
-| **SD Card CS** | GPIO **15** | SPI header |  ⚠️ GPIO 5 conflicts with RGB — use GPIO 15 instead for SD CS |
-| **SD Card MOSI** | GPIO 23 | SPI header | |
-| **SD Card MISO** | GPIO 19 | SPI header | |
-| **SD Card SCK** | GPIO 18 | SPI header | |
-
-> **Critical:** GPIO 34 & 35 are **input-only pins** — they have no internal pull-up resistors. Always connect a **10kΩ resistor from the GPIO pin to 3.3V** for each flow sensor signal line.
+| **Flow Sensor 1 — Inlet** | GPIO 26 | Screw terminal 1 | Direct connection, no pull-up needed |
+| **Flow Sensor 2 — Fixture 1 (Bidet)** | GPIO 25 | Screw terminal 2 | Direct connection |
+| **Flow Sensor 3 — Fixture 2 (Kitchen)** | GPIO 33 | Screw terminal 3 | Direct connection |
+| **Flow Sensor 4 — Fixture 3 (Bathroom Shower)** | GPIO 32 | Screw terminal 4 | Direct connection |
 
 ---
 
@@ -113,25 +89,13 @@ block-beta
 ```
 ESP32 38-Pin Expansion Board
 ┌─────────────────────────────────────────────────────┐
-│  [34]──10kΩ─┬── YF-S201 Inlet (Yellow)              │
-│  [35]──10kΩ─┬── YF-S201 Fixture 1 (Yellow)          │
-│  [32]──10kΩ─┬── YF-S201 Fixture 2 (Yellow)          │
-│  [33]──10kΩ─┬── YF-S201 Fixture 3 (Yellow)          │
-│  [25]──10kΩ─┬── YF-S201 Fixture 4 (Yellow)          │
-│                                                     │
-│  [4]  ──────┬── Buzzer (+)                          │
-│  [2]  ──────┬── Built-in LED                        │
-│  [5]  ──────┬── RGB LED (via driver)                │
-│                                                     │
-│  [15] ──────┬── SD Card CS                          │
-│  [23] ──────┬── SD Card MOSI                        │
-│  [19] ──────┬── SD Card MISO                        │
-│  [18] ──────┬── SD Card SCK                         │
+│  [26] ──────┬── YF-S201 Inlet (Yellow)              │
+│  [25] ──────┬── YF-S201 Fixture 1 (Yellow)          │
+│  [33] ──────┬── YF-S201 Fixture 2 (Yellow)          │
+│  [32] ──────┬── YF-S201 Fixture 3 (Yellow)          │
 │                                                     │
 │  5V  ──────┬── YF-S201 VCC (Red wires)             │
 │  GND ──────┬── All sensor GND (Black wires)        │
-│  GND ──────┬── Buzzer GND                          │
-│  GND ──────┬── RGB LED GND                         │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -145,7 +109,7 @@ YF-S201 Flow Sensor
 │              │
 │  Red   ─────┼──── 5V (VIN from ESP32/Expansion Board)
 │  Black ─────┼──── GND
-│  Yellow ────┼──── GPIO (via 10kΩ pull-up to 3.3V)
+│  Yellow ────┼──── GPIO (26, 25, 33, 32) — direct connection
 │              │
 │  [Flow →]    │   ← Arrow indicates water flow direction
 └──────────────┘
@@ -177,9 +141,6 @@ block-beta
     AC --> PSU
     PSU --> ESPV
     PSU --> SensorV
-    
-    AC --> Valves12
-    Valves12["(Not used in<br/>current config)"]:1
 ```
 
 </details>
@@ -204,11 +165,7 @@ block-beta
         
         ESP32Board["ESP32 +<br/>Expansion Board"]:1
         
-        SDCardM["SD Card<br/>Module"]:1
-        
-        Buzzer["Buzzer<br/>Module"]:1
-        
-        Terminal["Terminal Block<br/>Sensor Inputs<br/>(5 sensors)"]:2
+        Terminal["Terminal Block<br/>Sensor Inputs<br/>(4 sensors)"]:2
         
         PSU2["5V Adapter<br/>(mounted)"]:2
     end
@@ -224,26 +181,26 @@ block-beta
 
 ```
                    ┌─────────────┐
-              EN ──┤ 1         38├── VBAT
-            GPIO36─┤ 2         37├── GPIO23 (SD MOSI)
-            GPIO39─┤ 3         36├── GPIO22 
-            GPIO34─┤ 4  E   P  35├── TXD0
-            GPIO35─┤ 5  S   3  34├── RXD0
-            GPIO32─┤ 6   P   2  33├── GPIO21 
-            GPIO33─┤ 7   3   1  32├── GPIO19 (SD MISO)
-            GPIO25─┤ 8   8      31├── GPIO18 (SD SCK)
-            GPIO26─┤ 9          30├── GPIO5 (RGB/SD CS)
-            GPIO27─┤10          29├── GPIO17 (TXD2)
-            GPIO14─┤11          28├── GPIO16 (RXD2)
-            GPIO12─┤12          27├── GPIO4 (Buzzer)
-            GPIO13─┤13          26├── GPIO0 (BOOT)
+             EN ──┤ 1         38├── VBAT
+           GPIO36─┤ 2         37├── GPIO23
+           GPIO39─┤ 3         36├── GPIO22
+           GPIO34─┤ 4  E   P  35├── TXD0
+           GPIO35─┤ 5  S   3  34├── RXD0
+           GPIO32─┤ 6   P   2  33├── GPIO21
+           GPIO33─┤ 7   3   1  32├── GPIO19
+           GPIO25─┤ 8   8      31├── GPIO18
+           GPIO26─┤ 9          30├── GPIO5
+           GPIO27─┤10          29├── GPIO17 (TXD2)
+           GPIO14─┤11          28├── GPIO16 (RXD2)
+           GPIO12─┤12          27├── GPIO4
+           GPIO13─┤13          26├── GPIO0 (BOOT)
               GND ─┤14          25├── GPIO2 (LED)
-            GPIO15─┤15          24├── GPIO15
-            ───────┤16          23├── ───────
+           GPIO15─┤15          24├── GPIO15
+           ───────┤16          23├── ───────
               3.3V ─┤17          22├── ───────
               5V  ─┤18          21├── ───────
               GND ─┤19          20├── ───────
                    └─────────────┘
 ```
 
-> Flow sensors on **input-only pins** (34, 35, 32, 33, 25) — safe and reliable for pulse counting.
+> Flow sensors on **GPIO 26, 25, 33, 32** — direct connection, no pull-up resistors needed.

@@ -36,8 +36,7 @@ Check [BOM.md](./bom.md) for complete list with Shopee/Lazada links. Minimum ess
 | Breadboard + Jumper Wires | 1 set | ₱150 |
 | USB Micro Data Cable | 1 | ₱100 |
 | 5V 2A USB Power Adapter | 1 | ₱150 |
-| 10kΩ Resistors | 10 | ₱20 |
-| **Minimum Total** | | **~₱1,880** |
+| **Minimum Total** | | **~₱2,110** |
 
 ### Required Tools
 
@@ -185,41 +184,29 @@ YF-S201 Sensor          ESP32 Expansion Board
 ┌──────────────┐
 │  Red   ──────┼────── 5V (VIN pin)
 │  Black ──────┼────── GND
-│  Yellow ─────┼────── GPIO 34 (via 10kΩ to 3.3V)
+│  Yellow ─────┼────── GPIO 26
 └──────────────┘
 ```
 
-**Critical:** The yellow signal wire needs a **10kΩ pull-up resistor** connected to 3.3V:
-
-```
-GPIO 34 ──── 10kΩ resistor ──── 3.3V
-         │
-         └─── YF-S201 Yellow wire
-```
+**Note:** The YF-S201 Hall-effect sensor outputs a digital pulse signal. No external pull-up resistor or capacitor needed — connect signal wire directly to GPIO.
 
 ### Step 4.3: Connect All 4 Sensors
 
 Once the test circuit works, connect all sensors:
 
-| Sensor | GPIO | Pull-up (10kΩ to 3.3V) |
-|--------|------|------------------------|
-| Inlet | 34 | Required (input-only pin) |
-| Fixture 1 (Bidet) | 35 | Required (input-only pin) |
-| Fixture 2 (Kitchen) | 32 | Recommended |
-| Fixture 3 (Bathroom Shower) | 33 | Recommended |
+| Sensor | GPIO | Notes |
+|--------|------|-------|
+| Inlet | 26 | Connect signal directly |
+| Fixture 1 (Bidet) | 25 | Connect signal directly |
+| Fixture 2 (Kitchen) | 33 | Connect signal directly |
+| Fixture 3 (Bathroom Shower) | 32 | Connect signal directly |
 
-### Step 4.4: Connect Peripherals
-
+**Wiring for each sensor:**
 ```
-RGB LED (optional):
-  Red → GPIO 5 (via driver)
-  Green → GPIO 18 (via driver)
-  Blue → GPIO 19 (via driver)
-  Common → GND
-
-Buzzer (Active):
-  Positive → GPIO 4
-  Negative → GND (via 100Ω resistor optional)
+YF-S201 Sensor:
+  Red   → 5V (VIN)
+  Black → GND
+  Yellow → GPIO (26, 25, 33, or 32)
 ```
 
 ### Step 4.5: Plumbing Setup
@@ -284,10 +271,10 @@ For testing without actual plumbing:
    WiFi connected! IP: 192.168.1.100
    Firebase initialized successfully
    Starting stream on: /commands/wm_001
-   Sensor 0 (inlet): ISR attached on GPIO 34
-   Sensor 1 (fix1): ISR attached on GPIO 35
-   Sensor 2 (fix2): ISR attached on GPIO 32
-   Sensor 3 (fix3): ISR attached on GPIO 33
+   Sensor 0 (inlet): ISR attached on GPIO 26
+   Sensor 1 (fix1): ISR attached on GPIO 25
+   Sensor 2 (fix2): ISR attached on GPIO 33
+   Sensor 3 (fix3): ISR attached on GPIO 32
    Reading: inlet=0.00 L/min fix1=0.00 L/min fix2=0.00 L/min fix3=0.00 L/min
    Data uploaded to Firebase
    ```
