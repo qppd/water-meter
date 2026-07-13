@@ -25,9 +25,10 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 -  **Real-time Firebase Sync** — data streamed via [Firebase-ESP-Client](https://github.com/mobizt/Firebase-ESP-Client)
 -  **XGBoost ML Model** — detects leaks, anomalies, and usage patterns (server-side)
 -  **Isolation Forest** — unsupervised anomaly detection for unknown patterns
--  **RPi Backend** — Flask + Firebase Admin SDK + XGBoost
+-  **RPi Backend** — Flask + **Pyrebase4** + XGBoost
 -  **Check Valves** — prevent backflow between fixtures
 -  **Web Dashboard** — real-time monitoring via RPi Flask dashboard (7" touchscreen)
+-  **Remote Access** — port forwarding + Dynamic DNS for worldwide access
 -  **Local Data Logging** — SD card backup when offline
 
 ---
@@ -55,17 +56,25 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 │   Firebase Realtime Database                                    │
 │     - /readings/{device_id}/{timestamp} → raw sensor data        │
 │     - /alerts/{alert_id} → leak events                           │
+│     - /commands/{device_id} → device commands                    │
 │     - /models/{version} → ML model metadata                      │
 └──────────────────────────────────────────────────────────────────┘
-                               ↓ (Firebase Admin SDK polling)
+                               ↓ (Pyrebase4 polling)
 ┌──────────────────────────────────────────────────────────────────┐
 │                      RPi BACKEND                                  │
-│  • Firebase Admin SDK — Firebase polling + writes                │
+│  • Pyrebase4 — Firebase polling + writes                          │
 │  • XGBoost Model — leak classification (normal/minor/major)      │
 │  • Isolation Forest — unsupervised anomaly detection             │
 │  • Flask Web App — dashboard + API endpoints                     │
 │  • Alert Engine — Telegram notifications                         │
 │  • Daily Retraining Pipeline — model improvement over time       │
+└──────────────────────────────────────────────────────────────────┘
+                               ↓ (Port forwarding + DDNS)
+┌──────────────────────────────────────────────────────────────────┐
+│                      USER LAYER                                   │
+│  • Web Dashboard (local: 7" touchscreen, remote: port forward)   │
+│  • Telegram / Email Alerts                                        │
+│  • Remote Device Control                                          │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -115,8 +124,9 @@ cd wmldad
 # 2. Set up Firebase
 #    - Create a Firebase project
 #    - Enable Realtime Database
-#    - Download service account JSON
+#    - Download service account JSON (for ESP32)
 #    - Configure Firebase credentials in ESP32 firmware
+#    - Create email/password user for Pyrebase4 (RPi)
 
 # 3. Upload ESP32 firmware (Arduino IDE)
 #    - Open src/water-meter.ino in Arduino IDE
@@ -127,6 +137,7 @@ cd wmldad
 # 4. Deploy RPi backend
 #    - Set up Raspberry Pi with Python 3.9+
 #    - Install dependencies: pip install -r rpi/requirements.txt
+#    - Copy firebase_config.json to rpi/
 #    - Run Flask app on RPi
 #    (Or use systemd service for auto-start)
 
@@ -189,10 +200,17 @@ wmldad/
 │   └── led_indicator.h          # Status LED patterns
 ├── rpi/                  # RPi backend (Flask + ML)
 │   ├── app.py                # Flask web app
-│   ├── firebase_listener.py  # Firebase Admin SDK polling
+│   ├── firebase_listener.py  # Pyrebase4 polling
 │   ├── ml_inference.py       # XGBoost + Isolation Forest
 │   ├── alert_engine.py       # Notification system
-│   └── requirements.txt
+│   ├── models/               # Trained models
+│   │   ├── xgboost_model.json
+│   │   └── isolation_forest.pkl
+│   ├── templates/            # Jinja2 HTML templates
+│   ├── static/               # CSS, JS, Chart.js
+│   ├── requirements.txt
+│   ├── firebase_config.json  # Pyrebase4 config (gitignored)
+│   └── water-meter.service   # systemd service file
 ├── training/                  # ML training notebooks
 │   ├── water_meter_ml_training.ipynb   # Main training notebook (Colab/Jupyter)
 │   └── requirements.txt                # Dependencies for local runs
@@ -203,6 +221,76 @@ wmldad/
 │   └── water-meter-wiring.fzz
 └── README.md
 ```
+
+---
+
+##  Remote Access (Port Forwarding + DDNS)
+
+The RPi dashboard is accessible locally on the 7" touchscreen. For **remote access from anywhere with internet**:
+
+### 1. Router Port Forwarding
+
+| Setting | Value |
+|---------|-------|
+| **External Port** | 8443 (or any unused port) |
+| **Internal IP** | Raspberry Pi's local IP (e.g., 192.168.1.100) |
+| **Internal Port** | 5000 |
+| **Protocol** | TCP |
+
+**Example (TP-Link/Asus/Netgear):**
+1. Access router admin (usually 192.168.1.1 or 192.168.0.1)
+2. Go to **Advanced → NAT Forwarding → Port Forwarding / Virtual Server**
+3. Add rule:
+   - Service Name: `WaterMeter`
+   - External Port: `8443`
+   - Internal IP: `<rpi-local-ip>`
+   - Internal Port: `5000`
+   - Protocol: `TCP`
+4. Save and apply
+
+### 2. Static DHCP Reservation (Recommended)
+
+Reserve a fixed IP for the RPi in router's DHCP settings so port forwarding doesn't break after reboot.
+
+### 3. Dynamic DNS (Optional but Recommended)
+
+If your ISP doesn't provide a static public IP:
+
+**Option A: DuckDNS (Free)**
+```bash
+# Create account at duckdns.org
+# Get token, then:
+curl "https://www.duckdns.org/update?domains=yourdomain&token=yourtoken&ip="
+# Add to cron for auto-update:
+crontab -e
+# */5 * * * * curl "https://www.duckdns.org/update?domains=yourdomain&token=yourtoken&ip="
+```
+
+**Option B: Cloudflare Tunnel (Best for HTTPS)**
+```bash
+# Install cloudflared
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64.deb
+sudo dpkg -i cloudflared-linux-arm64.deb
+# Authenticate: cloudflared tunnel login
+# Create tunnel: cloudflared tunnel create water-meter
+# Route: cloudflared tunnel route dns water-meter yourdomain.com
+# Run as service
+```
+
+### 4. Access from Anywhere
+
+- **Local:** `http://<rpi-local-ip>:5000/`
+- **Remote:** `http://yourdomain.duckdns.org:8443/` or `https://yourdomain.com` (if Cloudflare Tunnel)
+
+### 5. Security Considerations
+
+| Measure | Implementation |
+|---------|----------------|
+| **HTTPS** | Use Cloudflare Tunnel (free SSL) or Caddy/Nginx reverse proxy with Let's Encrypt |
+| **Authentication** | Add basic auth or Flask-Login to dashboard |
+| **Firewall** | `sudo ufw allow 5000/tcp` (local), block unnecessary ports |
+| **Fail2Ban** | `sudo apt install fail2ban` — protect against brute force |
+| **Change default port** | Use non-standard external port (e.g., 8443 instead of 5000) |
 
 ---
 

@@ -4,7 +4,7 @@
 
 Smart water monitoring system with **fixture-level leak detection** using **ESP32 → Firebase → RPi → XGBoost ML**.
 
-The system uses 1 inlet flow sensor to measure total consumption and 4 fixture flow sensors to monitor individual water outlets. Data flows from the ESP32 to Firebase Realtime DB via the [Firebase-ESP-Client](https://github.com/mobizt/Firebase-ESP-Client) library (stream + regular calls). A **Raspberry Pi** backend consumes the Firebase data using the Firebase Admin SDK, runs **XGBoost** and **Isolation Forest** ML models, and serves a web dashboard on the 7" touchscreen LCD.
+The system uses 1 inlet flow sensor to measure total consumption and 4 fixture flow sensors to monitor individual water outlets. Data flows from the ESP32 to Firebase Realtime DB via the [Firebase-ESP-Client](https://github.com/mobizt/Firebase-ESP-Client) library (stream + regular calls). A **Raspberry Pi** backend consumes the Firebase data using **Pyrebase4**, runs **XGBoost** and **Isolation Forest** ML models, and serves a web dashboard on the 7" touchscreen LCD.
 
 ---
 
@@ -55,7 +55,7 @@ graph TB
 
     subgraph "RPi Backend"
         direction TB
-        FBAdmin["Firebase Admin SDK<br/>(Poll + Write)"]
+        FBAdmin["Pyrebase4<br/>(Poll + Write)"]
         XGB["XGBoost Classifier<br/>normal / minor_leak / major_leak"]
         ISO["Isolation Forest<br/>Unsupervised Anomaly Detection"]
         Flask["Flask Web App<br/>Dashboard + API"]
@@ -121,7 +121,7 @@ Step 3: FIREBASE UPLOAD (every 5–60 seconds via Firebase-ESP-Client)
         → Write to /readings/{device_id}/{timestamp}
         → Stream listener for /commands/{device_id}
 
-Step 4: RPi PROCESSING (polling via Firebase Admin SDK)
+Step 4: RPi PROCESSING (polling via Pyrebase4)
         → Poll /readings/{device_id} for new data
         → Extract features for ML
         → Run XGBoost inference
@@ -143,10 +143,13 @@ Step 5: USER ACTION
 |------|--------|----------|---------|
 | ESP32 → Firebase | Write + Stream | HTTPS/SSE | Firebase-ESP-Client |
 | Firebase → ESP32 | Stream Listener | Server-Sent Events | Firebase-ESP-Client |
-| RPi → Firebase | Read + Write | REST | Firebase Admin SDK |
-| Firebase → RPi | Poll (HTTP) | REST | Firebase Admin SDK |
+| RPi → Firebase | Read + Write | REST (Pyrebase4) | Pyrebase4 |
+| Firebase → RPi | Poll (HTTP) | REST | Pyrebase4 |
 | User → Dashboard | HTTP/WebSocket | HTTPS | Flask + JavaScript |
 | Dashboard → Commands | Write to /commands | HTTPS | Fetch API |
+| RPi → Firebase | HTTPS (Alert write) | JSON | On leak detection |
+| RPi → Telegram | HTTPS (Bot API) | Form | On leak alert |
+| **Remote → RPi** | **HTTPS (port forward)** | **HTML/JSON** | **On demand** |
 
 ---
 
@@ -156,9 +159,9 @@ Step 5: USER ACTION
 |----------|-----------|
 | **Firebase over custom server** | Managed real-time DB, built-in auth, no server maintenance |
 | **Firebase-ESP-Client** | Most mature Firebase library for ESP32, supports streaming (SSE) |
-| **Firebase Admin SDK (RPi)** | Official Python SDK for Firebase — full Realtime DB read/write |
+| **Pyrebase4** | Email/Password auth, client-style API, works on RPi |
 | **RPi over cloud hosting** | Local processing — no monthly fees, full control, no internet dependency for LAN dashboard |
 | **Isolation Forest + XGBoost** | XGBoost for known leak patterns, Isolation Forest for unknown anomalies |
 | **Check Valves per Fixture** | Prevents backflow contamination between fixtures |
 | **SD Card Backup** | Survives WiFi/Firebase outages — data never lost |
-| **Touchscreen LCD on RPi** | Dashboard display replaces OLED; web UI served locally on RPi |
+| **Port Forwarding + DDNS** | Remote access anywhere with internet; standard router feature |

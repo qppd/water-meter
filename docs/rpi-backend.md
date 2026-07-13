@@ -2,7 +2,8 @@
 
 > **Hardware:** Raspberry Pi 3B+/4/5  
 > **OS:** Raspberry Pi OS (64-bit) Bookworm  
-> **Stack:** Flask + Firebase Admin SDK + XGBoost + Isolation Forest
+> **Stack:** Flask + **Pyrebase4** + XGBoost + Isolation Forest  
+> **Remote Access:** Port forwarding + Dynamic DNS
 
 ---
 
@@ -20,8 +21,8 @@ source venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Upload Firebase service account key
-#    Copy serviceAccountKey.json to this directory
+# 4. Upload Firebase config
+#    Copy firebase_config.json to this directory
 
 # 5. Run Flask app
 python app.py
@@ -65,27 +66,40 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 3. Firebase Service Account
+### 3. Firebase Configuration (Pyrebase4)
 
-1. In Firebase Console → **Project Settings → Service Accounts**
-2. Click **Generate new private key**
-3. Save as `serviceAccountKey.json` in `rpi/` directory
+1. In Firebase Console → **Project Settings → General**
+2. Copy the **Web API Key**, **Database URL**, **Auth Domain**, **Project ID**, **Storage Bucket**, **Messaging Sender ID**, **App ID**
+3. Save as `firebase_config.json` in `rpi/` directory:
+
+```json
+{
+  "apiKey": "AIzaSy...",
+  "authDomain": "your-project.firebaseapp.com",
+  "databaseURL": "https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app",
+  "projectId": "your-project",
+  "storageBucket": "your-project.appspot.com",
+  "messagingSenderId": "123456789",
+  "appId": "1:123456789:web:abcdef123456"
+}
+```
 
 ```bash
 # Verify file exists
-ls -la serviceAccountKey.json
+ls -la firebase_config.json
 ```
 
-### 4. Environment Configuration
+### 4. Authentication (Email/Password)
 
-Create `.env` file (or edit `app.py` directly):
+Pyrebase4 uses email/password authentication:
 
 ```python
-# app.py configuration
-DEVICE_ID = "wm_001"
-FIREBASE_DB_URL = "https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app"
-SERVICE_ACCOUNT_PATH = "serviceAccountKey.json"
+# In your code:
+email = "esp32@your-project.iam.gserviceaccount.com"
+password = "your-strong-password"
 ```
+
+**Important:** The email/password user must be created in Firebase Console → **Authentication → Sign-in method → Email/Password → Add user**.
 
 ### 5. ML Model Files
 
@@ -171,7 +185,7 @@ journalctl -u water-meter.service -f
 
 ```
 flask>=2.3
-firebase-admin>=6.2
+pyrebase4>=4.5
 xgboost>=2.0
 scikit-learn>=1.3
 pandas>=2.0
@@ -189,7 +203,7 @@ requests>=2.31
 ```
 rpi/
 ├── app.py                 # Main Flask application
-├── firebase_listener.py   # Firebase Admin SDK polling
+├── firebase_listener.py   # Pyrebase4 polling
 ├── ml_inference.py        # XGBoost + Isolation Forest inference
 ├── alert_engine.py        # Notification system (Telegram, Email)
 ├── models/                # Trained ML models
@@ -205,7 +219,7 @@ rpi/
 │   ├── js/
 │   └── lib/
 ├── requirements.txt
-├── serviceAccountKey.json # Firebase service account (gitignored)
+├── firebase_config.json   # Firebase config for Pyrebase4 (gitignored)
 ├── .env                   # Environment variables (gitignored)
 └── water-meter.service    # systemd service file
 ```
@@ -228,8 +242,9 @@ app = Flask(__name__)
 
 # Initialize components
 listener = FirebaseListener(
-    db_url=os.getenv("FIREBASE_DB_URL"),
-    cred_path=os.getenv("SERVICE_ACCOUNT_PATH"),
+    firebase_config_path="firebase_config.json",
+    email=os.getenv("FIREBASE_EMAIL"),
+    password=os.getenv("FIREBASE_PASSWORD"),
     device_id=os.getenv("DEVICE_ID", "wm_001")
 )
 detector = LeakDetector(
@@ -270,29 +285,51 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)
 ```
 
-### firebase_listener.py — Firebase Admin SDK Polling
+---
+
+### firebase_listener.py — Pyrebase4 Polling
 
 ```python
-import firebase_admin
-from firebase_admin import credentials, db as firebase_db
+import pyrebase
+import json
 import threading
 import time
 from datetime import datetime
 
 class FirebaseListener:
-    def __init__(self, db_url, cred_path, device_id):
+    def __init__(self, firebase_config_path, email, password, device_id):
         self.device_id = device_id
         self.last_timestamp = None
+        self.email = email
+        self.password = password
         
-        # Initialize Firebase Admin SDK
-        cred = credentials.Certificate(cred_path)
-        firebase_admin.initialize_app(cred, {
-            "databaseURL": db_url
-        })
+        # Load Firebase config
+        with open(firebase_config_path, 'r') as f:
+            config = json.load(f)
         
-        self.readings_ref = firebase_db.reference(f"readings/{device_id}")
-        self.alerts_ref = firebase_db.reference(f"alerts/{device_id}")
-        self.commands_ref = firebase_db.reference(f"commands/{device_id}")
+        # Initialize Pyrebase4
+        self.firebase = pyrebase.initialize_app(config)
+        self.auth = self.firebase.auth()
+        self.db = self.firebase.database()
+        
+        # Sign in with email/password
+        self.user = self.auth.sign_in_with_email_and_password(email, password)
+        self.id_token = self.user['idToken']
+        
+        self.readings_ref = self.db.child(f"readings/{device_id}")
+        self.alerts_ref = self.db.child(f"alerts/{device_id}")
+        self.commands_ref = self.db.child(f"commands/{device_id}")
+        
+    def _refresh_token(self):
+        """Refresh auth token if expired"""
+        try:
+            self.user = self.auth.refresh(self.user['refreshToken'])
+            self.id_token = self.user['idToken']
+        except Exception as e:
+            print(f"Token refresh failed: {e}")
+            # Re-authenticate
+            self.user = self.auth.sign_in_with_email_and_password(self.email, self.password)
+            self.id_token = self.user['idToken']
         
     def start(self):
         """Start polling thread"""
@@ -305,13 +342,16 @@ class FirebaseListener:
                 self._check_new_readings()
             except Exception as e:
                 print(f"Poll error: {e}")
+                # Try to refresh token on auth errors
+                if "permission" in str(e).lower() or "unauthorized" in str(e).lower():
+                    self._refresh_token()
             time.sleep(5)  # Poll every 5 seconds
             
     def _check_new_readings(self):
         # Get latest reading
-        readings = self.readings_ref.order_by_key().limit_to_last(1).get()
-        if readings:
-            for ts, data in readings.items():
+        readings = self.readings_ref.order_by_key().limit_to_last(1).get(self.id_token)
+        if readings and readings.val():
+            for ts, data in readings.val().items():
                 if ts != self.last_timestamp:
                     self.last_timestamp = ts
                     self.process_reading(data)
@@ -330,24 +370,28 @@ class FirebaseListener:
                 "fixture_index": data.get('fixture_index', -1),
                 "valve_action": "monitoring"
             }
-            self.alerts_ref.push(alert_data)
+            self.alerts_ref.push(alert_data, self.id_token)
             
             # Send notification
             alert_engine.send_telegram(alert_data)
             
     def get_latest_reading(self):
-        return self.readings_ref.order_by_key().limit_to_last(1).get()
+        readings = self.readings_ref.order_by_key().limit_to_last(1).get(self.id_token)
+        return readings.val() if readings else None
         
     def get_recent_alerts(self, limit=20):
-        return self.alerts_ref.order_by_key().limit_to_last(limit).get()
+        alerts = self.alerts_ref.order_by_key().limit_to_last(limit).get(self.id_token)
+        return alerts.val() if alerts else None
         
     def send_command(self, command):
         self.commands_ref.push({
             "command": command,
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "source": "dashboard"
-        })
+        }, self.id_token)
 ```
+
+---
 
 ### ml_inference.py — XGBoost + Isolation Forest
 
@@ -405,6 +449,8 @@ class LeakDetector:
             
         return result
 ```
+
+---
 
 ### alert_engine.py — Notifications
 
@@ -525,39 +571,94 @@ class AlertEngine:
 
 ---
 
+## Remote Access: Port Forwarding + Dynamic DNS
+
+### 1. Router Port Forwarding
+
+| Setting | Value |
+|---------|-------|
+| **External Port** | 8443 (or any unused port) |
+| **Internal IP** | Raspberry Pi's local IP (e.g., 192.168.1.100) |
+| **Internal Port** | 5000 |
+| **Protocol** | TCP |
+
+**Example (TP-Link/Asus/Netgear):**
+1. Access router admin page (usually 192.168.1.1 or 192.168.0.1)
+2. Go to **Advanced → NAT Forwarding → Port Forwarding / Virtual Server**
+3. Add rule:
+   - Service Name: `WaterMeter`
+   - External Port: `8443`
+   - Internal IP: `<rpi-local-ip>`
+   - Internal Port: `5000`
+   - Protocol: `TCP`
+4. Save and apply
+
+### 2. Static DHCP Reservation (Recommended)
+
+Reserve a fixed IP for the RPi in router's DHCP settings so port forwarding doesn't break after reboot.
+
+### 3. Dynamic DNS (Optional but Recommended)
+
+If your ISP doesn't provide a static public IP:
+
+**Option A: DuckDNS (Free)**
+```bash
+# Create account at duckdns.org
+# Get token, then:
+curl "https://www.duckdns.org/update?domains=yourdomain&token=yourtoken&ip="
+# Add to cron for auto-update:
+crontab -e
+# */5 * * * * curl "https://www.duckdns.org/update?domains=yourdomain&token=yourtoken&ip="
+```
+
+**Option B: No-IP (Free tier)**
+```bash
+# Install noip2 client
+sudo apt install noip2
+# Configure: sudo noip2 -C
+```
+
+**Option C: Cloudflare Tunnel (Best for HTTPS)**
+```bash
+# Install cloudflared
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64.deb
+sudo dpkg -i cloudflared-linux-arm64.deb
+# Authenticate: cloudflared tunnel login
+# Create tunnel: cloudflared tunnel create water-meter
+# Route: cloudflared tunnel route dns water-meter yourdomain.com
+# Run as service
+```
+
+### 4. Access from Anywhere
+
+After port forwarding + DDNS:
+
+- **Local:** `http://<rpi-local-ip>:5000/`
+- **Remote:** `http://yourdomain.duckdns.org:8443/` or `https://yourdomain.com` (if Cloudflare Tunnel)
+
+### 5. Security Considerations
+
+| Measure | Implementation |
+|---------|----------------|
+| **HTTPS** | Use Cloudflare Tunnel (free SSL) or Caddy/Nginx reverse proxy with Let's Encrypt |
+| **Authentication** | Add basic auth or Flask-Login to dashboard |
+| **Firewall** | `sudo ufw allow 5000/tcp` (local), block unnecessary ports |
+| **Fail2Ban** | `sudo apt install fail2ban` — protect against brute force |
+| **Change default port** | Use non-standard external port (e.g., 8443 instead of 5000) |
+
+---
+
 ## Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
 | **App not loading** | Check Flask output: `journalctl -u water-meter.service -f` |
-| **"Internal Server Error"** | View error log: `sudo journalctl -u water-meter.service --since "5 min ago"` |
+| **"Internal Server Error"** | View Flask error log: `sudo journalctl -u water-meter.service --since "5 min ago"` |
 | **Module not found** | Activate venv → `pip install -r requirements.txt` |
 | **Memory error** | RPi 4 has 2-8GB RAM — check `free -h`. Reduce `n_estimators` in XGBoost if needed. |
 | **RPi not reachable** | Check network: `ping <rpi-ip>`. Ensure port 5000 is not blocked by firewall |
 | **RPi auto-start not working** | Check systemd: `sudo systemctl status water-meter.service` |
 | **SD card corruption** | Use a UPS and `sudo raspi-config` → Performance → Overlay File System for read-only root |
-
----
-
-## Remote Access
-
-### SSH Tunneling (for dashboard access)
-
-```bash
-# From your laptop
-ssh -L 5000:localhost:5000 pi@<rpi-ip>
-
-# Then open http://localhost:5000 in browser
-```
-
-### Ngrok (public URL)
-
-```bash
-# Install ngrok
-# Then:
-ngrok http 5000
-# Gives you a public https://xxx.ngrok.io URL
-```
 
 ---
 

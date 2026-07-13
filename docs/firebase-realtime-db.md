@@ -1,6 +1,6 @@
 # Firebase Realtime DB Schema
 
-> **Architecture:** ESP32 (Firebase-ESP-Client) ↔ Firebase Realtime DB ↔ RPi (Firebase Admin SDK)
+> **Architecture:** ESP32 (Firebase-ESP-Client) ↔ Firebase Realtime DB ↔ RPi (Pyrebase4)
 > **Data flow:** Sensors → ESP32 → Firebase → RPi → XGBoost → Dashboard
 
 ---
@@ -353,44 +353,175 @@ Dashboard-adjustable device parameters.
 
 ---
 
-## Firebase Admin SDK Code (RPi Backend)
+## Pyrebase4 Code (RPi Backend)
 
 ```python
-import firebase_admin
-from firebase_admin import credentials, db as firebase_db
+import pyrebase
+import json
+import threading
+import time
+from datetime import datetime
 
-# Initialize Firebase Admin SDK
-cred = credentials.Certificate("serviceAccountKey.json")
-firebase_admin.initialize_app(cred, {
-    "databaseURL": "https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app"
-})
+# Load Firebase config
+with open("firebase_config.json", "r") as f:
+    firebase_config = json.load(f)
+
+# Initialize Pyrebase4
+firebase = pyrebase.initialize_app(firebase_config)
+auth = firebase.auth()
+db = firebase.database()
+
+# Email/Password authentication
+EMAIL = "esp32@your-project.iam.gserviceaccount.com"
+PASSWORD = "your-strong-password"
+
+# Sign in
+user = auth.sign_in_with_email_and_password(EMAIL, PASSWORD)
+id_token = user['idToken']
+refresh_token = user['refreshToken']
 
 DEVICE_ID = "wm_001"
 
-# Poll latest readings
-ref = firebase_db.reference(f"readings/{DEVICE_ID}")
-readings = ref.order_by_key().limit_to_last(1).get()
+# References
+readings_ref = db.child(f"readings/{DEVICE_ID}")
+alerts_ref = db.child(f"alerts/{DEVICE_ID}")
+commands_ref = db.child(f"commands/{DEVICE_ID}")
 
-# Process data
-if readings:
-    for ts, data in readings.items():
-        features = extract_features(data)
-        prediction = xgboost_model.predict(features)
-        if prediction != "normal":
-            # Write alert
-            alert_data = {
-                "alert_type": prediction,
-                "timestamp": get_timestamp(),
-                "fixture_index": data.get("fixture_index", -1)
-            }
-            firebase_db.reference(f"alerts/{DEVICE_ID}").push(alert_data)
+def refresh_token():
+    """Refresh auth token if expired"""
+    global user, id_token
+    try:
+        user = auth.refresh(refresh_token)
+        id_token = user['idToken']
+    except Exception as e:
+        print(f"Token refresh failed: {e}")
+        # Re-authenticate
+        user = auth.sign_in_with_email_and_password(EMAIL, PASSWORD)
+        id_token = user['idToken']
 
-# Write a command to ESP32
-firebase_db.reference(f"commands/{DEVICE_ID}").push({
-    "command": "calibrate",
-    "timestamp": get_timestamp(),
-    "source": "ml_model"
-})
+def poll_readings():
+    """Poll Firebase for new readings every 5 seconds"""
+    last_timestamp = None
+    
+    while True:
+        try:
+            # Get latest reading
+            readings = readings_ref.order_by_key().limit_to_last(1).get(id_token)
+            if readings and readings.val():
+                for ts, data in readings.val().items():
+                    if ts != last_timestamp:
+                        last_timestamp = ts
+                        process_reading(data)
+        except Exception as e:
+            print(f"Poll error: {e}")
+            if "permission" in str(e).lower() or "unauthorized" in str(e).lower():
+                refresh_token()
+        time.sleep(5)
 
-# Full code: ./docs/rpi-backend.md
+def process_reading(data):
+    """Extract features and run ML inference"""
+    features = extract_features(data)
+    result = detector.predict(features)
+    
+    if result['final'] != 'normal':
+        # Write alert to Firebase
+        alert_data = {
+            "alert_type": result['final'],
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "confidence": result.get('confidence', 0),
+            "fixture_index": data.get('fixture_index', -1),
+            "valve_action": "monitoring"
+        }
+        alerts_ref.push(alert_data, id_token)
+        
+        # Send notification
+        alert_engine.send_telegram(alert_data)
+
+def send_command(command):
+    """Send command to ESP32 via Firebase"""
+    commands_ref.push({
+        "command": command,
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "source": "dashboard"
+    }, id_token)
+
+# Example: Get latest reading
+def get_latest_reading():
+    readings = readings_ref.order_by_key().limit_to_last(1).get(id_token)
+    return readings.val() if readings else None
+
+# Example: Get recent alerts
+def get_recent_alerts(limit=20):
+    alerts = alerts_ref.order_by_key().limit_to_last(limit).get(id_token)
+    return alerts.val() if alerts else None
+```
+
+---
+
+## Token Refresh Pattern (Pyrebase4)
+
+```python
+def _refresh_token(self):
+    """Refresh auth token if expired"""
+    try:
+        self.user = self.auth.refresh(self.user['refreshToken'])
+        self.id_token = self.user['idToken']
+    except Exception as e:
+        print(f"Token refresh failed: {e}")
+        # Re-authenticate
+        self.user = self.auth.sign_in_with_email_and_password(
+            self.email, self.password
+        )
+        self.id_token = self.user['idToken']
+```
+
+Call `_refresh_token()` before each DB operation or when catching "permission_denied" / "unauthorized" errors.
+
+---
+
+## Security Rules (for Pyrebase4 Email/Password Auth)
+
+```json
+{
+  "rules": {
+    "readings": {
+      ".indexOn": ["device_id"],
+      "$device_id": {
+        "$timestamp": {
+          ".read": "auth != null && auth.uid == $device_id",
+          ".write": "auth != null && auth.uid == $device_id",
+          ".validate": "newData.hasChildren(['inlet'])"
+        }
+      }
+    },
+    "commands": {
+      "$device_id": {
+        ".read": "auth != null && auth.uid == $device_id",
+        ".write": "auth.uid == $device_id"
+      }
+    },
+    "alerts": {
+      "$device_id": {
+        ".read": "auth != null",
+        ".write": "auth.uid == $device_id"
+      }
+    },
+    "devices": {
+      ".read": "auth != null",
+      "$device_id": {
+        ".write": "auth.uid == $device_id || auth.uid == 'dashboard-admin'"
+      }
+    },
+    "models": {
+      ".read": "auth != null",
+      ".write": "auth.uid == 'rpi-backend'"
+    },
+    "config": {
+      "$device_id": {
+        ".read": "auth != null && auth.uid == $device_id",
+        ".write": "auth.uid == 'dashboard-admin'"
+      }
+    }
+  }
+}
 ```

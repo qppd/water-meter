@@ -97,7 +97,7 @@ cd wmldad
 cd training/
 pip install -r requirements.txt
 # or manually:
-pip install xgboost scikit-learn pandas numpy joblib flask firebase-admin
+pip install xgboost scikit-learn pandas numpy joblib flask pyrebase4
 ```
 
 ---
@@ -117,8 +117,8 @@ pip install xgboost scikit-learn pandas numpy joblib flask firebase-admin
 1. In Firebase Console, go to **Build → Realtime Database**
 2. Click **Create Database**
 3. Choose location (closest to you — e.g., `asia-southeast1`)
-3. Start in **test mode** (we'll secure it later)
-4. Click **Enable**
+4. Start in **test mode** (we'll secure it later)
+5. Click **Enable**
 
 ### Step 3.3: Create Authentication (Email/Password)
 
@@ -136,12 +136,26 @@ pip install xgboost scikit-learn pandas numpy joblib flask firebase-admin
    User Password: [the password you set]
    ```
 
-### Step 3.4: Create Firebase Service Account
+### Step 3.4: Get Firebase Web Config (for Pyrebase4)
 
-1. Go to **Project Settings → Service accounts**
-2. Click **Generate new private key**
-3. **Save** the downloaded JSON file as `serviceAccountKey.json`
-4. This will be used by the RPi backend
+1. Go to **Project Settings → General**
+2. Scroll to **Your apps** → click **Web app** (</>) icon
+3. Register app name: `water-meter-rpi`
+4. **Copy the config object** — save as `firebase_config.json`:
+   ```json
+   {
+     "apiKey": "AIzaSy...",
+     "authDomain": "your-project.firebaseapp.com",
+     "databaseURL": "https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app",
+     "projectId": "your-project",
+     "storageBucket": "your-project.appspot.com",
+     "messagingSenderId": "123456789",
+     "appId": "1:123456789:web:abcdef123456"
+   }
+   ```
+5. This file will be used by Pyrebase4 on the RPi.
+
+> **Note:** No service account key needed for Pyrebase4 — it uses Email/Password authentication.
 
 ### Step 3.5: Set Up Database Structure
 
@@ -325,7 +339,16 @@ For testing without actual plumbing:
    source venv/bin/activate
    pip install -r requirements.txt
    ```
-5. **Upload Firebase service account key** (`serviceAccountKey.json`) to the RPi
+5. **Copy Firebase config:**
+   ```bash
+   cp firebase_config.json rpi/
+   ```
+6. **Set environment variables:**
+   ```bash
+   export FIREBASE_EMAIL="esp32@your-project.iam.gserviceaccount.com"
+   export FIREBASE_PASSWORD="your-strong-password"
+   export DEVICE_ID="wm_001"
+   ```
 6. **Run the Flask app:**
    ```bash
    python app.py

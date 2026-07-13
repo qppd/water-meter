@@ -1,6 +1,6 @@
 # Technology Stack — Water Meter with Leak Detection
 
-> **Architecture:** Sensors → ESP32 → Firebase Realtime DB → RPi → XGBoost → Dashboard (7" touchscreen LCD on RPi)
+> **Architecture:** Sensors → ESP32 → Firebase Realtime DB → RPi → XGBoost → Dashboard (7" touchscreen LCD on RPi + remote via port forwarding)
 
 ---
 
@@ -83,9 +83,9 @@ void setupFirebase() {
 | Feature | Usage |
 |---------|-------|
 | **Data structure** | JSON tree: `/readings/{device_id}/{timestamp}`, `/alerts/{alert_id}`, `/commands/{device_id}` |
-| **Authentication** | Email/Password or Anonymous for ESP32; Service Account for the RPi backend |
+| **Authentication** | Email/Password for ESP32 and RPi (Pyrebase4); Anonymous for ESP32 optional |
 | **Security Rules** | Validate schema, restrict write paths per device |
-| **Streaming** | ESP32 listens on `/commands`, RPi polls `/readings` via Firebase Admin SDK |
+| **Streaming** | ESP32 listens on `/commands`, RPi polls `/readings` via Pyrebase4 |
 | **Storage** | Free tier: 1 GB, 100 simultaneous connections, 10 GB/month bandwidth |
 | **Pricing** | Spark (free) is sufficient for 1–5 devices. Blaze (pay-as-you-go) for production. |
 
@@ -101,7 +101,7 @@ void setupFirebase() {
 | **OS** | Raspberry Pi OS (64-bit) | Bookworm | Stable Linux distribution for ARM |
 | **Language** | Python | ≥ 3.9 | ML ecosystem, Firebase SDK |
 | **Web Framework** | Flask | ≥ 2.x | Web dashboard + REST API endpoints |
-| **Firebase Client** | [firebase-admin](https://github.com/firebase/firebase-admin-python) | ≥ 6.0 | Firebase Realtime DB read/write (official SDK) |
+| **Firebase Client** | [Pyrebase4](https://github.com/nhorvath/Pyrebase4) | ≥ 4.5 | Firebase Realtime DB read/write via Email/Password auth |
 | **ML (primary)** | [XGBoost](https://xgboost.readthedocs.io/) | ≥ 2.0 | Gradient-boosted decision tree — leak classification |
 | **ML (anomaly)** | [scikit-learn](https://scikit-learn.org/) (IsolationForest) | ≥ 1.3 | Unsupervised anomaly detection |
 | **Data** | pandas, numpy | Latest | Feature engineering |
@@ -154,6 +154,7 @@ void setupFirebase() {
 | **Real-time** | Server-Sent Events (SSE) from Flask, or periodic fetch |
 | **Styling** | Bootstrap 5 / Tailwind CSS |
 | **Deployment** | RPi Flask — systemd service |
+| **Remote Access** | **Port forwarding** (router) + Dynamic DNS (optional) |
 
 ---
 
@@ -164,11 +165,12 @@ void setupFirebase() {
 | Sensor → ESP32 | Pulse (GPIO interrupt) | Rising edge | Continuous |
 | ESP32 → Firebase | HTTPS | JSON | Every 5–60s |
 | Firebase → ESP32 | SSE (stream) | JSON | Real-time |
-| Firebase → RPi | Poll (HTTP) | REST | On load / every 5s |
+| Firebase → RPi | Poll (HTTP) | REST (Pyrebase4) | On load / every 5s |
 | RPi → Firebase | HTTPS (REST) | JSON | On ML result |
 | RPi → Dashboard | HTTP (Flask) | HTML/JSON | On page load |
 | RPi → Firebase | HTTPS (Alert write) | JSON | On leak detection |
 | RPi → Telegram | HTTPS (Bot API) | Form | On leak alert |
+| **Remote → RPi** | **HTTPS (port forward)** | **HTML/JSON** | **On demand** |
 
 ---
 
@@ -193,8 +195,9 @@ void setupFirebase() {
 |-------------|--------|------------------------|--------------|
 | Firebase | Custom Node.js server, Supabase, AWS IoT | Managed, free tier, SSE streaming, ESP32 library |
 | Firebase-ESP-Client | HTTP client, MQTT, Blynk | Full Firebase API (stream + write), well-maintained |
-| Firebase Admin SDK | firebase-admin | Official SDK, best support |
+| **Pyrebase4** | firebase-admin | Email/Password auth, client-style API, works on RPi |
 | XGBoost | Random Forest, LightGBM, CNN | Best for tabular time-series |
 | Isolation Forest | Autoencoder, One-Class SVM | Unsupervised, low memory |
 | RPi (Raspberry Pi) | Heroku, Railway, cloud VPS | One-time cost, no monthly fees, full local control |
 | ESP32 38-pin NodeMCU-32S | 30-pin, ESP32-C3, ESP8266 | More GPIOs for 5 sensors + peripherals |
+| **Port Forwarding + DDNS** | Tailscale, ngrok, Cloudflare Tunnel | No third-party dependency, standard router feature |

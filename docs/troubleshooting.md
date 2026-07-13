@@ -120,22 +120,23 @@ Normal: balance < 10% of inlet
 | PushJSON returned error | Payload too large | Reduce data per push (limit to ~16KB) |
 | Stream not receiving | Permission denied | Check security rules |
 
-### RPi → Firebase
+### RPi → Firebase (Pyrebase4)
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| firebase-admin ImportError | Not installed | `pip install firebase-admin` |
+| ImportError | Not installed | `pip install pyrebase4` |
 | "Invalid service account" | Wrong JSON key | Re-download from Firebase Console |
-| Stream not working | firebase-admin uses polling | Poll `/readings/` every 5s instead |
+| Stream not working | Pyrebase4 uses polling | Poll `/readings/` every 5s instead |
 | "403 Forbidden" | Security rules blocking | Check rules in Firebase Console |
 | Rate limited | Too many connections | Reduce polling frequency |
+| "Permission denied" | Auth token expired | Refresh token before DB operations |
 
 ---
 
 ## 5. ML Model Issues
 
 | Problem | Cause | Fix |
-|---------|-------|-----|
+|---------|-------|------|
 | All predictions are "normal" | Model not trained / loaded | Check model file exists |
 | Too many false positives | Threshold too low | Increase `confidence_threshold` to 0.85 |
 | Misses all leaks | Training data doesn't include leaks | Add leak samples, retrain |
@@ -183,6 +184,8 @@ print(result)
 | Water hammer | Fast valve closing | Install water hammer arrestor |
 | Sensor not spinning | Debris in turbine | Remove and clean with soft brush |
 | Check valve stuck | Debris or hard water | Disassemble and clean |
+| Solenoid valve buzzing | Low voltage | Check 12V supply, increase wire gauge |
+| Valve won't close | Relay not activating | Check GPIO pin, test relay manually |
 
 ---
 

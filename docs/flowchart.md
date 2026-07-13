@@ -70,8 +70,8 @@ flowchart LR
         N[(/models)] --> O
     end
     
-    subgraph "RPi (Firebase Admin SDK)"
-        P[Firebase Admin SDK<br/>Poll Listener] --> J
+    subgraph "RPi (Pyrebase4)"
+        P[Pyrebase4<br/>Poll Listener] --> J
         P --> Q[Extract Features]
         Q --> R[XGBoost Inference]
         Q --> S[Isolation Forest<br/>Anomaly Score]
@@ -270,7 +270,7 @@ flowchart LR
     C --> D[ Feature<br/>Extraction]:::firmware
     D --> E[ Firebase<br/>ESP-Client]:::firmware
     E --> F[ Firebase<br/>Realtime DB]:::cloud
-    F --> G[ Firebase Admin SDK<br/>Poll]:::backend
+    F --> G[ Pyrebase4<br/>Poll]:::backend
     G --> H[ XGBoost<br/>Inference]:::ml
     G --> I[ Isolation<br/>Forest]:::ml
     H --> J[ Alert<br/>Engine]:::backend

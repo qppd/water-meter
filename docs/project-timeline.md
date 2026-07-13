@@ -96,7 +96,7 @@ Each week includes:
 | Item | Activity |
 |------|----------|
 |  **Goal** | Flask web app running on Raspberry Pi with Firebase connection |
-|  **Tasks** | • Set up Raspberry Pi (OS, dependencies)<br/>• Configure Firebase Admin SDK<br/>• Implement Firebase polling (or run listener as a service)<br/>• Create dashboard template (HTML + Chart.js)<br/>• Serve dashboard on RPi: `http://<rpi-ip>:5000/` |
+|  **Tasks** | • Set up Raspberry Pi (OS, dependencies)<br/>• Configure Pyrebase4<br/>• Implement Firebase polling (or run listener as a service)<br/>• Create dashboard template (HTML + Chart.js)<br/>• Serve dashboard on RPi: `http://<rpi-ip>:5000/` |
 |  **Deliverable** | Flask app live on RPi showing sensor data from Firebase |
 |  **Risk** | RPi must run 24/7 — use a reliable SD card and consider a UPS |
 
@@ -204,7 +204,7 @@ Each week includes:
 |------|---------------|-------------|
 | **Hardware Lead** | Sensors, wiring, plumbing, enclosure | Student 1 |
 | **Firmware Lead** | ESP32 code, Firebase-ESP-Client, local rules | Student 2 |
-| **Backend Lead** | RPi, Flask, Firebase Admin SDK, dashboard | Student 3 |
+| **Backend Lead** | RPi, Flask, Pyrebase4, dashboard | Student 3 |
 | **ML Lead** | XGBoost training, feature engineering, model evaluation | Student 4 |
 
 > 3-person team: combine Backend + ML roles. 2-person team: combine Firmware + Hardware, Backend + ML.
