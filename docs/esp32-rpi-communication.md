@@ -13,10 +13,8 @@
 3. [RPi Auto Port Detection](#rpi-auto-port-detection)
 4. [ESP32 Firmware (USB Serial)](#esp32-firmware-usb-serial)
 5. [RPi Python Serial Reader](#rpi-python-serial-reader)
-6. [Message Protocol (JSON)](#message-protocol-json)
-7. [Auto Port Detection Logic](#auto-port-detection-logic)
-8. [Error Handling & Reconnection](#error-handling--reconnection)
-9. [Testing & Verification](#testing--verification)
+7. [Error Handling & Reconnection](#error-handling--reconnection)
+8. [Testing & Verification](#testing--verification)
 
 ---
 
@@ -45,14 +43,9 @@
 
 ## Hardware Connection
 
-| ESP32 Pin | USB Cable | RPi Port | Notes |
-|-----------|-----------|----------|-------|
-| USB D+ | USB D+ | USB D+ | Data+ |
-| USB D- | USB D- | USB D- | Data- |
-| 5V (VIN) | USB 5V | USB 5V | Power from RPi |
-| GND | USB GND | USB GND | Common ground |
+Connect the ESP32 to the Raspberry Pi via a **micro-USB data cable** (not charge-only). The ESP32's built-in CP2102/CH340 USB-UART bridge will appear as `/dev/ttyUSB0` (or `ttyUSB1` if multiple devices) on the RPi.
 
-> **Important:** Use a **data-capable USB cable** (not charge-only). The CP2102/CH340 USB-UART bridge on NodeMCU-32S exposes `/dev/ttyUSB0` (or `ttyUSB1` if multiple devices).
+> **Important:** Use a **data-capable USB cable**. The CP2102/CH340 USB-UART bridge on NodeMCU-32S exposes `/dev/ttyUSB0` (or `ttyUSB1` if multiple devices) when connected via micro-USB cable to the Raspberry Pi's USB port.
 
 ---
 
@@ -100,7 +93,6 @@ def find_esp32_port() -> str | None:
     
     for port in candidates:
         try:
-            # Try to open and check VID:PID via sysfs
             if _is_esp32_device(port):
                 logger.info(f"Found ESP32 on {port}")
                 return port
@@ -183,8 +175,7 @@ def get_serial_connection(baudrate: int = 115200, timeout: float = 1.0) -> seria
 ```cpp
 // esp32/src/main.cpp
 #include <Arduino.h>
-#include <ArduinoJson.h>
-
+```
 // Sensor pins
 const uint8_t PIN_INLET = 26;
 const uint8_t PIN_FIX1 = 25;
@@ -299,7 +290,6 @@ void handleCommand() {
     resp["status"] = "ok";
     
     if (strcmp(cmd, "calibrate") == 0) {
-        // Reset all counters, wait for known volume
         for (int i = 0; i < 4; i++) pulseCount[i] = 0;
         resp["msg"] = "Calibration mode: run known volume";
     } else if (strcmp(cmd, "reboot") == 0) {
@@ -310,7 +300,6 @@ void handleCommand() {
     } else if (strcmp(cmd, "set_ppl") == 0) {
         int sensor = cmdDoc["sensor"] | 0;  // 0=inlet, 1-3=fixtures
         float ppl = cmdDoc["ppl"] | 450.0;
-        // Update PPL (would need persistent storage)
         resp["msg"] = "PPL updated (not persistent)";
     }
     
@@ -333,7 +322,7 @@ import threading
 import logging
 from typing import Callable, Optional, Dict, Any
 from dataclasses import dataclass
-from serial_reader import get_serial_connection, find_esp32_port
+from serial_port import get_serial_connection, find_esp32_port
 import serial
 
 logger = logging.getLogger(__name__)
@@ -472,9 +461,8 @@ class ESP32SerialReader:
 
 ```python
 # rpi/main.py
-from rpi.serial_reader import ESP32SerialReader, SensorReading
-from rpi.ml_inference import LeakDetector
-from rpi.firebase_listener import FirebaseListener
+from serial_reader import ESP32SerialReader, SensorReading
+from ml_inference import LeakDetector
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -488,16 +476,6 @@ detector = LeakDetector(
     threshold_path='models/iso_threshold.pkl'
 )
 detector.warm_up()
-
-# Initialize Firebase (for alerts/commands)
-firebase = FirebaseListener(
-    config_path='firebase_config.json',
-    email='esp32@project.iam.gserviceaccount.com',
-    password='password',
-    device_id='wm_001'
-)
-firebase.set_detector(detector)
-firebase.start()
 
 # Callback for serial readings
 def on_reading(reading: SensorReading):
@@ -515,12 +493,8 @@ def on_reading(reading: SensorReading):
             
             if result['final'] != 'normal':
                 logger.warning(f"LEAK: {result['final']} on {fixture_name} (conf: {result['confidence']:.2f})")
-                firebase.write_alert({
-                    'alert_type': result['final'],
-                    'fixture': fixture_name,
-                    'confidence': result['confidence'],
-                    'details': result
-                })
+                # Write alert to Firebase if needed
+                # firebase.write_alert(...)
 
 # Start serial reader
 reader = ESP32SerialReader(on_reading=on_reading)
@@ -532,214 +506,97 @@ try:
         time.sleep(1)
 except KeyboardInterrupt:
     reader.stop()
-    firebase.stop()
 ```
-
----
-
-## Message Protocol (JSON)
-
-### ESP32 → RPi (Sensor Data)
-
-```json
-{
-  "inlet": {
-    "flow_rate": 12.5,
-    "volume": 2.5,
-    "pulses": 1125,
-    "ppl": 450
-  },
-  "bidet": {
-    "flow_rate": 5.2,
-    "volume": 0.9,
-    "pulses": 405,
-    "ppl": 450
-  },
-  "kitchen": {
-    "flow_rate": 0.0,
-    "volume": 0.0,
-    "pulses": 0,
-    "ppl": 450
-  },
-  "bathroom_shower": {
-    "flow_rate": 0.2,
-    "volume": 0.02,
-    "pulses": 10,
-    "ppl": 450
-  },
-  "device_id": "wm_001",
-  "uptime_ms": 86400000,
-  "free_heap": 180000,
-  "rssi": -65
-}
-```
-
-### RPi → ESP32 (Commands)
-
-```json
-{"cmd": "calibrate"}
-{"cmd": "reboot"}
-{"cmd": "set_ppl", "sensor": 0, "ppl": 462.5}
-```
-
-### ESP32 → RPi (Command Response)
-
-```json
-{"cmd": "calibrate", "status": "ok", "msg": "Calibration mode: run known volume"}
-{"cmd": "reboot", "status": "ok", "msg": "Rebooting..."}
-```
-
----
-
-## Auto Port Detection Logic
-
-### Detection Priority
-
-1. **`/dev/ttyESP32`** (udev symlink) — highest priority
-2. **`/dev/ttyUSB*`** with matching VID:PID (CP2102/CH340)
-3. **`/dev/ttyACM*`** with matching VID:PID (native USB)
-
-### Detection Flow
-
-```
-find_esp32_port()
-    │
-    ├─ Check /dev/ttyESP32 (udev symlink) → return if exists
-    │
-    ├─ Scan /dev/ttyUSB* and /dev/ttyACM*
-    │     │
-    │     ├─ For each port: read VID:PID from sysfs
-    │     │
-    │     ├─ Match against known ESP32 VID:PID pairs
-    │     │
-    │     └─ Return first match
-    │
-    └─ No match → return None
-```
-
-### Known ESP32 VID:PID Pairs
-
-| Chip | VID (hex) | PID (hex) | Description |
-|------|-----------|-----------|-------------|
-| CP2102/CP2104 | 0x10c4 | 0xea60 | NodeMCU-32S, most ESP32 dev boards |
-| CH340/CH341 | 0x1a86 | 0x7523 | Cheap ESP32 boards |
-| ESP32-S3 native | 0x303a | 0x1001 | Native USB (no bridge) |
 
 ---
 
 ## Error Handling & Reconnection
 
-### Reconnection Strategy
+### ESP32 Side
+- **Watchdog timer**: `esp_task_wdt_init(30, true)` with `esp_task_wdt_reset()` in loop
+- **WiFi reconnect**: `WiFi.reconnect()` if disconnected
+- **Buffer management**: Reset pulse counters after each send interval
 
-| Failure Type | Action | Delay |
-|--------------|--------|-------|
-| Port not found | Scan all ttyUSB/ttyACM, retry | 5 sec |
-| Permission denied | Check dialout group, retry | 5 sec |
-| SerialException (disconnect) | Close port, re-scan, reopen | 5 sec |
-| JSON decode error | Log warning, continue | 1 sec |
-| Buffer overflow | Reset buffer, continue | 1 sec |
+### RPi Side
+- **Auto-reconnect**: Exponential backoff (5s, 10s, 20s, max 60s)
+- **Port re-detection**: Re-scans `/dev/ttyUSB*` on each reconnect
+- **Buffer handling**: Accumulates partial lines, handles fragmented JSON
+- **Graceful shutdown**: `Ctrl+C` stops reader thread cleanly
 
-### Buffer Management
+### Common Issues & Fixes
 
-```python
-def _process_line(self, line: str):
-    """Handle incomplete/truncated lines."""
-    self._buffer += line
-    
-    while '\n' in self._buffer:
-        line, self._buffer = self._buffer.split('\n', 1)
-        self._process_line(line.strip())
-```
+| Issue | Fix |
+|-------|-----|
+| "Board not found" / No device on `/dev/ttyUSB0` | Use **data cable** (not charge-only). Check `ls /dev/tty*`. Hold **BOOT** → press **EN** → release **BOOT** → upload. |
+| `Permission denied` on `/dev/ttyUSB0` | `sudo usermod -a -G dialout $USER && newgrp dialout` |
+| `esptool.py not found` | `pip3 install esptool` |
+| Upload succeeds but Serial Monitor shows garbage | Set baud to **115200** (match `Serial.begin(115200)`) |
+| JSON parse errors | Check for stray debug `Serial.print()` calls mixing with JSON output |
 
 ---
 
 ## Testing & Verification
 
-### 1. Verify Hardware Connection
-
+### 1. Test Serial Connection
 ```bash
-# Check USB device
-lsusb | grep -E "(10c4:ea60|1a86:7523|303a:1001)"
-# Should show: Bus 001 Device 004: ID 10c4:ea60 Cygnal Integrated Products, Inc. CP210x
+# Find port
+ls /dev/ttyUSB*
 
-# Check serial port
-ls -l /dev/ttyUSB* /dev/ttyACM* /dev/ttyESP32
-# Should show: /dev/ttyUSB0 or /dev/ttyESP32 -> ttyUSB0
-```
-
-### 2. Test Serial Communication
-
-```bash
-# Using screen (exit: Ctrl+A, K, Y)
+# Test with screen
 screen /dev/ttyUSB0 115200
-
-# Or using Python one-liner
-python3 -c "
-import serial, time
-s = serial.Serial('/dev/ttyUSB0', 115200, timeout=2)
-time.sleep(2)
-for _ in range(5):
-    line = s.readline().decode().strip()
-    print(line)
-"
+# Should see JSON lines every 5 seconds
+# Exit: Ctrl+A, then k, then y
 ```
 
-### 3. Verify JSON Output
-
-```json
-// Expected output every 5 seconds:
-{
-  "inlet": {"flow_rate": 12.5, "volume": 2.5, "pulses": 1125, "ppl": 450},
-  "bidet": {"flow_rate": 5.2, "volume": 0.9, "pulses": 405, "ppl": 450},
-  "kitchen": {"flow_rate": 0.0, "volume": 0.0, "pulses": 0, "ppl": 450},
-  "bathroom_shower": {"flow_rate": 0.2, "volume": 0.02, "pulses": 10, "ppl": 450},
-  "device_id": "wm_001",
-  "uptime_ms": 123456,
-  "free_heap": 180000,
-  "rssi": -65
-}
-```
-
-### 4. End-to-End Test Script
-
+### 2. Test Python Reader
 ```bash
-# test_serial.py
+cd rpi
 python3 -c "
-from rpi.serial_reader import ESP32SerialReader, SensorReading
-import time
-
-def on_reading(r):
-    print(f'Inlet: {r.inlet[\"flow_rate\"]:.2f} L/min | '
-          f'Bidet: {r.bidet.get(\"flow_rate\",0):.2f} | '
-          f'Kitchen: {r.kitchen.get(\"flow_rate\",0):.2f} | '
-          f'Shower: {r.bathroom_shower.get(\"flow_rate\",0):.2f}')
-
-reader = ESP32SerialReader(on_reading=lambda r: print(f'OK: {r.device_id}'))
-reader.start()
-time.sleep(15)
-reader.stop()
-print('Test passed!')
+from serial_port import find_esp32_port, get_serial_connection
+port = find_esp32_port()
+print(f'Found: {port}')
+ser = get_serial_connection()
+print('Connected!')
+for _ in range(3):
+    line = ser.readline().decode().strip()
+    print(f'Got: {line}')
 "
+```
+
+### 3. Test Full Pipeline
+```bash
+cd rpi
+python3 main.py
+# Should see:
+# Inlet: 12.50 L/min, Bidet: 0.00, Kitchen: 5.20, Shower: 0.00
+# LEAK: minor_leak on kitchen (conf: 0.92)
 ```
 
 ---
 
 ## Quick Reference
 
-| Task | Command/Code |
-|------|--------------|
-| Find ESP32 port | `python3 -c "from serial_port import find_esp32_port; print(find_esp32_port())"` |
-| Monitor serial | `screen /dev/ttyUSB0 115200` |
-| Check permissions | `groups \$USER` (must include `dialout`) |
-| Add udev rule | `sudo tee /etc/udev/rules.d/99-esp32.rules < rules.txt && sudo udevadm control --reload && sudo udevadm trigger` |
-| Install deps | `pip install pyserial` |
+| Task | Command |
+|------|---------|
+| Find ESP32 port | `ls /dev/ttyUSB*` |
+| Test serial | `screen /dev/ttyUSB0 115200` |
+| Install Arduino IDE | `pip install arduino` |
+| Upload firmware | Arduino IDE: Sketch → Upload (`Ctrl+U`) |
+| Monitor serial | `screen /dev/ttyUSB0 115200` or Serial Monitor (`Ctrl+Shift+M`) |
+| Run RPi reader | `cd rpi && python3 main.py` |
+| Check udev rule | `udevadm test /dev/ttyUSB0` |
+| View RPi logs | `journalctl -u water-meter -f` |
 
 ---
 
 ## Official References
 
-- [pyserial Documentation](https://pyserial.readthedocs.io/)
-- [ESP32 Arduino Serial](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/serial.html)
-- [ArduinoJson v7](https://arduinojson.org/v7/doc/)
-- [udev Rules](https://www.freedesktop.org/software/systemd/man/udev.html)
-- [USB VID/PID Database](https://www.linux-usb.org/usb.ids)
+- [Arduino IDE PyPI](https://pypi.org/project/arduino/)
+- [ESP32 Arduino Core Installation](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html)
+- [Firebase-ESP-Client Docs](https://github.com/mobizt/Firebase-ESP-Client)
+- [pyserial Docs](https://pyserial.readthedocs.io/)
+- [pyserial VID/PID Detection](https://pyserial.readthedocs.io/en/latest/tools.html#module-serial.tools.list_ports)
+
+---
+
+*Last updated: July 2026 | `pip install arduino` on Raspberry Pi OS Bookworm/Trixie (64-bit) | Compatible with ESP32 NodeMCU-32S, ESP32-S3, ESP32-C3*

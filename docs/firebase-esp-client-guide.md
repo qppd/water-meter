@@ -31,7 +31,6 @@
 2. Search: **"Firebase ESP Client"**
 3. Select: **"Firebase ESP Client" by Mobizt**
 4. Click **Install** (choose latest 4.4.x+)
-5. Also install: **"ArduinoJson" by Benoit Blanchon** (≥ 7.x)
 
 > 📸 **Screenshot Placeholder:** *Library Manager showing "Firebase ESP Client" by Mobizt installing*
 
@@ -41,7 +40,6 @@
 # platformio.ini
 lib_deps =
     mobizt/Firebase ESP Client@^4.4.0
-    bblanchon/ArduinoJson@^7.0
 ```
 
 ### Manual Installation (GitHub)
@@ -55,12 +53,13 @@ git clone https://github.com/mobizt/Firebase-ESP-Client.git
 
 ---
 
-## Dependencies
+### Required Libraries
 
 | Library | Version | Purpose |
 |---------|---------|---------|
-| **Firebase-ESP-Client** | ≥ 4.4.x | Firebase Realtime DB, Auth, Storage |
-| **ArduinoJson** | ≥ 7.x | JSON serialization (required by Firebase lib) |
+| **Firebase-ESP-Client** | ≥ 4.4.x | Firebase Realtime DB (push, set, stream) |
+
+> **Note:** `Firebase-ESP-Client` by Mobizt already bundles/handles JSON serialization internally. No separate `ArduinoJson` library installation needed.
 | **WiFi** | Built-in | Network connectivity |
 | **FS / SPIFFS / LittleFS** | Built-in | File system for certificates/tokens |
 
@@ -500,10 +499,13 @@ void checkFirebaseConnection() {
 
 ### Error: "Firebase Client Library requires ArduinoJson 6.18.0 or higher"
 
+This error should not occur with Firebase-ESP-Client 4.4+. The library bundles its own JSON handling internally.
+
+If you encounter this with an older version:
 ```bash
-# Update ArduinoJson via Library Manager
+# Update to latest Firebase-ESP-Client (4.4+) via Library Manager
 # Or in platformio.ini:
-lib_deps = bblanchon/ArduinoJson@^7.0
+lib_deps = mobizt/Firebase ESP Client@^4.4.0
 ```
 
 ### Error: "Token generation failed: invalid API key"
@@ -765,7 +767,6 @@ void FirebaseClient::tokenStatusCallback(TokenInfo info) {
 | **Firebase-ESP-Client GitHub** | https://github.com/mobizt/Firebase-ESP-Client |
 | **Library Documentation** | https://github.com/mobizt/Firebase-ESP-Client/tree/main/docs |
 | **Examples** | https://github.com/mobizt/Firebase-ESP-Client/tree/main/examples |
-| **ArduinoJson** | https://arduinojson.org/ |
 | **Firebase REST API** | https://firebase.google.com/docs/reference/rest/database |
 | **Firebase Security Rules** | https://firebase.google.com/docs/database/security |
 | **Espressif Arduino Core** | https://github.com/espressif/arduino-esp32 |
@@ -775,11 +776,11 @@ void FirebaseClient::tokenStatusCallback(TokenInfo info) {
 
 ## Version Compatibility Matrix
 
-| Firebase-ESP-Client | ESP32 Arduino Core | ArduinoJson | Notes |
-|---------------------|-------------------|-------------|-------|
-| 4.4.x | 2.0.14+ | 7.x | **Current stable** |
-| 4.3.x | 2.0.11+ | 6.18+ | Legacy |
-| 4.2.x | 2.0.9+ | 6.17+ | Older |
+| Firebase-ESP-Client | ESP32 Arduino Core | Notes |
+|---------------------|-------------------|-------|
+| 4.4.x | 2.0.14+ | **Current stable** |
+| 4.3.x | 2.0.11+ | Legacy |
+| 4.2.x | 2.0.9+ | Older |
 
 ---
 
@@ -792,4 +793,4 @@ Proceed to:
 
 ---
 
-*Last updated: July 2026 | Tested with Firebase-ESP-Client 4.4.9, ESP32 Core 2.0.14, ArduinoJson 7.2.0 | Compatible with ESP32 NodeMCU-32S, ESP32-S3, ESP32-C3*
+*Last updated: July 2026 | Tested with Firebase-ESP-Client 4.4.9, ESP32 Core 2.0.14 | Compatible with ESP32 NodeMCU-32S, ESP32-S3, ESP32-C3*

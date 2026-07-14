@@ -50,7 +50,8 @@ Install required libraries via Library Manager (**Tools** → **Manage Libraries
 | Library | Version |
 |---------|---------|
 | **Firebase ESP Client** (by mobizt) | ≥ 4.4.x |
-| **ArduinoJson** (by Benoit Blanchon) | ≥ 7.x |
+
+> **Note:** `Firebase-ESP-Client` by Mobizt already bundles/handles JSON serialization internally. No separate `ArduinoJson` library installation needed.
 
 ---
 

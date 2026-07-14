@@ -336,15 +336,8 @@ These run on the ESP32 when Firebase/ML is unreachable — less accurate but wor
 4. Select port: **Tools -> Port -> COMx** (check Windows Device Manager for the COM port)
 5. Install libraries via Library Manager (Tools -> Manage Libraries):
    - `Firebase ESP Client` by mobizt
-   - `ArduinoJson` by bblanchon
 
-### Required Libraries
-
-| Library | Version | Purpose |
-|---------|---------|---------|
-| Firebase-ESP-Client | 4.4+ | Firebase Realtime DB (push, set, stream) |
-| ArduinoJson | 7+ | JSON payload serialization |
-
+> **Note:** `Firebase-ESP-Client` by Mobizt already bundles/handles JSON serialization internally. No separate `ArduinoJson` library installation needed.
 ### Compile and Upload
 
 1. Open `src/water-meter.ino` in Arduino IDE

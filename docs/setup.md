@@ -69,7 +69,8 @@ Check [BOM.md](./bom.md) for complete list with Shopee/Lazada links. Minimum ess
    - Tools -> Board -> Boards Manager -> search **ESP32** -> install **ESP32 Arduino**
 4. Install required libraries via Library Manager (Tools -> Manage Libraries):
    - `Firebase ESP Client` by mobizt
-   - `ArduinoJson` by bblanchon
+
+> **Note:** `Firebase-ESP-Client` by Mobizt already bundles/handles JSON serialization internally. No separate `ArduinoJson` library installation needed.
 
 ### Step 2.2: Install Python
 
