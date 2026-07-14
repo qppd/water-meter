@@ -119,7 +119,7 @@ void setupFirebase() {
 | `minor_leak` | Drip / slow leak (0.1–0.5 L/min sustained >30s) | Label 1 |
 | `major_leak` | Burst / stuck valve (>5 L/min for >30s) | Label 2 |
 
-> See [ML Model](./ml-model.md) for complete model training guide and performance benchmarks.
+> See [ML Model](./ml-complete-guide.md) for complete model training guide and performance benchmarks.
 
 ---
 
@@ -176,7 +176,7 @@ void setupFirebase() {
 | XGBoost | Random Forest, LightGBM, CNN | Best for tabular time-series |
 | Isolation Forest | Autoencoder, One-Class SVM | Unsupervised, low memory |
 | RPi (Raspberry Pi) | Heroku, Railway, cloud VPS | One-time cost, no monthly fees, full local control |
-| ESP32 38-pin NodeMCU-32S | 30-pin, ESP32-C3, ESP8266 | More GPIOs for 4 sensors + peripherals |
+| ESP32 38-pin ESP32 Dev Module | 30-pin, ESP32-C3, ESP8266 | More GPIOs for 4 sensors + peripherals |
 | **Port Forwarding + DDNS** | Tailscale, ngrok, Cloudflare Tunnel | No third-party dependency, standard router feature |
 
 ---

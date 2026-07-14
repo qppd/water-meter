@@ -17,7 +17,7 @@
 5. [Expand Filesystem](#5-expand-filesystem)
 6. [System Update & Upgrade](#6-system-update--upgrade)
 7. [Install RealVNC Server](#7-install-realvnc-server)
-8. [Configure VNC for Headless/Remote Access](#8-configure-vnc-for-headlessremote-access)
+8. [Configure VNC for Touchscreen/Remote Access](#8-configure-vnc-for-touchscreenremote-access)
 
 ### Phase 2: Project Setup
 9. [Clone Water Meter Project](#9-clone-water-meter-project)
@@ -225,21 +225,20 @@ ssh pi@water-meter.local
 
 ---
 
-## 7. Install RealVNC Server
+## 7. Enable RealVNC Server
 
-### 7.1 Install via APT (Recommended for Pi OS)
+RealVNC is **pre-installed** on Raspberry Pi OS Desktop. You only need to enable it.
+
+### 7.1 Verify Installation
 ```bash
-# RealVNC is pre-installed on Raspberry Pi OS Desktop
-# Verify:
+# Check if RealVNC is installed
 dpkg -l | grep realvnc
-
-# If not installed (Lite version):
-sudo apt update
-sudo apt install -y realvnc-vnc-server realvnc-vnc-viewer
+# Should show: realvnc-vnc-server, realvnc-vnc-viewer
 ```
 
 ### 7.2 Enable VNC Server
 ```bash
+# Via raspi-config (recommended)
 sudo raspi-config
 # Interface Options → VNC → Yes → OK → Finish
 ```
@@ -255,9 +254,9 @@ systemctl status vncserver-x11-serviced
 
 ---
 
-## 8. Configure VNC for Headless/Remote Access
+## 8. Configure VNC for Touchscreen/Remote Access
 
-### 8.1 Set VNC Password (Required for Headless)
+### 8.1 Set VNC Password (Required for Touchscreen/Remote)
 ```bash
 # Set VNC password (different from user password)
 sudo -u pi vncpasswd -service
@@ -267,17 +266,16 @@ sudo -u pi vncpasswd -service
 sudo systemctl restart vncserver-x11-serviced
 ```
 
-### 8.2 Configure for Headless (No Monitor)
-If running **headless** (no HDMI monitor):
-
+### 8.2 Configure Display Resolution (for 800×480 Touchscreen)
 ```bash
-# Enable virtual desktop
+# Set resolution for 7" touchscreen
 sudo raspi-config
-# Advanced Options → VNC Resolution → 1920x1080 (or your preferred)
+# Advanced Options → Resolution → 800x480
 # OR via config.txt:
 echo "hdmi_force_hotplug=1" | sudo tee -a /boot/firmware/config.txt
 echo "hdmi_group=2" | sudo tee -a /boot/firmware/config.txt
-echo "hdmi_mode=82" | sudo tee -a /boot/firmware/config.txt  # 1080p 60Hz
+echo "hdmi_mode=87" | sudo tee -a /boot/firmware/config.txt
+echo "hdmi_cvt=800 480 60 6 0 0 0" | sudo tee -a /boot/firmware/config.txt
 
 sudo reboot
 ```
@@ -1827,7 +1825,7 @@ sudo systemctl daemon-reload && sudo systemctl enable water-meter && sudo system
 | **Module not found** | Ensure venv activated: `source /home/pi/wmldad/rpi/venv/bin/activate`. |
 | **Port 5000 in use** | `sudo lsof -i :5000` → kill process, or change `FLASK_PORT` in `.env`. |
 | **SD card full** | `df -h` → clean with `sudo apt clean`, `sudo journalctl --vacuum-time=7d`. |
-| **VNC headless no display** | Add to `/boot/firmware/config.txt`: `hdmi_force_hotplug=1`, `hdmi_group=2`, `hdmi_mode=82`. Reboot. |
+| **VNC no display / touchscreen not detected** | Add to `/boot/firmware/config.txt`: `hdmi_force_hotplug=1`, `hdmi_group=2`, `hdmi_mode=87`, `hdmi_cvt=800 480 60 6 0 0 0`. Reboot. |
 
 ---
 
@@ -1961,7 +1959,7 @@ xinput list
 
 1. **Hardware:** Wire ESP32 + 4× YF-S201 per [block-diagram.md](./block-diagram.md)
 2. **Firmware:** Flash ESP32 per [esp32-firmware-complete-guide.md](./esp32-firmware-complete-guide.md)
-3. **Calibrate:** Bucket test per [calibration.md](./calibration.md)
+3. **Calibrate:** Bucket test per [esp32-firmware-complete-guide.md](./esp32-firmware-complete-guide.md#sensor-calibration-bucket-test)
 4. **ML Training:** Follow [ml-complete-guide.md](./ml-complete-guide.md) for real models
 5. **Remote Access:** Configure Cloudflare Tunnel for HTTPS access from anywhere
 

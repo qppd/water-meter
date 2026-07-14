@@ -1388,8 +1388,8 @@ rpi/
 ## Next Steps
 
 1. **Deploy hardware** — Wire ESP32 + 4× YF-S201 per [block-diagram.md](./block-diagram.md)
-2. **Flash firmware** — Upload ESP32 code per [esp32-setup-guide.md](./esp32-setup-guide.md)
-3. **Calibrate sensors** — Bucket test per [calibration.md](./calibration.md)
+2. **Flash firmware** — Upload ESP32 code per [esp32-firmware-complete-guide.md](./esp32-firmware-complete-guide.md)
+3. **Calibrate sensors** — Bucket test per [esp32-firmware-complete-guide.md#sensor-calibration-bucket-test](./esp32-firmware-complete-guide.md#sensor-calibration-bucket-test)
 4. **Train initial model** — Follow this guide with synthetic data
 5. **Deploy RPi backend** — Copy files, create service, test dashboard
 6. **Collect real data** — Run for 2 weeks, simulate leaks weekly

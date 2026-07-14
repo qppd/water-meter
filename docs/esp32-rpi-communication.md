@@ -45,7 +45,7 @@
 
 Connect the ESP32 to the Raspberry Pi via a **micro-USB data cable** (not charge-only). The ESP32's built-in CP2102/CH340 USB-UART bridge will appear as `/dev/ttyUSB0` (or `ttyUSB1` if multiple devices) on the RPi.
 
-> **Important:** Use a **data-capable USB cable**. The CP2102/CH340 USB-UART bridge on NodeMCU-32S exposes `/dev/ttyUSB0` (or `ttyUSB1` if multiple devices) when connected via micro-USB cable to the Raspberry Pi's USB port.
+> **Important:** Use a **data-capable USB cable**. The CP2102/CH340 USB-UART bridge on ESP32 Dev Module exposes `/dev/ttyUSB0` (or `ttyUSB1` if multiple devices) when connected via micro-USB cable to the Raspberry Pi's USB port.
 
 ---
 
@@ -55,7 +55,7 @@ Connect the ESP32 to the Raspberry Pi via a **micro-USB data cable** (not charge
 
 ```bash
 # /etc/udev/rules.d/99-esp32.rules
-# CP2102 (NodeMCU-32S)
+# CP2102 (ESP32 Dev Module)
 SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="ttyESP32", MODE="0666", GROUP="dialout"
 # CH340 (some ESP32 boards)
 SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", SYMLINK+="ttyESP32", MODE="0666", GROUP="dialout"
@@ -78,7 +78,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 ESP32_VID_PID = [
-    (0x10c4, 0xea60),  # CP2102/CP2104 (NodeMCU-32S)
+    (0x10c4, 0xea60),  # CP2102/CP2104 (ESP32 Dev Module)
     (0x1a86, 0x7523),  # CH340
     (0x303a, 0x1001),  # ESP32-S3 native USB
 ]
@@ -599,4 +599,4 @@ python3 main.py
 
 ---
 
-*Last updated: July 2026 | `pip install arduino` on Raspberry Pi OS Bookworm/Trixie (64-bit) | Compatible with ESP32 NodeMCU-32S, ESP32-S3, ESP32-C3*
+*Last updated: July 2026 | `pip install arduino` on Raspberry Pi OS Bookworm/Trixie (64-bit) | Compatible with ESP32 ESP32 Dev Module, ESP32-S3, ESP32-C3*

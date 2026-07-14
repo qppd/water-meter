@@ -546,9 +546,9 @@ DEVICE_ID=wm_001
 
 Proceed to:
 1. [Project Setup Guide](./setup.md) — Complete system deployment
-2. [ESP32 Setup Guide](./esp32-setup-guide.md) — Firmware upload
-3. [RPi Backend Guide](./rpi-backend.md) — Backend deployment
+2. [ESP32 Setup Guide](./esp32-firmware-complete-guide.md) — Firmware upload
+3. [RPi Backend Guide](./pi-complete-setup.md) — Backend deployment
 
 ---
 
-*Last updated: July 2026 | Firebase Console UI v2026 | Tested with Spark (Free) Plan | Compatible with ESP32 NodeMCU-32S, RPi 4/5*
+*Last updated: July 2026 | Firebase Console UI v2026 | Tested with Spark (Free) Plan | Compatible with ESP32 ESP32 Dev Module, RPi 4/5*

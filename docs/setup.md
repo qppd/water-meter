@@ -250,7 +250,7 @@ For testing without actual plumbing:
 
 1. Connect ESP32 via USB cable
 2. In Arduino IDE, select your board:
-   - **Tools -> Board -> ESP32 Arduino -> NodeMCU-32S**
+   - **Tools -> Board -> ESP32 Arduino -> ESP32 Dev Module**
 3. Select the correct port:
    - **Tools -> Port -> COMx** (check Windows Device Manager for the COM port)
 4. Click **Sketch -> Verify/Compile** (Ctrl+R) to check for errors
@@ -288,7 +288,7 @@ For testing without actual plumbing:
 
 ## Phase 6: Sensor Calibration
 
-> Detailed procedure: [Calibration Guide](./calibration.md)
+> Detailed procedure: [Calibration Guide](./esp32-firmware-complete-guide.md#sensor-calibration-bucket-test)
 
 ### Quick Calibration (Bucket Test)
 
@@ -308,7 +308,7 @@ For testing without actual plumbing:
 
 ## Phase 7: RPi Backend Setup
 
-> **Detailed guide:** [RPi Backend App](./rpi-backend.md)
+> **Detailed guide:** [RPi Backend App](./pi-complete-setup.md)
 
 ### Quick Setup
 
@@ -347,13 +347,13 @@ For testing without actual plumbing:
    sudo systemctl start water-meter.service
    ```
 
-> See [RPi Backend App](./rpi-backend.md) for complete setup instructions, systemd service config, and remote access setup.
+> See [RPi Backend App](./pi-complete-setup.md) for complete setup instructions, systemd service config, and remote access setup.
 
 ---
 
 ## Phase 8: ML Model Training
 
-> Complete details: [ML Model](./ml-model.md)
+> Complete details: [ML Model](./ml-complete-guide.md)
 
 ### Quick Training
 
@@ -510,14 +510,12 @@ wmldad/
 │   ├── block-diagram.md
 │   ├── stacks.md
 │   ├── firebase-realtime-db.md
-│   ├── ml-model.md
-│   ├── firmware.md
-│   ├── setup.md
-│   ├── calibration.md
-│   ├── rpi-backend.md
+│   ├── esp32-firmware-complete-guide.md
+│   ├── esp32-rpi-communication.md
+│   ├── ml-complete-guide.md
+│   ├── pi-complete-setup.md
 │   ├── bom.md
-│   ├── troubleshooting.md
-│   └── project-timeline.md
+│   └── troubleshooting.md
 ├── src/                      # ESP32 firmware (Arduino C++ / .ino)
 │   ├── water-meter.ino          # Main Arduino sketch
 │   ├── config.h                 # WiFi, Firebase, sensor config

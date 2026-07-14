@@ -170,7 +170,7 @@ Step 5: USER ACTION
 
 | Component | Qty | Purpose |
 |-----------|-----|---------|
-| ESP32 38-Pin Dev Board (NodeMCU-32S) | 1 | Main MCU |
+| ESP32 38-Pin Dev Board (ESP32 Dev Module) | 1 | Main MCU |
 | ESP32 38-Pin Expansion Board | 1 | Screw terminals for wiring |
 | YF-S201 Flow Sensor | 4 | 1 inlet + 3 fixtures |
 | Check Valve 1/2" | 3 | One per fixture (backflow prevention) |
