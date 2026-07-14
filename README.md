@@ -66,14 +66,14 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 │  • XGBoost Model — leak classification (normal/minor/major)      │
 │  • Isolation Forest — unsupervised anomaly detection             │
 │  • Flask Web App — dashboard + API endpoints                     │
-│  • Alert Engine — Telegram notifications                         │
+│  • Alert Engine — In-app notifications + webhook                 │
 │  • Daily Retraining Pipeline — model improvement over time       │
 └──────────────────────────────────────────────────────────────────┘
                                ↓ (Port forwarding + DDNS)
 ┌──────────────────────────────────────────────────────────────────┐
 │                      USER LAYER                                   │
 │  • Web Dashboard (local: 7" touchscreen, remote: port forward)   │
-│  • Telegram / Email Alerts                                        │
+│  • In-App Alerts + Webhook                                       │
 │  • Remote Device Control                                          │
 └──────────────────────────────────────────────────────────────────┘
 ```
@@ -143,8 +143,8 @@ cd wmldad
 
 # 5. Train the model
 #    - Upload training/water_meter_ml_training.ipynb to Google Colab
-#    - Run all cells (Runtime -> Run all)
-#    - Trained models are saved to model/ folder
+#    - Runtime -> Run all
+#    - Models are saved to model/ folder automatically
 ```
 
 See [Setup Guide](./docs/setup.md) for complete step-by-step instructions.
@@ -217,9 +217,25 @@ wmldad/
 ├── model/                    # Trained models
 │   ├── xgboost_model.json
 │   └── isolation_forest.pkl
-├── wiring/                  # Wiring diagrams & enclosure designs
-│   ├── wmldad.png              # Static wiring diagram (PNG)
-│   └── wmldad.ckt              # Cirkit Designer source file
+├── wiring/                  # CAD, Cirkit Designer, enclosure designs
+│   ├── wmldad.ckt
+│   └── wmldad.png
+├── model/                  # 3D models (Fusion 360)
+│   ├── water-meter-fusion-360-file.f3d
+│   ├── water-meter-fixture.png
+│   ├── water-meter-fixture-1.png
+│   ├── water-meter-fixture-2.png
+│   ├── water-meter-fixture-3.png
+│   ├── water-meter-fixture-4.png
+│   ├── water-meter-fixture-5.png
+│   ├── water-meter-fixture-6.png
+│   ├── water-meter-fixture-7.png
+│   ├── water-meter-fixture-8.png
+│   ├── water-meter-fixture-9.png
+│   ├── water-meter-fixture-10.png
+│   ├── water-meter-fixture-11.png
+│   ├── water-meter-fixture-12.png
+│   └── water-meter-fixture-13.png
 └── README.md
 ```
 
@@ -272,10 +288,12 @@ crontab -e
 # Install cloudflared
 wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64.deb
 sudo dpkg -i cloudflared-linux-arm64.deb
+
 # Authenticate: cloudflared tunnel login
 # Create tunnel: cloudflared tunnel create water-meter
 # Route: cloudflared tunnel route dns water-meter yourdomain.com
 # Run as service
+sudo cloudflared service install
 ```
 
 ### 4. Access from Anywhere

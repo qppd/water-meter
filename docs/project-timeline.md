@@ -158,7 +158,7 @@ Each week includes:
 | Item | Activity |
 |------|----------|
 |  **Goal** | Complete all technical documentation |
-|  **Tasks** | • Write/update all docs/ files<br/>• Create user manual<br/>• Write API documentation<br/>• Add code comments<br/>• Document test results<br/>• Prepare system diagram images |
+|  **Tasks** | • Write/update all docs/ files<br/>• Create user manual<br/>• Write API documentation<br/>• Add code comments<br/>• Document test results<br/>• Prepare system diagram images<br/>• Add 3D model renders and Fusion 360 source reference |
 |  **Deliverable** | Complete repository documentation. All docs/ files final. |
 |  **Risk** | Use screenshots of Firebase Console, dashboard, and hardware setup. Visuals are important. |
 

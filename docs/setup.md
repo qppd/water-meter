@@ -552,5 +552,21 @@ wmldad/
 ├── wiring/                  # CAD, Cirkit Designer, enclosure designs
 │   ├── wmldad.ckt
 │   └── wmldad.png
+├── model/                  # 3D models (Fusion 360)
+│   ├── water-meter-fusion-360-file.f3d
+│   ├── water-meter-fixture.png
+│   ├── water-meter-fixture-1.png
+│   ├── water-meter-fixture-2.png
+│   ├── water-meter-fixture-3.png
+│   ├── water-meter-fixture-4.png
+│   ├── water-meter-fixture-5.png
+│   ├── water-meter-fixture-6.png
+│   ├── water-meter-fixture-7.png
+│   ├── water-meter-fixture-8.png
+│   ├── water-meter-fixture-9.png
+│   ├── water-meter-fixture-10.png
+│   ├── water-meter-fixture-11.png
+│   ├── water-meter-fixture-12.png
+│   └── water-meter-fixture-13.png
 └── README.md
 ```

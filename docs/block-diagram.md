@@ -147,6 +147,8 @@ Each YF-S201 sensor has 3 wires: **Red (VCC)**, **Black (GND)**, **Yellow (Signa
 - **Board/perf board side:** JST-XH 3-pin **Female** (soldered to perf board)
 - **Power input:** Terminal Block 2-pin Blue (5mm pitch) for 5V/GND from buck converter
 
+> **Note:** JST-XH connectors are purchased **pre-crimped / ready-to-use** — no crimp kit or crimping tool needed. Just solder the female connectors to the perf board and plug in the sensor cables.
+
 ---
 
 ## Power Distribution
@@ -252,6 +254,32 @@ block-beta
 | **Interactive Wiring Diagram** | Cirkit Designer (clickable, zoomable) | [app.cirkitdesigner.com/project/4f173a2b-5656-48ff-b98f-183483fecb1e](https://app.cirkitdesigner.com/project/4f173a2b-5656-48ff-b98f-183483fecb1e) |
 | **Static Wiring Diagram** | PNG image for docs | `../wiring/wmldad.png` |
 | **Cirkit Designer Source** | Editable .ckt file | `../wiring/wmldad.ckt` |
+
+---
+
+## 3D Enclosure Models
+
+All 3D models and Fusion 360 source files are in the `model/` folder:
+
+| File | Description |
+|------|-------------|
+| `water-meter-fusion-360-file.f3d` | Fusion 360 source file (editable) |
+| `water-meter-fixture.png` | Main fixture assembly render |
+| `water-meter-fixture-1.png` | Fixture view 1 |
+| `water-meter-fixture-2.png` | Fixture view 2 |
+| `water-meter-fixture-3.png` | Fixture view 3 |
+| `water-meter-fixture-4.png` | Fixture view 4 |
+| `water-meter-fixture-5.png` | Fixture view 5 |
+| `water-meter-fixture-6.png` | Fixture view 6 |
+| `water-meter-fixture-7.png` | Fixture view 7 |
+| `water-meter-fixture-8.png` | Fixture view 8 |
+| `water-meter-fixture-9.png` | Fixture view 9 |
+| `water-meter-fixture-10.png` | Fixture view 10 |
+| `water-meter-fixture-11.png` | Fixture view 11 |
+| `water-meter-fixture-12.png` | Fixture view 12 |
+| `water-meter-fixture-13.png` | Fixture view 13 |
+
+> Use the `.f3d` file in Fusion 360 to modify the enclosure design, add mounting holes, or adjust dimensions for different components.
 
 ---
 
