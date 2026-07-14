@@ -8,65 +8,81 @@
 <summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
-block-beta
-    columns 7
-    
-    block:plumbing:7
-        columns 7
-        
-        Inlet["Main Water<br/>Supply"]:1
-        FS_In["Inlet Flow<br/>Sensor"]:1
-        CV_In["Check<br/>Valve"]:1
-        Joint["Junction"]:1
-        Fixtures["To Fixtures<br/>1–3"]:3
+graph TB
+    subgraph "Plumbing Layer"
+        A[Main Water Supply] --> B[Inlet Flow Sensor<br/>YF-S201]
+        B --> C[Check Valve]
+        C --> D[Junction]
+        D --> E1[Fixture 1 Sensor]
+        D --> E2[Fixture 2 Sensor]
+        D --> E3[Fixture 3 Sensor]
+        E1 --> CV1[Check Valve] --> F1[Fixture 1]
+        E2 --> CV2[Check Valve] --> F2[Fixture 2]
+        E3 --> CV3[Check Valve] --> F3[Fixture 3]
     end
-    
-    space:7
-    
-    block:fixtures:7
-        columns 7
-        F1["Fixture 1<br/>Sensor"]:1
-        F2["Fixture 2<br/>Sensor"]:1
-        F3["Fixture 3<br/>Sensor"]:1
-        CV1["Check<br/>Vlv"] CV2["Check<br/>Vlv"] CV3["Check<br/>Vlv"]
-    end
-    
-    space:7
-    
-    block:esp32:7
-        columns 7
+
+    subgraph "ESP32 Edge Layer"
+        direction TB
+        Sensors["4× Flow Sensor<br/>Pulse Counters<br/>(ISR + Debounce)"]
+        Features["Feature Extractor<br/>flow_rate, volume,<br/>duration, time, ratio"]
+        FirebaseClient["Firebase-ESP-Client<br/>Stream + Write"]
+        LocalCtrl["Local Leak Rules"]
+        SPIFFS["SPIFFS Logger<br/>(Offline Backup)"]
         
-        block:pins:7
-            columns 7
-            P26["GPIO 26"] P25["GPIO 25"] P33["GPIO 33"] P32["GPIO 32"] Pins_Spacer:1 Pins_Spacer2:1 Pins_Spacer3:1
-        end
-        
-        block:mcu:7
-            columns 7
-            MCU["ESP32 38-Pin<br/>CP2102<br/>Xtensa LX6<br/>WiFi + BLE"]:7
-        end
-        
-        P26 --> MCU
-        P25 --> MCU
-        P33 --> MCU
-        P32 --> MCU
+        Sensors --> Features
+        Features --> FirebaseClient
+        Features --> LocalCtrl
+        Sensors --> SPIFFS
     end
-    
-    space:7
-    
-    block:cloud:7
-        columns 7
-        Firebase[" Firebase<br/>Realtime DB"]:3
-        RPi[" Raspberry Pi<br/>Flask + ML"]:4
+
+    subgraph "Firebase Realtime DB"
+        direction TB
+        Readings["/readings/{device_id}/{ts}<br/>Raw sensor data"]
+        Alerts["/alerts/{alert_id}<br/>Leak events"]
+        Commands["/commands/{device_id}<br/>Device commands"]
+        Models["/models/{version}<br/>ML metadata"]
     end
+
+    subgraph "RPi Backend"
+        direction TB
+        FBAdmin["Pyrebase4<br/>(Poll + Write)"]
+        XGB["XGBoost Classifier<br/>normal / minor_leak / major_leak"]
+        ISO["Isolation Forest<br/>Unsupervised Anomaly Detection"]
+        Flask["Flask Web App<br/>Dashboard + API"]
+        AlertEngine["Alert Engine<br/>In-App + Webhook"]
+        Retrain["Daily Retrain Pipeline"]
+        
+        FBAdmin --> XGB
+        FBAdmin --> ISO
+        XGB --> Flask
+        ISO --> Flask
+        Flask --> AlertEngine
+        Flask --> Retrain
+    end
+
+    subgraph "User Layer"
+        Dashboard["Web Dashboard<br/>Real-time Charts"]
+        Notif["In-App + Webhook<br/>Alerts"]
+        Cmd["Remote Device<br/>Control"]
+    end
+
+    B --> Sensors
+    E1 --> Sensors
+    E2 --> Sensors
+    E3 --> Sensors
     
-    FS_In --> P26
-    F1 --> P25
-    F2 --> P33
-    F3 --> P32
+    FirebaseClient --> Readings
+    FirebaseClient --> Alerts
+    Commands --> FirebaseClient
     
-    MCU --> Firebase
-    Firebase --> RPi
+    Readings --> FBAdmin
+    Alerts --> FBAdmin
+    Commands --> FBAdmin
+    
+    Flask --> Dashboard
+    AlertEngine --> Notif
+    Dashboard --> Cmd
+    Cmd --> Commands
 ```
 
 </details>
@@ -159,30 +175,18 @@ Each YF-S201 sensor has 3 wires: **Red (VCC)**, **Black (GND)**, **Yellow (Signa
 <summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
-block-beta
-    columns 5
-    
-    AC["220V AC<br/>Outlet"]:1
-    
-    PSU12["12V 5A<br/>Switching PSU<br/>(S-60-12 / LRS-60-12)"]:2
-    
-    ESPV["ESP32 VIN<br/>(5V)"]:1
-    
-    SensorV["Flow Sensors<br/>VCC (5V)"]:1
-    
-    Buck["LM2596S<br/>12V → 5V<br/>Buck Converter"]:1
-    
-    AC --> PSU12
-    PSU12 --> Buck
-    Buck --> ESPV
-    Buck --> SensorV
+graph LR
+    AC[220V AC<br/>Outlet] --> PSU12[12V 5A<br/>Switching PSU<br/>(S-60-12 / LRS-60-12)]
+    PSU12 --> Buck[LM2596S<br/>12V → 5V<br/>Buck Converter]
+    Buck --> ESPV[ESP32 VIN<br/>(5V)]
+    Buck --> SensorV[Flow Sensors<br/>VCC (5V)]
 ```
 
 </details>
 
 > **Power Architecture:**
 > - **220V AC** → **12V 5A Switching Power Supply (S-60-12 / LRS-60-12)** 
-> - **12V** → **LM2596S Buck Converter** → **5V** for ESP32 + Flow Sensors
+> - **12V** → **LM2596S Buck Converter** → **5V** for ESP32 + sensors
 > - 12V rail available for future 12V components if needed
 
 ---
@@ -195,20 +199,18 @@ block-beta
 <summary><b> Mermaid Source</b> (click to expand)</summary>
 
 ```mermaid
-block-beta
-    columns 4
-    
-    block:enclosure:4
-        columns 4
-        
-        ESP32Board["ESP32 +<br/>Expansion Board"]:1
-        
-        BuckConv["LM2596S<br/>Buck Converter<br/>(12V→5V)"]:1
-        
-        Terminal["Terminal Block<br/>Sensor Inputs<br/>(4 sensors)"]:2
-        
-        PSU12["12V 5A<br/>PSU (mounted)"]:2
+graph TB
+    subgraph "Enclosure"
+        ESP32Board["ESP32 +<br/>Expansion Board"]
+        BuckConv["LM2596S<br/>Buck Converter<br/>(12V→5V)"]
+        Terminal["Terminal Block<br/>Sensor Inputs<br/>(4 sensors)"]
+        PSU12["12V 5A<br/>PSU (mounted)"]
     end
+    
+    PSU12 --> BuckConv
+    BuckConv --> ESP32Board
+    BuckConv --> Terminal
+    ESP32Board --> Terminal
 ```
 
 </details>
@@ -243,7 +245,26 @@ block-beta
                    └─────────────┘
 ```
 
-> Flow sensors on **GPIO 26, 25, 33, 32** — direct connection, no pull-up resistors needed.
+> Flow sensors on **GPIO 26, 25, 33, 32** — direct connection, no pull-up resistors or capacitors needed (YF-S201 outputs digital pulses).
+
+---
+
+## Wiring Summary for 4 Flow Sensors
+
+Each YF-S201 sensor has 3 wires: **Red (VCC)**, **Black (GND)**, **Yellow (Signal)**
+
+| Connection | JST-XH 3-pin | Wire Color | Pin |
+|------------|--------------|------------|-----|
+| VCC | Pin 1 | Red | 5V |
+| GND | Pin 2 | Black | GND |
+| Signal | Pin 3 | Yellow | GPIO (26, 25, 33, 32) |
+
+**Connector Setup:**
+- **Sensor side:** JST-XH 3-pin **Male** (crimped to sensor wires)
+- **Board/perf board side:** JST-XH 3-pin **Female** (soldered to perf board)
+- **Power input:** Terminal Block 2-pin Blue (5mm pitch) for 5V/GND from buck converter
+
+> **Note:** JST-XH connectors are purchased **pre-crimped / ready-to-use** — no crimp kit or crimping tool needed. Just solder the female connectors to the perf board and plug in the sensor cables.
 
 ---
 
@@ -280,22 +301,3 @@ All 3D models and Fusion 360 source files are in the `model/` folder:
 | `water-meter-fixture-13.png` | Fixture view 13 |
 
 > Use the `.f3d` file in Fusion 360 to modify the enclosure design, add mounting holes, or adjust dimensions for different components.
-
----
-
-## Wiring Summary for 4 Flow Sensors
-
-Each YF-S201 sensor has 3 wires: **Red (VCC)**, **Black (GND)**, **Yellow (Signal)**
-
-| Connection | JST-XH 3-pin | Wire Color | Pin |
-|------------|--------------|------------|-----|
-| VCC | Pin 1 | Red | 5V |
-| GND | Pin 2 | Black | GND |
-| Signal | Pin 3 | Yellow | GPIO (26, 25, 33, 32) |
-
-**Connector Setup:**
-- **Sensor side:** JST-XH 3-pin **Male** (crimped to sensor wires)
-- **Board/perf board side:** JST-XH 3-pin **Female** (soldered to perf board)
-- **Power input:** Terminal Block 2-pin Blue (5mm pitch) for 5V/GND from buck converter
-
-> **Note:** JST-XH connectors are purchased **pre-crimped / ready-to-use** — no crimp kit or crimping tool needed. Just solder the female connectors to the perf board and plug in the sensor cables.

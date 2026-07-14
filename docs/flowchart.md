@@ -10,30 +10,22 @@
 ```mermaid
 flowchart TD
     A[Power On] --> B[ESP32 Initialization]
-    B --> C[Initialize All 4 Flow Sensors
-+ Attach ISRs]
+    B --> C[Initialize All 4 Flow Sensors<br/>+ Attach ISRs]
     C --> D[Connect to WiFi]
     D --> E{Connected?}
     E -->|Yes| F[Initialize Firebase-ESP-Client]
-    E -->|No| G[Offline Mode
-→ SPIFFS Logging]
-    F --> H[Start Firebase Stream Listener
-(commands)]
+    E -->|No| G[Offline Mode<br/>→ SPIFFS Logging]
+    F --> H[Start Firebase Stream Listener<br/>(commands)]
     G --> I[Enter Main Loop]
     H --> I
     
-    I --> J[Read All Pulse Counters
-Sensors 1–4]
-    J --> K[Calculate Flow Metrics
-per Fixture]
+    I --> J[Read All Pulse Counters<br/>Sensors 1–4]
+    J --> K[Calculate Flow Metrics<br/>per Fixture]
     K --> L[Update Status LEDs]
-    L --> M[Apply Local Leak Rules
-(non-ML fallback)]
+    L --> M[Apply Local Leak Rules<br/>(non-ML fallback)]
     
-    M --> N{Upload Interval?
-(5–60s)}
-    N -->|Yes| O[Push to Firebase
-→ /readings/{device_id}/{ts}]
+    M --> N{Upload Interval?<br/>(5–60s)}
+    N -->|Yes| O[Push to Firebase<br/>→ /readings/{device_id}/{ts}]
     N -->|No| P{Command Received?}
     
     O --> Q{Success?}
@@ -43,8 +35,7 @@ per Fixture]
     R --> P
     S --> P
     
-    P -->|Yes| T[Execute Command
-→ Calibration / Reboot]
+    P -->|Yes| T[Execute Command<br/>→ Calibration / Reboot]
     P -->|No| I
     
     T --> I
@@ -64,12 +55,9 @@ per Fixture]
 ```mermaid
 flowchart LR
     subgraph "ESP32 (Firebase-ESP-Client)"
-        A[Read Sensors] --> B[Build JSON
-Payload]
-        B --> C[Firebase.pushJSON
-→ /readings/{id}/{ts}]
-        D[Firebase.stream
-← /commands/{id}]
+        A[Read Sensors] --> B[Build JSON<br/>Payload]
+        B --> C[Firebase.pushJSON<br/>→ /readings/{id}/{ts}]
+        D[Firebase.stream<br/>← /commands/{id}]
         D --> E{New Command?}
         E -->|calibrate| H[Enter Calibration Mode]
         E -->|reboot| I[Reboot ESP32]
@@ -83,20 +71,16 @@ Payload]
     end
     
     subgraph "RPi (Pyrebase4)"
-        P[Pyrebase4
-Poll Listener] --> J
+        P[Pyrebase4<br/>Poll Listener] --> J
         P --> Q[Extract Features]
         Q --> R[XGBoost Inference]
-        Q --> S[Isolation Forest
-Anomaly Score]
+        Q --> S[Isolation Forest<br/>Anomaly Score]
         R --> T{Leak?}
         S --> T
-        T -->|Yes| U[Write Alert
-→ /alerts/{id}]
+        T -->|Yes| U[Write Alert<br/>→ /alerts/{id}]
         U --> L
         T -->|No| V[Log Normal Reading]
-        U --> W[In-App Notification
-(Web Dashboard)]
+        U --> W[In-App Notification<br/>(Web Dashboard)]
     end
     
     subgraph "User"
@@ -120,11 +104,9 @@ Anomaly Score]
 
 ```mermaid
 flowchart TD
-    A[Pulse from
-Flow Sensor N] --> B[ISR Triggered]
+    A[Pulse from<br/>Flow Sensor N] --> B[ISR Triggered]
     B --> C[Read millis()]
-    C --> D{ millis() - lastPulseTime[N]
-> 5ms ?}
+    C --> D{ millis() - lastPulseTime[N]<br/>> 5ms ?}
     D -->|Yes (valid pulse)| E[Increment pulseCount[N]]
     D -->|No (bounce)| F[Ignore]
     E --> G[Update lastPulseTime[N]]
@@ -146,8 +128,7 @@ Flow Sensor N] --> B[ISR Triggered]
 ```mermaid
 flowchart TD
     A[Raw Firebase Data] --> B[Parse JSON]
-    B --> C[For each fixture:
-extract raw metrics]
+    B --> C[For each fixture:<br/>extract raw metrics]
     C --> D[Compute Features]
     
     D --> D1["flow_rate (L/min)"]
@@ -160,8 +141,7 @@ extract raw metrics]
     D --> D8["is_night_time"]
     D --> D9["pulse_trend (slope)"]
     
-    D1 --> E[Feature Vector
-(9–12 features)]
+    D1 --> E[Feature Vector<br/>(9–12 features)]
     D2 --> E
     D3 --> E
     D4 --> E
@@ -188,22 +168,16 @@ extract raw metrics]
 
 ```mermaid
 flowchart TD
-    A[Feature Vector
-(9 features)] --> B[XGBoost Predict]
+    A[Feature Vector<br/>(9 features)] --> B[XGBoost Predict]
     B --> C[Class Probabilities]
     C --> D{argmax class}
     
-    D -->|normal
-confidence > 0.80| E[ Normal Usage]
-    D -->|minor_leak
-confidence > 0.70| F[ Minor Leak]
-    D -->|major_leak
-confidence > 0.85| G[ Major Leak]
-    D -->|low confidence
-< 0.70| H[ Uncertain]
+    D -->|normal<br/>confidence > 0.80| E[ Normal Usage]
+    D -->|minor_leak<br/>confidence > 0.70| F[ Minor Leak]
+    D -->|major_leak<br/>confidence > 0.85| G[ Major Leak]
+    D -->|low confidence<br/>< 0.70| H[ Uncertain]
     
-    H --> I[Isolation Forest
-Anomaly Score]
+    H --> I[Isolation Forest<br/>Anomaly Score]
     I --> J{Anomaly?}
     J -->|score > threshold| K[ Anomaly Detected]
     J -->|normal| L[Wait for more data]
@@ -217,10 +191,8 @@ Anomaly Score]
     N --> Q
     P --> Q
     
-    Q --> R[In-App Notification
-(Web Dashboard)]
-    Q --> S[Write Command
-→ /commands/{id}]
+    Q --> R[In-App Notification<br/>(Web Dashboard)]
+    Q --> S[Write Command<br/>→ /commands/{id}]
 ```
 
 </details>
@@ -236,19 +208,15 @@ Anomaly Score]
 
 ```mermaid
 flowchart TD
-    A[Firebase Stream Event
-← /commands/{device_id}] --> B{Command Type?}
+    A[Firebase Stream Event<br/>← /commands/{device_id}] --> B{Command Type?}
     
-    B -->|calibrate| J[Start Calibration
-Routine]
+    B -->|calibrate| J[Start Calibration<br/>Routine]
     B -->|reboot| I[Reboot ESP32]
     
-    J --> K[Update Status
-+ LED Indicators]
+    J --> K[Update Status<br/>+ LED Indicators]
     I --> K
     
-    K --> L[Acknowledge to Firebase
-→ command_acknowledged]
+    K --> L[Acknowledge to Firebase<br/>→ command_acknowledged]
 ```
 
 </details>
@@ -265,27 +233,20 @@ Routine]
 ```mermaid
 flowchart TD
     A[Every Read Cycle] --> B[Check inlet vs sum of fixtures]
-    B --> C{Inlet volume >
-sum(fixtures) + 10%?}
-    C -->|Yes| D[Hidden Leak Suspected
-→ Alert Locally]
+    B --> C{Inlet volume ><br/>sum(fixtures) + 10%?}
+    C -->|Yes| D[Hidden Leak Suspected<br/>→ Alert Locally]
     C -->|No| E[Balance OK]
     
-    A --> F[Check individual fixture
-continuous flow > 30 min]
-    F --> G{Pulse count > 0
-for > 30 min?}
-    G -->|Yes| H[Possible Stuck Valve /
-Running Toilet]
+    A --> F[Check individual fixture<br/>continuous flow > 30 min]
+    F --> G{Pulse count > 0<br/>for > 30 min?}
+    G -->|Yes| H[Possible Stuck Valve /<br/>Running Toilet]
     G -->|No| I[Fixture OK]
     
     D --> J[Send Firebase Alert]
     H --> J
     
-    A --> K[Check for very low
-continuous flow]
-    K --> L{Flow 0.1–0.5 L/min
-for > 5 min?}
+    A --> K[Check for very low<br/>continuous flow]
+    K --> L{Flow 0.1–0.5 L/min<br/>for > 5 min?}
     L -->|Yes| M[Drip Leak Suspected]
     M --> J
     L -->|No| N[No Leak]
@@ -304,33 +265,20 @@ for > 5 min?}
 
 ```mermaid
 flowchart LR
-    A[ Water Flow]:::physical --> B[ YF-S201
-Flow Sensor]:::physical
-    B --> C[ Pulse
-Interrupt]:::firmware
-    C --> D[ Feature
-Extraction]:::firmware
-    D --> E[ Firebase
-ESP-Client]:::firmware
-    E --> F[ Firebase
-Realtime DB]:::cloud
-    F --> G[ Pyrebase4
-Poll]:::backend
-    G --> H[ XGBoost
-Inference]:::ml
-    G --> I[ Isolation
-Forest]:::ml
-    H --> J[ Alert
-Engine]:::backend
+    A[ Water Flow]:::physical --> B[ YF-S201<br/>Flow Sensor]:::physical
+    B --> C[ Pulse<br/>Interrupt]:::firmware
+    C --> D[ Feature<br/>Extraction]:::firmware
+    D --> E[ Firebase<br/>ESP-Client]:::firmware
+    E --> F[ Firebase<br/>Realtime DB]:::cloud
+    F --> G[ Pyrebase4<br/>Poll]:::backend
+    G --> H[ XGBoost<br/>Inference]:::ml
+    G --> I[ Isolation<br/>Forest]:::ml
+    H --> J[ Alert<br/>Engine]:::backend
     I --> J
-    J --> K[ In-App
-Notification]:::user
-    F --> L[ Web
-Dashboard]:::user
-    F --> M[ ESP32
-Command Stream]:::firmware
-    M --> N[ Command
-Handler]:::firmware
+    J --> K[ In-App<br/>Notification]:::user
+    F --> L[ Web<br/>Dashboard]:::user
+    F --> M[ ESP32<br/>Command Stream]:::firmware
+    M --> N[ Command<br/>Handler]:::firmware
     
     classDef physical fill:#e1f5fe,stroke:#0288d1
     classDef firmware fill:#fff3e0,stroke:#f57c00
