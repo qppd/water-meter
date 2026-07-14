@@ -3,7 +3,7 @@
 # For ESP32 firmware, dependencies are managed via Arduino Library Manager
 
 # ============================================
-# RASPBERRY PI BACKEND (rpi/requirements.txt)
+# RASPBERRY PI BACKEND
 # ============================================
 # Web Framework
 flask>=3.0.0
@@ -24,7 +24,7 @@ python-dotenv>=1.0.0
 requests>=2.31.0
 
 # ============================================
-# ML TRAINING (training/requirements.txt)
+# ML TRAINING (for Google Colab / Local Jupyter)
 # ============================================
 # Data Processing
 pandas>=2.1.4

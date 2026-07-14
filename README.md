@@ -1,332 +1,151 @@
-# WMLDAD
+# WMLDAD — Smart Water Monitoring System
 
 > **A Research Project** — Smart Water Monitoring System that detects leaks, anomalies, and per-fixture consumption using ESP32, Firebase, Raspberry Pi, and Machine Learning (XGBoost).
 
 ---
 
-## Project Overview
+## Developer Quick-Start: Step-by-Step Process
 
-A complete IoT system that monitors water consumption across multiple fixtures in a building, detects leaks in real-time, and identifies anomalous usage patterns using machine learning on a **Raspberry Pi**.
+Follow these steps **in order**. Each step links to the detailed guide.
 
-### How It Works
+### Phase 1: Prepare (Do First)
 
-```text
-|[Inlet Flow Sensor] ─┐
-|[Fixture 1 Sensor] ──┤
-|[Fixture 2 Sensor] ──┤──→ ESP32 → Firebase Realtime DB → RPi (Flask + ML)
-|[Fixture 3 Sensor] ──┘                                              ↓
-                                    Leak Alert / Dashboard
-```
+| Step | Action | Guide | Est. Time |
+|------|--------|-------|-----------|
+| 1 | **Buy parts** — Order from BOM (Makerlab Electronics on Shopee/Lazada) | [BOM.md](./docs/bom.md) | 1–2 weeks shipping |
+| 2 | **Flash Raspberry Pi OS** — Trixie 64-bit, enable SSH + WiFi in Imager | [raspberry-pi-installation.md](./docs/raspberry-pi-installation.md) | 30 min |
+| 3 | **Create Firebase project** — Realtime DB + Email/Password auth + web app config | [firebase-setup-guide.md](./docs/firebase-setup-guide.md) | 20 min |
 
-### Key Features
-
--  **1 Inlet + 3 Fixture Flow Sensors** — total consumption + per-fixture monitoring (bidet, kitchen, bathroom shower)
--  **Fixture-Level Leak Detection** — exactly which fixture is leaking
--  **Real-time Firebase Sync** — data streamed via [Firebase-ESP-Client](https://github.com/mobizt/Firebase-ESP-Client)
--  **XGBoost ML Model** — detects leaks, anomalies, and usage patterns (server-side)
--  **Isolation Forest** — unsupervised anomaly detection for unknown patterns
--  **RPi Backend** — Flask + **Pyrebase4** + XGBoost
--  **Check Valves** — prevent backflow between fixtures
--  **Web Dashboard** — real-time monitoring via RPi Flask dashboard (7" touchscreen)
--  **Remote Access** — port forwarding + Dynamic DNS for worldwide access
--  **Local Data Logging** — SPIFFS backup when offline
+> ⚠️ **Do Step 1–3 in parallel.** Hardware shipping takes longest.
 
 ---
 
-## System Architecture
+### Phase 2: Hardware Assembly
 
-```text
-┌──────────────────────────────────────────────────────────────────┐
-│                      PLUMBING LAYER                              │
-│  Supply → Inlet Sensor → Check Valve → Junction → Fixture 1-3   │
-│                                         ↓ (×3)                   │
-│                                  [Sensor + Check Valve] → Faucet  │
-└──────────────────────────────────────────────────────────────────┘
-                               ↓ (pulse signals)
-┌──────────────────────────────────────────────────────────────────┐
-│                      ESP32 EDGE LAYER                             │
-│  • Pulse Counter (4× interrupts, debounced)                       │
-│  • Local Feature Extraction (flow rate, volume, duration)         │
-│  • Firebase-ESP-Client → Firebase Realtime DB (stream + write)    │
-│  • SPIFFS Logger (offline backup)                                 │
-└──────────────────────────────────────────────────────────────────┘
-                               ↓ (HTTPS/SSE stream)
-┌──────────────────────────────────────────────────────────────────┐
-│                      CLOUD LAYER                                  │
-│   Firebase Realtime Database                                    │
-│     - /readings/{device_id}/{timestamp} → raw sensor data        │
-│     - /alerts/{alert_id} → leak events                           │
-│     - /commands/{device_id} → device commands                    │
-│     - /models/{version} → ML model metadata                      │
-└──────────────────────────────────────────────────────────────────┘
-                               ↓ (Pyrebase4 polling)
-┌──────────────────────────────────────────────────────────────────┐
-│                      RPi BACKEND                                  │
-│  • Pyrebase4 — Firebase polling + writes                          │
-│  • XGBoost Model — leak classification (normal/minor/major)      │
-│  • Isolation Forest — unsupervised anomaly detection             │
-│  • Flask Web App — dashboard + API endpoints                     │
-│  • Alert Engine — In-app notifications + webhook                 │
-│  • Daily Retraining Pipeline — model improvement over time       │
-└──────────────────────────────────────────────────────────────────┘
-                               ↓ (Port forwarding + DDNS)
-┌──────────────────────────────────────────────────────────────────┐
-│                      USER LAYER                                   │
-│  • Web Dashboard (local: 7" touchscreen, remote: port forward)   │
-│  • In-App Alerts + Webhook                                       │
-│  • Remote Device Control                                          │
-└──────────────────────────────────────────────────────────────────┘
-```
+| Step | Action | Guide | Est. Time |
+|------|--------|-------|-----------|
+| 4 | **Wire ESP32 + 4× YF-S201** on expansion board (GPIO 26, 25, 33, 32) | [block-diagram.md](./docs/block-diagram.md#pin-connections) | 1 hr |
+| 5 | **Plumbing** — Install sensors in-line with check valves (arrow = flow direction) | [setup.md#phase-4-hardware-assembly](./docs/setup.md#phase-4-hardware-assembly) | 2–4 hrs |
+| 6 | **Enclosure** — Mount in IP67 box with cable glands | [block-diagram.md](./docs/block-diagram.md#component-layout-enclosure) | 1 hr |
 
 ---
 
-## Complete Documentation
+### Phase 3: ESP32 Firmware
 
-| Document | Description |
-|----------|-------------|
-| [System Architecture](./docs/system-architecture.md) | Detailed architecture with Mermaid diagrams |
-| [Flowchart](./docs/flowchart.md) | System flow, data flow, ML pipeline |
-| [Block Diagram](./docs/block-diagram.md) | Hardware connections, pinout, enclosure layout |
-| [Technology Stack](./docs/stacks.md) | Full tech stack with versions and justifications |
-| [Firebase Realtime DB Schema](./docs/firebase-realtime-db.md) | Complete Firebase database structure |
-| [ML Model](./docs/ml-model.md) | XGBoost + Isolation Forest — training, features, deployment |
-| [Firmware Guide](./docs/firmware.md) | ESP32 code structure, Firebase-ESP-Client usage |
-| [Setup Guide](./docs/setup.md) | Step-by-step from zero to working system |
-| [Calibration Guide](./docs/calibration.md) | Sensor calibration procedures |
-| [RPi Backend App](./docs/rpi-backend.md) | Deploying the backend on Raspberry Pi |
-| [Bill of Materials](./docs/bom.md) | Complete parts list with prices & links (Makerlab) |
-| [Troubleshooting](./docs/troubleshooting.md) | Common issues and solutions |
-| [Project Timeline](./docs/project-timeline.md) | 16-week breakdown with milestones |
+| Step | Action | Guide | Est. Time |
+|------|--------|-------|-----------|
+| 7 | **Install Arduino IDE 2.x** (Flatpak on RPi, or Windows/macOS) | [arduino-ide-installation.md](./docs/arduino-ide-installation.md) | 15 min |
+| 8 | **Add ESP32 board support** — Board Manager URL + install `esp32:esp32` | [esp32-setup-guide.md](./docs/esp32-setup-guide.md#arduino-ide-board-configuration) | 10 min |
+| 9 | **Install libraries** — `Firebase ESP Client` (mobizt) + `ArduinoJson` | [firmware.md](./docs/firmware.md#required-libraries) | 5 min |
+| 10 | **Configure `config.h`** — WiFi, Firebase API key, DB URL, user email/password, device ID | [setup.md#phase-5-esp32-firmware-upload](./docs/setup.md#phase-5-esp32-firmware-upload) | 10 min |
+| 11 | **Upload firmware** — Select NodeMCU-32S, correct port, Upload (Ctrl+U) | [esp32-setup-guide.md](./docs/esp32-setup-guide.md#upload-process--boot-modes) | 5 min |
+| 12 | **Verify** — Serial Monitor (115200): WiFi connect → Firebase stream start → sensor ISRs attached | [setup.md](./docs/setup.md#step-53-monitor-serial-output) | 5 min |
 
 ---
 
-## ML Model Summary
+### Phase 4: Sensor Calibration (Required Before ML)
 
-**Primary:** [XGBoost](./docs/ml-model.md) — gradient-boosted decision trees
-- 9 input features (flow rate, duration, time patterns, fixture ID, etc.)
-- 3 output classes: `normal`, `minor_leak`, `major_leak`
-- Accuracy target: ≥ 95%
-- Trained on RPi, served via Flask API
+| Step | Action | Guide | Est. Time |
+|------|--------|-------|-----------|
+| 13 | **Bucket test each sensor** — 5L measured, calculate PPL, update `config.h` | [calibration.md](./docs/calibration.md) | 30 min/sensor |
 
-**Secondary:** Isolation Forest — catches unknown/unseen anomaly patterns
-- Unsupervised — no training labels needed
-- Flags data points that don't match normal usage patterns
+> 🎯 Target: < 3% error per sensor. Uncalibrated sensors = false leaks / missed leaks.
 
 ---
 
-## Quick Start
+### Phase 5: Raspberry Pi Backend
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/qppd/wmldad.git
-cd wmldad
-
-# 2. Set up Firebase
-#    - Create a Firebase project
-#    - Enable Realtime Database
-#    - Download service account JSON (for ESP32)
-#    - Configure Firebase credentials in ESP32 firmware
-#    - Create email/password user for Pyrebase4 (RPi)
-
-# 3. Upload ESP32 firmware (Arduino IDE)
-#    - Open src/water-meter.ino in Arduino IDE
-#    - Select board: Tools -> Board -> ESP32 Arduino -> NodeMCU-32S
-#    - Select port: Tools -> Port -> COMx
-#    - Click Sketch -> Upload (Ctrl+U)
-
-# 4. Deploy RPi backend
-#    - Set up Raspberry Pi with Python 3.11+
-#    - Install dependencies: pip install -r rpi/requirements.txt
-#    - Copy firebase_config.json to rpi/
-#    - Run Flask app on RPi
-#    (Or use systemd service for auto-start)
-
-# 5. Train the model
-#    - Upload training/water_meter_ml_training.ipynb to Google Colab
-#    - Runtime -> Run all
-#    - Models are saved to model/ folder automatically
-```
-
-See [Setup Guide](./docs/setup.md) for complete step-by-step instructions.
+| Step | Action | Guide | Est. Time |
+|------|--------|-------|-----------|
+| 14 | **SSH into RPi** — `ssh pi@water-meter.local` | [raspberry-pi-networking.md](./docs/raspberry-pi-networking.md) | 5 min |
+| 15 | **Clone repo + create venv + install deps** | [rpi-backend.md](./docs/rpi-backend.md#quick-start) | 10 min |
+| 16 | **Copy `firebase_config.json` + `.env`** (from Firebase web app config) | [rpi-backend.md](./docs/rpi-backend.md#firebase-configuration-pyrebase4) | 5 min |
+| 17 | **Run Flask** — `python app.py`, verify dashboard at `http://<rpi-ip>:5000/` | [rpi-backend.md](./docs/rpi-backend.md#running-the-backend) | 5 min |
+| 18 | **Enable systemd service** for auto-start on boot | [rpi-backend.md](./docs/rpi-backend.md#production-mode-systemd-service) | 5 min |
 
 ---
 
-## Hardware Requirements (Minimum)
+### Phase 6: ML Model (Can Defer)
 
-| Item | Qty | Estimated Cost (₱) |
-|------|-----|-------------------|
-| ESP32 38-Pin Dev Board | 1 | ₱450 |
-| ESP32 38-Pin Expansion Board | 1 | ₱180 |
-| YF-S201 Flow Sensor | 4 | ₱720 |
-| Check Valve 1/2" | 3 | ₱360 |
-| Perf board + soldering | 1 set | ₱115 |
-| USB Micro Data Cable | 1 | ₱100 |
-| **TOTAL** | | **~₱2,110** |
+| Step | Action | Guide | Est. Time |
+|------|--------|-------|-----------|
+| 19 | **Train XGBoost + Isolation Forest** — Use Google Colab (GPU) | [ml-training-guide.md](./docs/ml-training-guide.md) | 30 min |
+| 20 | **Export models** — `xgboost_model.json`, `isolation_forest.pkl`, `scaler.pkl` to `rpi/models/` | [model-deployment-guide.md](./docs/model-deployment-guide.md) | 5 min |
+| 21 | **Verify inference** — Dashboard shows leak classifications | [ml-model.md](./docs/ml-model.md) | 5 min |
 
-> Full BOM with links, alternatives, and pricing tiers: [BOM.md](./docs/bom.md)
+> 💡 **Skip for initial bring-up.** System works with local ESP32 rules (inlet balance, continuous flow, drip detection) without ML. Add ML after hardware + data pipeline verified.
 
 ---
 
-## Project Structure
+### Phase 7: Remote Access (Optional)
 
-```text
-wmldad/
-├── docs/                     # Complete documentation (14 files)
-│   ├── system-architecture.md
-│   ├── flowchart.md
-│   ├── block-diagram.md
-│   ├── stacks.md
-│   ├── firebase-realtime-db.md
-│   ├── ml-model.md
-│   ├── firmware.md
-│   ├── setup.md
-│   ├── calibration.md
-│   ├── rpi-backend.md
-│   ├── bom.md
-│   ├── troubleshooting.md
-│   └── project-timeline.md
-├── src/                      # ESP32 firmware (Arduino C++ / .ino)
-│   ├── water-meter.ino          # Main Arduino sketch
-│   ├── config.h                 # WiFi, Firebase, sensor config
-│   ├── sensor_manager.h         # 4 sensor ISR management
-│   ├── flow_sensor.h            # Pulse counter class
-│   ├── firebase_client.h        # Firebase-ESP-Client wrapper
-│   ├── local_rules.h            # Offline leak detection
-│   ├── wifi_manager.h           # WiFi connect + reconnect
-│   ├── data_logger.h            # SPIFFS logging
-│   ├── alert_manager.h          # Buzzer + LED alerts
-│   ├── ntp_sync.h               # NTP time sync
-│   ├── ota_updater.h            # OTA firmware updates
-│   └── led_indicator.h          # Status LED patterns
-├── rpi/                  # RPi backend (Flask + ML)
-│   ├── app.py                # Flask web app
-│   ├── firebase_listener.py  # Pyrebase4 polling
-│   ├── ml_inference.py       # XGBoost + Isolation Forest
-│   ├── alert_engine.py       # Notification system
-│   ├── models/               # Trained models
-│   │   ├── xgboost_model.json
-│   │   └── isolation_forest.pkl
-│   ├── templates/            # Jinja2 HTML templates
-│   ├── static/               # CSS, JS, Chart.js
-│   ├── requirements.txt
-│   ├── firebase_config.json  # Pyrebase4 config (gitignored)
-│   └── water-meter.service   # systemd service file
-├── training/                  # ML training notebooks
-│   ├── water_meter_ml_training.ipynb   # Main training notebook (Colab/Jupyter)
-│   └── requirements.txt                # Dependencies for local runs
-├── model/                    # Trained models
-│   ├── xgboost_model.json
-│   └── isolation_forest.pkl
-├── wiring/                  # CAD, Cirkit Designer, enclosure designs
-│   ├── wmldad.ckt
-│   └── wmldad.png
-├── model/                  # 3D models (Fusion 360)
-│   ├── water-meter-fusion-360-file.f3d
-│   ├── water-meter-fixture.png
-│   ├── water-meter-fixture-1.png
-│   ├── water-meter-fixture-2.png
-│   ├── water-meter-fixture-3.png
-│   ├── water-meter-fixture-4.png
-│   ├── water-meter-fixture-5.png
-│   ├── water-meter-fixture-6.png
-│   ├── water-meter-fixture-7.png
-│   ├── water-meter-fixture-8.png
-│   ├── water-meter-fixture-9.png
-│   ├── water-meter-fixture-10.png
-│   ├── water-meter-fixture-11.png
-│   ├── water-meter-fixture-12.png
-│   └── water-meter-fixture-13.png
-└── README.md
-```
+| Step | Action | Guide | Est. Time |
+|------|--------|-------|-----------|
+| 22 | **Router port forward** — External 8443 → RPi:5000 | [rpi-backend.md](./docs/rpi-backend.md#remote-access-port-forwarding--ddns) | 10 min |
+| 23 | **DDNS** (DuckDNS free) or **Cloudflare Tunnel** (HTTPS) | [rpi-backend.md](./docs/rpi-backend.md#dynamic-dns-optional-but-recommended) | 15 min |
 
 ---
 
-## Remote Access (Port Forwarding + DDNS)
+## Essential Guides Only (Bookmark These)
 
-The RPi dashboard is accessible locally on the 7" touchscreen. For **remote access from anywhere with internet**:
-
-### 1. Router Port Forwarding
-
-| Setting | Value |
-|---------|-------|
-| **External Port** | 8443 (or any unused port) |
-| **Internal IP** | Raspberry Pi's local IP (e.g., 192.168.1.100) |
-| **Internal Port** | 5000 |
-| **Protocol** | TCP |
-
-**Example (TP-Link/Asus/Netgear):**
-1. Access router admin (usually 192.168.1.1 or 192.168.0.1)
-2. Go to **Advanced → NAT Forwarding → Port Forwarding / Virtual Server**
-3. Add rule:
-   - Service Name: `WaterMeter`
-   - External Port: `8443`
-   - Internal IP: `<rpi-local-ip>`
-   - Internal Port: `5000`
-   - Protocol: `TCP`
-4. Save and apply
-
-### 2. Static DHCP Reservation (Recommended)
-
-Reserve a fixed IP for the RPi in router's DHCP settings so port forwarding doesn't break after reboot.
-
-### 3. Dynamic DNS (Optional but Recommended)
-
-If your ISP doesn't provide a static public IP:
-
-**Option A: DuckDNS (Free)**
-```bash
-# Create account at duckdns.org
-# Get token, then:
-curl "https://www.duckdns.org/update?domains=yourdomain&token=yourtoken&ip="
-# Add to cron for auto-update:
-crontab -e
-# */5 * * * * curl "https://www.duckdns.org/update?domains=yourdomain&token=yourtoken&ip="
-```
-
-**Option B: Cloudflare Tunnel (Best for HTTPS)**
-```bash
-# Install cloudflared
-wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64.deb
-sudo dpkg -i cloudflared-linux-arm64.deb
-
-# Authenticate
-cloudflared tunnel login
-
-# Create tunnel
-cloudflared tunnel create water-meter
-
-# Route DNS
-cloudflared tunnel route dns water-meter yourdomain.com
-
-# Run as service
-sudo cloudflared service install
-```
-
-### 4. Access from Anywhere
-
-- **Local:** `http://<rpi-local-ip>:5000/`
-- **Remote:** `http://yourdomain.duckdns.org:8443/` or `https://yourdomain.com` (if Cloudflare Tunnel)
-
-### 5. Security Considerations
-
-| Measure | Implementation |
-|---------|----------------|
-| **HTTPS** | Use Cloudflare Tunnel (free SSL) or Caddy/Nginx reverse proxy with Let's Encrypt |
-| **Authentication** | Add basic auth or Flask-Login to dashboard |
-| **Firewall** | `sudo ufw allow 5000/tcp` (local), block unnecessary ports |
-| **Fail2Ban** | `sudo apt install fail2ban` — protect against brute force |
-| **Change default port** | Use non-standard external port (e.g., 8443 instead of 5000) |
+| Guide | Purpose |
+|-------|---------|
+| [BOM.md](./docs/bom.md) | Parts list with Shopee links, prices |
+| [raspberry-pi-installation.md](./docs/raspberry-pi-installation.md) | Pi OS Trixie 64-bit + SSH + WiFi |
+| [firebase-setup-guide.md](./docs/firebase-setup-guide.md) | Firebase project, auth, web config, security rules |
+| [block-diagram.md](./docs/block-diagram.md) | Pinout, wiring, enclosure layout |
+| [setup.md](./docs/setup.md) | Full phased walkthrough (reference) |
+| [calibration.md](./docs/calibration.md) | Bucket test procedure |
+| [arduino-ide-installation.md](./docs/arduino-ide-installation.md) | Flatpak on RPi, board manager, libraries |
+| [esp32-setup-guide.md](./docs/esp32-setup-guide.md) | Drivers, board select, boot modes, upload errors |
+| [rpi-backend.md](./docs/rpi-backend.md) | Flask + Pyrebase4 + systemd + remote access |
+| [firmware.md](./docs/firmware.md) | ESP32 code structure, Firebase-ESP-Client usage |
+| [troubleshooting.md](./docs/troubleshooting.md) | Serial commands, LED codes, common fixes |
 
 ---
 
-## For Students / Researchers
+## Guides Removed (Cause Delays)
 
-This project is designed as a **complete water monitoring project**. See:
+| Removed Guide | Why |
+|---------------|-----|
+| `ml-model.md` | Theory — read only if tuning model |
+| `ml-dataset-guide.md` | Data engineering — not needed for deployment |
+| `ml-training-guide.md` | Colab steps — only needed once for training |
+| `model-deployment-guide.md` | Edge optimization — default models work |
+| `project-timeline.md` | Student schedule — not for developers |
+| `stacks.md` | Version table — reference only |
+| `flowchart.md` / `system-architecture.md` | Diagrams — view once for understanding |
+| `raspberry-pi-networking.md` | SSH/mDNS — covered in Pi install guide |
+| `remote-desktop-guide.md` | RealVNC — not needed for headless operation |
 
-- **[Project Timeline](./docs/project-timeline.md)** — 16-week breakdown with milestones
-- **[Setup Guide](./docs/setup.md)** — step-by-step from parts to working system
-- **[ML Model](./docs/ml-model.md)** — theory and implementation details
-- **[Troubleshooting](./docs/troubleshooting.md)** — solutions to common problems
+---
+
+## Hardware Summary
+
+| Component | Qty | Key Spec |
+|-----------|-----|----------|
+| ESP32 38-pin (NodeMCU-32S) | 1 | CP2102 USB-UART |
+| ESP32 Expansion Board | 1 | Screw terminals |
+| YF-S201 Flow Sensor | 4 | 1/2" NPT, Hall effect |
+| Check Valve 1/2" | 3 | Brass/PVC, prevent backflow |
+| 12V 5A PSU + LM2596S buck | 1 | 220V → 12V → 5V |
+| IP67 ABS Enclosure | 1 | 175×125×75mm |
+| JST-XH 3-pin M/F | 4 each | Pre-crimped, no crimp tool |
+| Perf board 20×80mm | 2 | Soldered connections |
+
+---
+
+## Quick Verification Checklist
+
+After each phase, verify:
+
+- [ ] **Phase 1:** Pi boots, `ssh pi@water-meter.local` works, Firebase console shows project
+- [ ] **Phase 2:** All 4 sensors show pulses in Serial Monitor when water flows
+- [ ] **Phase 3:** Firebase `/readings/wm_001/` updates every 5 sec
+- [ ] **Phase 4:** 5L bucket test → < 3% error on each sensor
+- [ ] **Phase 5:** Dashboard at `:5000` shows live flow rates per fixture
+- [ ] **Phase 6:** Leak simulation (slow drip) → alert appears in dashboard
+- [ ] **Phase 7:** Remote URL (DDNS:8443 or Cloudflare) loads dashboard
 
 ---
 
