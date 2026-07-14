@@ -106,8 +106,8 @@ flowchart LR
 ```mermaid
 flowchart TD
     Pulse[/Pulse from Flow Sensor/] --> ISR[ISR Triggered]
-    ISR --> Time[Read millis()]
-    Time --> Debounce{Debounce Check<br/>dt > 5ms?}
+    ISR --> Time[Read millis]
+    Time --> Debounce{Debounce Check dt > 5ms?}
     Debounce -->|Yes| Count[Increment Pulse Counter]
     Debounce -->|No| Ignore[Ignore - Bounce]
     Count --> Update[Update Last Pulse Time]
@@ -143,7 +143,7 @@ flowchart TD
     Compute --> F8[is_night_time]
     Compute --> F9[pulse_trend]
     
-    F1 --> Vector[Feature Vector<br/>9 features]
+    F1 --> Vector[Feature Vector - 9 features]
     F2 --> Vector
     F3 --> Vector
     F4 --> Vector
@@ -154,7 +154,7 @@ flowchart TD
     F9 --> Vector
     
     Vector --> Scale[Scale & Normalize]
-    Scale --> Model[ML Models<br/>XGBoost + Isolation Forest]
+    Scale --> Model[ML Models - XGBoost + Isolation Forest]
 ```
 
 </details>
@@ -170,21 +170,21 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Features[/Feature Vector<br/>9 features/] --> XGB[XGBoost Predict]
+    Features[/Feature Vector - 9 features/] --> XGB[XGBoost Predict]
     XGB --> Probs[Class Probabilities]
     Probs --> Argmax{argmax Class}
     
-    Argmax -->|normal<br/>conf > 0.80| Normal[Normal Usage]
-    Argmax -->|minor_leak<br/>conf > 0.70| Minor[Minor Leak]
-    Argmax -->|major_leak<br/>conf > 0.85| Major[Major Leak]
-    Argmax -->|low confidence<br/>< 0.70| Uncertain[Uncertain]
+    Argmax -->|normal conf GT 0.80| Normal[Normal Usage]
+    Argmax -->|minor_leak conf GT 0.70| Minor[Minor Leak]
+    Argmax -->|major_leak conf GT 0.85| Major[Major Leak]
+    Argmax -->|low confidence LT 0.70| Uncertain[Uncertain]
     
-    Uncertain --> IF[Isolation Forest<br/>Anomaly Score]
-    IF --> IF_Thresh{Score > Threshold?}
+    Uncertain --> IF[Isolation Forest Anomaly Score]
+    IF --> IF_Thresh{Score GT Threshold?}
     IF_Thresh -->|Yes| Anomaly[Anomaly Detected]
     IF_Thresh -->|No| Wait[Wait for More Data]
     
-    Minor --> MinorCount{Consecutive >= 3?}
+    Minor --> MinorCount{Consecutive GE 3?}
     MinorCount -->|Yes| ConfirmedMinor[Confirmed Minor Leak]
     MinorCount -->|No| WatchMinor[Increment Counter & Watch]
     
@@ -210,7 +210,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Stream[/Firebase Stream Event<br/>commands/device_id/] --> CmdType{Command Type?}
+    Stream[/Firebase Stream Event commands/device_id/] --> CmdType{Command Type?}
     
     CmdType -->|calibrate| CalStart[Start Calibration Routine]
     CmdType -->|reboot| Reboot[Reboot ESP32]
@@ -222,7 +222,7 @@ flowchart TD
     Reset --> CalStatus
     Config --> CalStatus
     
-    CalStatus --> Ack[Send Acknowledgment<br/>command_acknowledged]
+    CalStatus --> Ack[Send Acknowledgment command_acknowledged]
 ```
 
 </details>
@@ -239,18 +239,18 @@ flowchart TD
 ```mermaid
 flowchart TD
     Cycle[Every Read Cycle] --> Rule1[Rule 1: Hidden Leak]
-    Rule1 --> Check1{Inlet Volume ><br/>Sum Fixtures + 10%?}
+    Rule1 --> Check1{Inlet Volume GT Sum Fixtures + 10%?}
     Check1 -->|Yes| Alert1[Hidden Leak Alert]
     Check1 -->|No| OK1[Balance OK]
     
     Cycle --> Rule2[Rule 2: Continuous Flow]
     Rule2 --> Loop{For Each Fixture}
-    Loop --> Check2{Pulse > 0 for > 30 min?}
+    Loop --> Check2{Pulse GT 0 for GT 30 min?}
     Check2 -->|Yes| Alert2[Stuck Valve / Running Toilet]
     Check2 -->|No| OK2[Fixture OK]
     
     Cycle --> Rule3[Rule 3: Drip Detection]
-    Loop2{For Each Fixture} --> Check3{Flow 0.1-0.5 L/min<br/>for > 5 min?}
+    Loop2{For Each Fixture} --> Check3{Flow 0.1-0.5 L/min for GT 5 min?}
     Check3 -->|Yes| Alert3[Drip Leak Suspected]
     Check3 -->|No| OK3[No Drip]
     
@@ -273,7 +273,7 @@ flowchart TD
 ```mermaid
 flowchart LR
     %% Physical Layer
-    Water[/Water Flow/]:::physical --> Sensor[YF-S201<br/>Flow Sensor]:::physical
+    Water[/Water Flow/]:::physical --> Sensor[YF-S201 Flow Sensor]:::physical
     Sensor --> Pulse[/Pulse Signal/]:::physical
     
     %% Firmware Layer
@@ -285,20 +285,20 @@ flowchart LR
     LocalRules --> FirebaseClient
     
     %% Cloud Layer
-    FirebaseClient -->|HTTPS/SSE| Firebase[(Firebase<br/>Realtime DB)]:::cloud
+    FirebaseClient -->|HTTPS SSE| Firebase[(Firebase Realtime DB)]:::cloud
     
     %% Backend Layer
     Firebase -->|Poll| Pyrebase[/Pyrebase4 Poll/]:::backend
     Pyrebase --> Features[Feature Extraction]:::backend
-    Features --> XGB[XGBoost<br/>Inference]:::ml
-    Features --> IF[Isolation Forest<br/>Anomaly]:::ml
+    Features --> XGB[XGBoost Inference]:::ml
+    Features --> IF[Isolation Forest Anomaly]:::ml
     XGB --> AlertEngine[Alert Engine]:::backend
     IF --> AlertEngine
-    AlertEngine --> Notify[In-App<br/>Notification]:::user
+    AlertEngine --> Notify[In-App Notification]:::user
     
     %% User Layer
     Firebase --> Dashboard[Web Dashboard]:::user
-    Firebase -->|Stream| ESP32Cmd[ESP32<br/>Command Stream]:::firmware
+    Firebase -->|Stream| ESP32Cmd[ESP32 Command Stream]:::firmware
     ESP32Cmd --> Handler[Command Handler]:::firmware
     
     classDef physical fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
