@@ -1,6 +1,6 @@
 # Setup Guide — Step-by-Step from Zero to Working System
 
-> **Target audience:** Students / researchers building a capstone project  
+> **Target audience:** Students / researchers building a water monitoring project  
 > **Estimated time:** 2–3 weeks (part-time)  
 > **Prerequisites:** Basic electronics, basic programming
 
@@ -451,8 +451,8 @@ cp training/scaler.pkl rpi/models/
 
 1. Install sensors in actual plumbing
 2. Perform bucket test on each sensor
-3. Update k-factor values in Firebase config
-4. Verify total consumption matches water bill
+2. Update k-factor values in Firebase config
+3. Verify total consumption matches water bill
 
 ### Monitoring
 

@@ -1,10 +1,10 @@
-#  WMLDAD
+# WMLDAD
 
-> **A Capstone / Research Project** — Smart Water Monitoring System that detects leaks, anomalies, and per-fixture consumption using ESP32, Firebase, Raspberry Pi, and Machine Learning (XGBoost).
+> **A Research Project** — Smart Water Monitoring System that detects leaks, anomalies, and per-fixture consumption using ESP32, Firebase, Raspberry Pi, and Machine Learning (XGBoost).
 
 ---
 
-##  Project Overview
+## Project Overview
 
 A complete IoT system that monitors water consumption across multiple fixtures in a building, detects leaks in real-time, and identifies anomalous usage patterns using machine learning on a **Raspberry Pi**.
 
@@ -33,7 +33,7 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 
 ---
 
-##  System Architecture
+## System Architecture
 
 ```text
 ┌──────────────────────────────────────────────────────────────────┐
@@ -80,7 +80,7 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 
 ---
 
-##  Complete Documentation
+## Complete Documentation
 
 | Document | Description |
 |----------|-------------|
@@ -96,11 +96,11 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 | [RPi Backend App](./docs/rpi-backend.md) | Deploying the backend on Raspberry Pi |
 | [Bill of Materials](./docs/bom.md) | Complete parts list with prices & links (Makerlab) |
 | [Troubleshooting](./docs/troubleshooting.md) | Common issues and solutions |
-| [Project Timeline](./docs/project-timeline.md) | Student capstone timeline with milestones |
+| [Project Timeline](./docs/project-timeline.md) | 16-week breakdown with milestones |
 
 ---
 
-##  ML Model Summary
+## ML Model Summary
 
 **Primary:** [XGBoost](./docs/ml-model.md) — gradient-boosted decision trees
 - 9 input features (flow rate, duration, time patterns, fixture ID, etc.)
@@ -114,7 +114,7 @@ A complete IoT system that monitors water consumption across multiple fixtures i
 
 ---
 
-##  Quick Start
+## Quick Start
 
 ```bash
 # 1. Clone the repository
@@ -151,7 +151,7 @@ See [Setup Guide](./docs/setup.md) for complete step-by-step instructions.
 
 ---
 
-##  Hardware Requirements (Minimum)
+## Hardware Requirements (Minimum)
 
 | Item | Qty | Estimated Cost (₱) |
 |------|-----|-------------------|
@@ -167,7 +167,7 @@ See [Setup Guide](./docs/setup.md) for complete step-by-step instructions.
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```text
 wmldad/
@@ -241,7 +241,7 @@ wmldad/
 
 ---
 
-##  Remote Access (Port Forwarding + DDNS)
+## Remote Access (Port Forwarding + DDNS)
 
 The RPi dashboard is accessible locally on the 7" touchscreen. For **remote access from anywhere with internet**:
 
@@ -289,9 +289,15 @@ crontab -e
 wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64.deb
 sudo dpkg -i cloudflared-linux-arm64.deb
 
-# Authenticate: cloudflared tunnel login
-# Create tunnel: cloudflared tunnel create water-meter
-# Route: cloudflared tunnel route dns water-meter yourdomain.com
+# Authenticate
+cloudflared tunnel login
+
+# Create tunnel
+cloudflared tunnel create water-meter
+
+# Route DNS
+cloudflared tunnel route dns water-meter yourdomain.com
+
 # Run as service
 sudo cloudflared service install
 ```
@@ -313,9 +319,9 @@ sudo cloudflared service install
 
 ---
 
-## ‍ For Students
+## For Students / Researchers
 
-This project is designed as a **complete capstone / thesis project**. See:
+This project is designed as a **complete water monitoring project**. See:
 
 - **[Project Timeline](./docs/project-timeline.md)** — 16-week breakdown with milestones
 - **[Setup Guide](./docs/setup.md)** — step-by-step from parts to working system
@@ -324,10 +330,10 @@ This project is designed as a **complete capstone / thesis project**. See:
 
 ---
 
-##  License
+## License
 
 MIT
 
-## ‍ Author
+## Author
 
 [qppd](https://github.com/qppd) — Quezon Province, Philippines

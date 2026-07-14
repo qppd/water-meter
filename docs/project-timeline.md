@@ -1,4 +1,4 @@
-# Project Timeline — Student Capstone Guide
+# Project Timeline — Water Monitoring Project Guide
 
 > **Project:** Smart Water Meter with Leak Detection & Anomaly Detection  
 > **Duration:** 16 weeks (1 semester)  
@@ -8,7 +8,7 @@
 
 ## Overview
 
-This timeline is designed for undergraduate students (BS Computer Engineering, BS Electronics Engineering, BS Computer Science, BS Information Technology) completing a capstone or thesis project.
+This timeline is designed for undergraduate students (BS Computer Engineering, BS Electronics Engineering, BS Computer Science, BS Information Technology) completing a water monitoring project.
 
 Each week includes:
 -  **Goal** — What should be accomplished
@@ -166,9 +166,9 @@ Each week includes:
 
 | Item | Activity |
 |------|----------|
-|  **Goal** | Write final capstone paper or thesis chapter |
+|  **Goal** | Write final project paper or report chapter |
 |  **Tasks** | • Chapter 1: Introduction<br/>• Chapter 2: Review of Related Literature<br/>• Chapter 3: Methodology (System Design)<br/>• Chapter 4: Results and Discussion<br/>• Chapter 5: Conclusion and Recommendations<br/>• Add references (IEEE/APA format) |
-|  **Deliverable** | Complete capstone paper (5 chapters) |
+|  **Deliverable** | Complete project paper (5 chapters) |
 |  **Risk** | Cite at least 15–20 references. Compare your results with existing literature. |
 
 ### Week 16: Presentation & Defense
@@ -238,7 +238,7 @@ Each week includes:
 | Raspberry Pi (4/5) | ₱2,500 |
 | **Grand Total** | **~₱6,280** |
 
->  **Tip:** Request budget from department. Many schools have ₱5,000–₱10,000 capstone budget per group.
+>  **Tip:** Request budget from department. Many schools have ₱5,000–₱10,000 project budget per group.
 
 ---
 
