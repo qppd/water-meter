@@ -96,8 +96,7 @@ Follow these steps **in order**. Each step links to the detailed guide.
 | [block-diagram.md](./docs/block-diagram.md) | Pinout, wiring, enclosure layout |
 | [setup.md](./docs/setup.md) | Full phased walkthrough (reference) |
 | [calibration.md](./docs/calibration.md) | Bucket test procedure |
-| [arduino-ide-installation.md](./docs/arduino-ide-installation.md) | Flatpak on RPi, board manager, libraries |
-| [esp32-setup-guide.md](./docs/esp32-setup-guide.md) | Drivers, board select, boot modes, upload errors |
+| [esp32-setup-guide.md](./docs/esp32-setup-guide.md) | Drivers, board select, boot modes, upload errors, Arduino IDE install |
 | [rpi-backend.md](./docs/rpi-backend.md) | Flask + Pyrebase4 + systemd + remote access |
 | [firmware.md](./docs/firmware.md) | ESP32 code structure, Firebase-ESP-Client usage |
 | [troubleshooting.md](./docs/troubleshooting.md) | Serial commands, LED codes, common fixes |

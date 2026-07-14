@@ -1,23 +1,39 @@
-# ESP32 Setup Guide — Complete Configuration for Water Meter Project
+# ESP32 Complete Setup Guide — Raspberry Pi OS Trixie 64-bit (Debian 13)
 
 > **Target:** ESP32 NodeMCU-32S (38-pin) with Expansion Board  
-> **OS:** Windows / Linux / Raspberry Pi OS (cross-platform)  
+> **Host OS:** Raspberry Pi OS Trixie 64-bit (Debian 13) on Pi 3B+/4/5  
+> **Method:** `pip install arduino` (official Arduino CLI + IDE 2.x package)  
 > **Audience:** Complete hardware/software setup from unboxing to first upload
 
 ---
 
 ## Table of Contents
 
-1. [Hardware Overview](#hardware-overview)
-2. [Driver Installation](#driver-installation)
-3. [Arduino IDE / CLI Board Configuration](#arduino-ide--cli-board-configuration)
-4. [Selecting the Correct Board](#selecting-the-correct-board)
-5. [Selecting COM / ttyUSB Port](#selecting-com--ttyusb-port)
-6. [Upload Process & Boot Modes](#upload-process--boot-modes)
-7. [Boot Button & EN Button Usage](#boot-button--en-button-usage)
-8. [Flash Button Usage](#flash-button-usage)
-9. [Common Upload Errors & Fixes](#common-upload-errors--fixes)
-10. [Verification Checklist](#verification-checklist)
+1. [Prerequisites](#prerequisites)
+2. [Hardware Overview](#hardware-overview)
+3. [Install Arduino IDE on Raspberry Pi OS Trixie](#install-arduino-ide-on-raspberry-pi-os-trixie)
+4. [Verify USB Driver (Built into Kernel)](#verify-usb-driver-built-into-kernel)
+5. [Configure ESP32 Board Support](#configure-esp32-board-support)
+6. [Select Correct Board: NodeMCU-32S](#select-correct-board-nodemcu-32s)
+7. [Serial Port Permissions & udev Rules](#serial-port-permissions--udev-rules)
+8. [Install Required Libraries](#install-required-libraries)
+9. [Upload Process & Boot Modes](#upload-process--boot-modes)
+10. [Boot Button & EN Button Usage](#boot-button--en-button-usage)
+11. [Common Upload Errors & Fixes](#common-upload-errors--fixes)
+12. [Verification Checklist](#verification-checklist)
+13. [Quick Reference Card](#quick-reference-card)
+
+---
+
+## Prerequisites
+
+- Raspberry Pi 3B+ / 4 / 5 with **Raspberry Pi OS Trixie 64-bit** (Debian 13)
+- Internet connection (for downloading ESP32 toolchain ~200 MB)
+- ESP32 NodeMCU-32S + Expansion Board
+- **Data-capable micro-USB cable** (not charge-only!)
+- Basic Linux terminal familiarity
+
+> 📸 **Screenshot Placeholder:** *Raspberry Pi OS Trixie desktop showing terminal and file manager*
 
 ---
 
@@ -27,7 +43,7 @@
 
 | Feature | Specification |
 |---------|---------------|
-| **MCU** | ESP32-WROOM-32D (Xtensa LX6 dual-core) |
+| **MCU** | ESP32-WROOM-32D (Xtensa LX6 dual-core @ 240 MHz) |
 | **USB-UART** | CP2102 (SiLabs) — requires CP210x driver |
 | **GPIO** | 38 pins (34 usable) |
 | **Flash** | 4 MB |
@@ -45,82 +61,121 @@
 
 ---
 
-## Driver Installation
+## Install Arduino IDE on Raspberry Pi OS Trixie
 
-### Windows (CP210x Driver)
+### Method: `pip install arduino` (Recommended)
 
-1. **Download:** [Silicon Labs CP210x Universal Windows Driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers)
-   - Direct: `CP210x_Universal_Windows_Driver.zip`
-2. **Extract** and run `CP210xVCPInstaller_x64.exe` (or x86 for 32-bit)
-3. **Restart** computer
-4. **Verify:** Device Manager → Ports (COM & LPT) → **Silicon Labs CP210x USB to UART Bridge (COMx)**
-
-> 📸 **Screenshot Placeholder:** *Windows Device Manager showing CP210x under Ports with COM port number*
-
-### Linux (Raspberry Pi / Ubuntu / Debian)
+The official Arduino package on PyPI installs Arduino IDE 2.x with Arduino CLI included.
 
 ```bash
-# CP210x driver is built into kernel (>= 3.x)
-# No installation needed
+# Update system first
+sudo apt update && sudo apt full-upgrade -y
+
+# Install pip if not present
+sudo apt install -y python3-pip
+
+# Install Arduino IDE (includes Arduino CLI)
+pip install arduino
+
+# Verify installation
+arduino --version
+# Arduino IDE 2.3.x
+```
+
+### Launch Arduino IDE
+
+```bash
+# From terminal
+arduino
+
+# Or from Applications Menu → Programming → Arduino IDE 2
+```
+
+> **Why pip?** The `arduino` PyPI package is the official distribution method for Linux ARM64. It provides automatic updates via `pip install --upgrade arduino` and works natively on Raspberry Pi OS Trixie 64-bit without Flatpak sandbox issues.
+
+### Alternative: Flatpak (if pip method fails)
+
+```bash
+flatpak install flathub cc.arduino.IDE2
+flatpak run cc.arduino.IDE2
+# Note: Flatpak requires extra permission for serial ports:
+# flatpak permission-set device serial cc.arduino.IDE2 yes
+```
+
+---
+
+## Verify USB Driver (Built into Kernel)
+
+On Linux (including Raspberry Pi OS Trixie), the CP210x driver is **built into the kernel** (version 3.x+). No installation needed.
+
+```bash
+# Plug in ESP32 via micro-USB data cable
+# Check kernel messages
+dmesg -w
+# Watch for:
+# cp210x 1-1.2:1.0: cp210x converter detected
+# usb 1-1.2: cp210x converter now attached to ttyUSB0
 
 # Verify device appears
 ls /dev/ttyUSB*
-# Should show: /dev/ttyUSB0
-
-# Check kernel messages
-dmesg -w
-# Plug in ESP32, watch for:
-# cp210x 1-1.2:1.0: cp210x converter detected
-# usb 1-1.2: cp210x converter now attached to ttyUSB0
+# Should show: /dev/ttyUSB0  (or ttyUSB1 if multiple devices)
 ```
 
-### macOS
+| OS | Driver Status | Verification |
+|----|---------------|--------------|
+| **Raspberry Pi OS Trixie** | Built-in (kernel) | `ls /dev/ttyUSB*` |
+| Ubuntu 22.04+/Debian 12+ | Built-in | `ls /dev/ttyUSB*` |
+| Windows | Manual install needed | Device Manager → CP210x |
+| macOS | Manual install needed | `ls /dev/tty.*` |
 
-```bash
-# Option 1: Official driver
-# Download from: https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers
-# Install .pkg, restart
-
-# Option 2: Homebrew (community)
-brew install --cask silicon-labs-vcp-driver
-```
-
-### Verify Driver Installation
-
-| OS | Command / Check |
-|----|-----------------|
-| **Windows** | Device Manager → Ports → CP210x (COM3) |
-| **Linux** | `ls /dev/ttyUSB*` → `/dev/ttyUSB0` |
-| **macOS** | `ls /dev/tty.*` → `/dev/tty.SLAB_USBtoUART` |
+> 📸 **Screenshot Placeholder:** *Terminal showing `dmesg` output with cp210x converter attached to ttyUSB0*
 
 ---
 
-## Arduino IDE Board Configuration
+## Configure ESP32 Board Support
 
-### Arduino IDE 2.x
+### 1. Open Preferences
 
-1. **File** → **Preferences** (`Ctrl+,`)
-2. **Additional Boards Manager URLs:**
-   ```
-   https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
-   ```
-3. **OK**
-4. **Tools** → **Board** → **Boards Manager...** (`Ctrl+Shift+B`)
-5. Search **"esp32"**
-6. Install **"esp32 by Espressif Systems"** (latest version)
-7. Wait for download (~200 MB)
+1. Launch Arduino IDE: `arduino`
+2. **File** → **Preferences** (`Ctrl+,`)
+
+### 2. Add ESP32 Board Manager URL
+
+In **Additional Boards Manager URLs**, paste:
+
+```
+https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+```
+
+Click **OK**.
+
+> 📸 **Screenshot Placeholder:** *Arduino IDE Preferences dialog with ESP32 URL pasted in Additional Boards Manager URLs field*
+
+### 3. Install ESP32 Core
+
+1. **Tools** → **Board** → **Boards Manager...** (`Ctrl+Shift+B`)
+2. Search: **esp32**
+3. Click **Install** on **"esp32 by Espressif Systems"** (latest version)
+4. Wait for download (~200 MB toolchain for ARM64)
+
+> 📸 **Screenshot Placeholder:** *Boards Manager showing "esp32 by Espressif Systems" installing with progress bar*
 
 ---
 
-## Selecting the Correct Board
+## Select Correct Board: NodeMCU-32S
 
-### For Water Meter Project: **NodeMCU-32S**
+> ⚠️ **Critical:** Selecting the wrong board = wrong pin mapping, wrong flash size, upload failures.
 
-| Interface | Selection |
-|-----------|-----------|
-| **Arduino IDE** | Tools → Board → ESP32 Arduino → **NodeMCU-32S** |
+| Selection | Value |
+|-----------|-------|
+| **Board** | Tools → Board → ESP32 Arduino → **NodeMCU-32S** |
+| **FQBN** | `esp32:esp32:nodemcu-32s` |
+| **Upload Speed** | 921600 (Tools → Upload Speed) |
+| **CPU Frequency** | 240 MHz (WiFi/BT) (Tools → CPU Frequency) |
+| **Flash Mode** | QIO (Tools → Flash Mode) |
+| **Partition Scheme** | Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS) |
 
-### Board Variants (Choose Correct One)
+### Board Variants Reference
 
 | Board | FQBN | Use Case |
 |-------|------|----------|
@@ -130,55 +185,59 @@ brew install --cask silicon-labs-vcp-driver
 | TTGO T-Display | `esp32:esp32:ttgo-tdisplay` | With built-in screen |
 | M5Stack Core2 | `esp32:esp32:m5stack-core2` | M5Stack device |
 
-> ⚠️ **Critical:** Selecting wrong board = wrong pin mapping, wrong flash size, upload failures.
-
-> 📸 **Screenshot Placeholder:** *Arduino IDE Tools → Board menu with NodeMCU-32S highlighted*
+> 📸 **Screenshot Placeholder:** *Tools → Board menu with ESP32 Arduino expanded and NodeMCU-32S highlighted*
 
 ---
 
-## Selecting COM / ttyUSB Port
+## Serial Port Permissions & udev Rules
 
-### Windows
-
-1. **Tools** → **Port** → Select **COMx (Silicon Labs CP210x)**
-2. Note the COM number (e.g., COM3, COM4)
-
-### Linux / Raspberry Pi
+### 1. Add User to dialout Group
 
 ```bash
-# List available ports
-ls /dev/ttyUSB* /dev/ttyACM*
+# Required for USB serial access
+sudo usermod -a -G dialout $USER
+newgrp dialout  # Apply immediately (or log out/in)
 
-# Typical output:
-# /dev/ttyUSB0  (CP2102 on NodeMCU-32S)
-
-# In Arduino IDE:
-# Tools → Port → /dev/ttyUSB0
+# Verify
+groups $USER
+# Should include: dialout
 ```
 
-### macOS
+### 2. Create udev Rule for Persistent Device Name
 
 ```bash
-ls /dev/tty.*
-# /dev/tty.SLAB_USBtoUART  (CP2102)
-# /dev/tty.wchusbserial     (CH340)
-```
-
-### Persistent Port Naming (Linux)
-
-```bash
-# Create udev rule for consistent naming
-sudo tee /etc/udev/rules.d/99-esp32.rules <<'EOF'
-SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="ttyESP32", MODE="0666"
+# Create rule for CP2102 (NodeMCU-32S)
+sudo tee /etc/udev/rules.d/99-esp32.rules > /dev/null <<'EOF'
+# CP2102/CP2104 (NodeMCU-32S)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE="0666", GROUP="dialout", SYMLINK+="ttyESP32"
+# CH340 (some ESP32 boards)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE="0666", GROUP="dialout", SYMLINK+="ttyESP32"
 EOF
 
+# Reload rules
 sudo udevadm control --reload-rules
 sudo udevadm trigger
 
-# Now always available as:
+# Verify symlink created
 ls -l /dev/ttyESP32
 # /dev/ttyESP32 -> /dev/ttyUSB0
 ```
+
+Now the ESP32 is **always** accessible at `/dev/ttyESP32` regardless of whether it's ttyUSB0 or ttyUSB1.
+
+---
+
+## Install Required Libraries
+
+Open **Library Manager**: **Tools** → **Manage Libraries...** (`Ctrl+Shift+I`)
+
+| Library | Version | Purpose |
+|---------|---------|---------|
+| **Firebase ESP Client** (by mobizt) | ≥ 4.4.x | Firebase Realtime DB (push, set, stream) |
+
+> **Note:** `Firebase-ESP-Client` by Mobizt already bundles/handles JSON serialization internally. No separate `ArduinoJson` library installation needed.
+
+> 📸 **Screenshot Placeholder:** *Library Manager showing "Firebase ESP Client" by mobizt installing*
 
 ---
 
@@ -186,11 +245,12 @@ ls -l /dev/ttyESP32
 
 ### Normal Upload (Automatic)
 
-1. Connect ESP32 via USB
-2. Select correct board and port
-3. Click **Upload** (`Ctrl+U`)
-4. Arduino IDE automatically:
-   - Resets ESP32 into bootloader mode
+1. Connect ESP32 via micro-USB **data cable**
+2. Select **Board**: NodeMCU-32S
+3. Select **Port**: `/dev/ttyESP32` (or `/dev/ttyUSB0`)
+4. Click **Upload** (`Ctrl+U`)
+5. Arduino IDE automatically:
+   - Resets ESP32 into bootloader mode (via DTR/RTS)
    - Uploads firmware via esptool.py
    - Resets into application mode
 
@@ -198,7 +258,7 @@ ls -l /dev/ttyESP32
 
 **When to use:** Upload fails with "Failed to connect to ESP32" or "Timed out waiting for packet header"
 
-#### Method: BOOT + EN Button Sequence
+#### BOOT + EN Button Sequence
 
 ```
 1. Hold BOOT button (GPIO 0 low)
@@ -235,34 +295,9 @@ ls -l /dev/ttyESP32
 |----------|--------|
 | **Normal upload** | Just click Upload (auto-reset works) |
 | **Upload fails** | Hold BOOT → Press EN → Release BOOT → Upload |
-| **Stuck in bootloader** | Press EN (reset) alone |
+| **Stuck in bootloader** | Press EN alone (reset) |
 | **Need clean boot** | Press EN alone |
 | **Factory reset** | Hold BOOT + EN for 5s → Release both |
-
----
-
-## Flash Button Usage
-
-> **Note:** The "Flash" button is typically the **BOOT button** (GPIO 0). There is no separate "Flash" button on standard NodeMCU-32S.
-
-### Terminology Clarification
-
-| Term | Actual Button | Purpose |
-|------|---------------|---------|
-| **Boot Button** | BOOT (GPIO 0) | Enters bootloader for flashing |
-| **Flash Button** | Same as BOOT | Colloquial term for "button to flash firmware" |
-| **EN / Reset** | EN (RST) | Hardware reset |
-
-### Flash Procedure Summary
-
-```
-To flash new firmware:
-1. Connect ESP32 via USB
-2. Select Board: NodeMCU-32S
-3. Select Port: COMx / /dev/ttyUSB0
-4. Click Upload (Ctrl+U)
-5. If fails: Hold BOOT → Press EN → Release BOOT → Retry Upload
-```
 
 ---
 
@@ -273,15 +308,14 @@ To flash new firmware:
 | Cause | Fix |
 |-------|-----|
 | Not in bootloader mode | Hold BOOT → Press EN → Release BOOT → Upload |
-| Wrong port selected | Verify port in Device Manager / `ls /dev/ttyUSB*` |
-| Charge-only USB cable | Use **data cable** (test with phone file transfer) |
-| Driver not installed | Install CP210x driver (see Driver Installation) |
+| Wrong port selected | Verify port: `ls /dev/ttyUSB*` or use `/dev/ttyESP32` |
+| Charge-only USB cable | Use **data cable** (test: phone file transfer works) |
+| Driver not loaded | `lsmod \| grep cp210x` — should show cp210x module |
 | Port busy (Serial Monitor open) | Close Serial Monitor / Plotter before upload |
 
-### Error 2: "A fatal error occurred: Could not open /dev/ttyUSB0: Permission denied"
+### Error 2: "Permission denied" on `/dev/ttyUSB0`
 
 ```bash
-# Linux fix:
 sudo usermod -a -G dialout $USER
 newgrp dialout
 # Or logout/login
@@ -290,27 +324,22 @@ newgrp dialout
 ### Error 3: "esptool.py not found" / "python3: not found"
 
 ```bash
-# Install esptool
 pip3 install esptool
-
-# Ensure python3 in PATH
 which python3
 ```
 
-### Error 4: "Property 'upload.speed' undefined" / Wrong baud rate
+### Error 4: Wrong upload speed / baud rate
 
-```bash
-# In Arduino IDE: Tools → Upload Speed → 921600 (or 115200 for reliability)
-# In CLI: --upload-speed 921600
-```
+- Arduino IDE: **Tools** → **Upload Speed** → **921600** (or 115200 for reliability)
+- Serial Monitor: **115200** (must match `Serial.begin(115200)` in code)
 
 ### Error 5: "Flash size mismatch" / "Invalid head of packet"
 
 | Cause | Fix |
 |-------|-----|
 | Wrong board selected | Select **NodeMCU-32S** (not ESP32 Dev Module) |
-| Corrupt flash | Erase flash: `esptool.py --port /dev/ttyUSB0 erase_flash` |
-| Partition scheme mismatch | Tools → Partition Scheme → Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS) |
+| Corrupt flash | `esptool.py --port /dev/ttyESP32 erase_flash` then re-upload |
+| Partition scheme mismatch | Tools → Partition Scheme → Default 4MB with spiffs |
 
 ### Error 6: "Brownout detector triggered" (Random resets)
 
@@ -323,16 +352,15 @@ which python3
 ### Error 7: "MD5 of file does not match data in flash!"
 
 ```bash
-# Erase and re-flash
-esptool.py --port /dev/ttyUSB0 erase_flash
-# Then upload again
+esptool.py --port /dev/ttyESP32 erase_flash
+# Then upload again via Arduino IDE
 ```
 
 ### Error 8: Upload succeeds but Serial Monitor shows garbage
 
 | Cause | Fix |
 |-------|-----|
-| Wrong baud rate | Set Serial Monitor to **115200** (match `Serial.begin(115200)`) |
+| Wrong baud rate | Set Serial Monitor to **115200** |
 | Line ending | Set to "Both NL & CR" or "Newline" |
 | Corrupt firmware | Erase flash and re-upload |
 
@@ -394,16 +422,22 @@ Data uploaded to Firebase
 
 ## Quick Reference Card
 
-| Task | Arduino IDE |
-|------|-------------|
-| Board | Tools → Board → ESP32 → **NodeMCU-32S** |
-| Port | Tools → Port → COMx / ttyUSB0 |
-| Upload Speed | Tools → Upload Speed → 921600 |
-| Compile | `Ctrl+R` |
-| Upload | `Ctrl+U` |
-| Monitor | `Ctrl+Shift+M` |
-| Bootloader | Hold BOOT → Press EN → Release BOOT |
-| Erase Flash | N/A (use esptool) |
+| Task | Command / Menu |
+|------|----------------|
+| **Launch IDE** | `arduino` |
+| **Preferences** | File → Preferences (`Ctrl+,`) |
+| **Boards Manager** | Tools → Board → Boards Manager (`Ctrl+Shift+B`) |
+| **Library Manager** | Tools → Manage Libraries (`Ctrl+Shift+I`) |
+| **Select Board** | Tools → Board → ESP32 Arduino → **NodeMCU-32S** |
+| **Select Port** | Tools → Port → `/dev/ttyESP32` |
+| **Upload Speed** | Tools → Upload Speed → 921600 |
+| **Verify/Compile** | Sketch → Verify/Compile (`Ctrl+R`) |
+| **Upload** | Sketch → Upload (`Ctrl+U`) |
+| **Serial Monitor** | Tools → Serial Monitor (`Ctrl+Shift+M`) |
+| **Board Manager URL** | Preferences → Additional Boards Manager URLs |
+| **Bootloader Mode** | Hold BOOT → Press EN → Release BOOT |
+| **Erase Flash** | `esptool.py --port /dev/ttyESP32 erase_flash` |
+| **Add to dialout** | `sudo usermod -a -G dialout $USER && newgrp dialout` |
 
 ---
 
@@ -416,6 +450,7 @@ Data uploaded to Firebase
 - [CP210x Drivers](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers)
 - [esptool.py Documentation](https://docs.espressif.com/projects/esptool/en/latest/esp32/)
 - [Arduino Forum - ESP32](https://forum.arduino.cc/c/hardware/esp32/61)
+- [Arduino PyPI Package](https://pypi.org/project/arduino/)
 
 ---
 
@@ -425,7 +460,8 @@ Proceed to:
 1. [Firebase ESP Client Guide](./firebase-esp-client-guide.md) — Library setup and usage
 2. [Project Setup Guide](./setup.md) — Full system deployment
 3. [Calibration Guide](./calibration.md) — Sensor K-factor calibration
+4. [ESP32 ↔ RPi Communication](./esp32-rpi-communication.md) — USB serial data flow
 
 ---
 
-*Last updated: July 2026 | Tested with ESP32 NodeMCU-32S, Arduino IDE 2.3.2, Arduino CLI 1.0.4, ESP32 Core 2.0.14 | Compatible with Windows 10/11, Linux, macOS, Raspberry Pi OS*
+*Last updated: July 2026 | Tested with ESP32 NodeMCU-32S, Arduino IDE 2.3.x (via `pip install arduino`), ESP32 Core 3.x, Raspberry Pi OS Trixie 64-bit (Debian 13) | Compatible with Pi 3B+/4/5*
