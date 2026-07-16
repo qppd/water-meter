@@ -1,4 +1,4 @@
-# Flowchart — Water Meter with Leak Detection (ESP32 → USB Serial → RPi Backend)
+# Flowchart — Water Meter with Leak Detection (ESP32 to USB Serial to RPi Backend)
 
 ## 1. Main System Flow (High-Level)
 
@@ -10,8 +10,8 @@
 ```mermaid
 flowchart TD
     Start((Start)) --> Init[ESP32 Initialization]
-    Init --> Sensors[Initialize 4 Flow Sensors & Attach ISRs]
-    Sensors --> SerialInit[Initialize USB Serial (921600 baud)]
+    Init --> Sensors[Initialize 4 Flow Sensors and Attach ISRs]
+    Sensors --> SerialInit[Initialize USB Serial at 921600 baud]
     SerialInit --> MainLoop[Enter Main Loop]
     
     MainLoop --> ReadPulses[Read All Pulse Counters]
@@ -41,7 +41,7 @@ flowchart TD
 
 ---
 
-## 2. USB Serial Data Flow (ESP32 → RPi)
+## 2. USB Serial Data Flow (ESP32 to RPi)
 
 > Mermaid-based diagram (SVG export removed; source below)
 
@@ -52,7 +52,7 @@ flowchart TD
 flowchart LR
     subgraph ESP32["ESP32 (Arduino Serial)"]
         ESP_Read[/Read Sensors/] --> ESP_Build[Build JSON Payload]
-        ESP_Build --> ESP_Serial[Serial.println(JSON)]
+        ESP_Build --> ESP_Serial[Serial Println JSON]
         ESP_Cmd[/Read Serial/] --> ESP_CmdCheck{New Command?}
         ESP_CmdCheck -->|calibrate| ESP_Cal[Enter Calibration]
         ESP_CmdCheck -->|reboot| ESP_Reboot[Reboot ESP32]
@@ -60,7 +60,7 @@ flowchart LR
     end
     
     subgraph USB["USB Cable (CDC/ACM)"]
-        ESP_Serial --> USB_Data[JSON Lines @ 921600 baud]
+        ESP_Serial --> USB_Data[JSON Lines at 921600 baud]
         USB_Cmd[Commands from RPi] --> ESP_Cmd
     end
     
@@ -101,8 +101,8 @@ flowchart LR
 ```mermaid
 flowchart TD
     Pulse[/Pulse from Flow Sensor/] --> ISR[ISR Triggered]
-    ISR --> Time[Read millis()]
-    Time --> Debounce{Debounce Check dt > 5ms?}
+    ISR --> Time[Read Millis]
+    Time --> Debounce{Debounce Check dt greater than 5ms?}
     Debounce -->|Yes| Count[Increment Pulse Counter]
     Debounce -->|No| Ignore[Ignore - Bounce]
     Count --> Update[Update Last Pulse Time]
@@ -148,7 +148,7 @@ flowchart TD
     F8 --> Vector
     F9 --> Vector
     
-    Vector --> Scale[Scale & Normalize]
+    Vector --> Scale[Scale and Normalize]
     Scale --> Model[ML Models - XGBoost + Isolation Forest]
 ```
 
@@ -181,7 +181,7 @@ flowchart TD
     
     Minor --> MinorCount{Consecutive GE 3?}
     MinorCount -->|Yes| ConfirmedMinor[Confirmed Minor Leak]
-    MinorCount -->|No| WatchMinor[Increment Counter & Watch]
+    MinorCount -->|No| WatchMinor[Increment Counter and Watch]
     
     Major --> ConfirmedMajor[Confirmed Major Leak]
     Anomaly --> Alert[Write Alert to DB]
@@ -213,7 +213,7 @@ flowchart TD
     CmdType -->|set_ppl| SetPPL[Update PPL Values]
     CmdType -->|sleep| Sleep[Deep Sleep Duration]
     
-    CalStart --> CalStatus[Update Status & LED]
+    CalStart --> CalStatus[Update Status and LED]
     Reboot --> CalStatus
     Reset --> CalStatus
     SetPPL --> CalStatus
@@ -236,14 +236,14 @@ flowchart TD
 ```mermaid
 flowchart TD
     Cycle[Every Read Cycle] --> Rule1[Rule 1: Hidden Leak]
-    Rule1 --> Check1{Inlet Volume GT Sum Fixtures + 10%?}
+    Rule1 --> Check1{Inlet Volume GT Sum Fixtures plus 10%?}
     Check1 -->|Yes| Alert1[Hidden Leak Alert]
     Check1 -->|No| OK1[Balance OK]
     
     Cycle --> Rule2[Rule 2: Continuous Flow]
     Rule2 --> Loop{For Each Fixture}
     Loop --> Check2{Pulse GT 0 for GT 30 min?}
-    Check2 -->|Yes| Alert2[Stuck Valve / Running Toilet]
+    Check2 -->|Yes| Alert2[Stuck Valve or Running Toilet]
     Check2 -->|No| OK2[Fixture OK]
     
     Cycle --> Rule3[Rule 3: Drip Detection]
@@ -276,7 +276,7 @@ flowchart LR
     %% Firmware Layer
     Pulse --> ISR[ISR Pulse Counter]:::firmware
     ISR --> Debounce[Debounce 5ms]:::firmware
-    Debounce --> Calc[Calculate Flow & Volume]:::firmware
+    Debounce --> Calc[Calculate Flow and Volume]:::firmware
     Calc --> LocalRules[Local Leak Rules]:::firmware
     Calc --> SerialOut[USB Serial Output]:::firmware
     LocalRules --> SerialOut
