@@ -1,4 +1,4 @@
-# Block Diagram — Water Meter with Leak Detection (ESP32 → Firebase → RPi)
+# Block Diagram — Water Meter with Leak Detection (ESP32 → USB Serial → RPi)
 
 ## System Block Diagram
 
@@ -24,46 +24,46 @@ graph TB
     subgraph "ESP32 Edge Layer"
         direction TB
         Sensors["4× Flow Sensor<br/>Pulse Counters<br/>(ISR + Debounce)"]
-        Features["Feature Extractor<br/>flow_rate, volume,<br/>duration, time, ratio"]
-        FirebaseClient["Firebase-ESP-Client<br/>Stream + Write"]
-        LocalCtrl["Local Leak Rules"]
-        SPIFFS["SPIFFS Logger<br/>(Offline Backup)"]
+        SerialOut["USB Serial Output<br/>JSON Lines<br/>(921600 baud)"]
+        LocalCtrl["Local Leak Rules<br/>(Threshold-based)"]
+        SPIFFS["SPIFFS Logger<br/>(Offline Buffer)"]
         
-        Sensors --> Features
-        Features --> FirebaseClient
-        Features --> LocalCtrl
+        Sensors --> SerialOut
+        Sensors --> LocalCtrl
         Sensors --> SPIFFS
+        LocalCtrl --> SerialOut
     end
 
-    subgraph "Firebase Realtime DB"
-        direction TB
-        Readings["/readings/{device_id}/{ts}<br/>Raw sensor data"]
-        Alerts["/alerts/{alert_id}<br/>Leak events"]
-        Commands["/commands/{device_id}<br/>Device commands"]
-        Models["/models/{version}<br/>ML metadata"]
+    subgraph "USB Connection"
+        USB[USB Cable<br/>CDC/ACM Device<br/>(/dev/ttyUSB0)]
     end
 
     subgraph "RPi Backend"
         direction TB
-        FBAdmin["Pyrebase4<br/>(Poll + Write)"]
+        SerialReader["Serial Reader<br/>(pyserial / asyncio)"]
+        Parser["JSON Parser<br/>Validate + Normalize"]
         XGB["XGBoost Classifier<br/>normal / minor_leak / major_leak"]
         ISO["Isolation Forest<br/>Unsupervised Anomaly Detection"]
         Flask["Flask Web App<br/>Dashboard + API"]
         AlertEngine["Alert Engine<br/>In-App + Webhook"]
         Retrain["Daily Retrain Pipeline"]
+        DB["SQLite / InfluxDB<br/>Time-series Storage"]
         
-        FBAdmin --> XGB
-        FBAdmin --> ISO
+        SerialReader --> Parser
+        Parser --> XGB
+        Parser --> ISO
+        Parser --> DB
         XGB --> Flask
         ISO --> Flask
         Flask --> AlertEngine
         Flask --> Retrain
+        DB --> Flask
     end
 
     subgraph "User Layer"
         Dashboard["Web Dashboard<br/>Real-time Charts"]
         Notif["In-App + Webhook<br/>Alerts"]
-        Cmd["Remote Device<br/>Control"]
+        Cmd["Remote Device<br/>Control (via Serial)"]
     end
 
     B --> Sensors
@@ -71,18 +71,13 @@ graph TB
     E2 --> Sensors
     E3 --> Sensors
     
-    FirebaseClient --> Readings
-    FirebaseClient --> Alerts
-    Commands --> FirebaseClient
-    
-    Readings --> FBAdmin
-    Alerts --> FBAdmin
-    Commands --> FBAdmin
+    SerialOut --> USB
+    USB --> SerialReader
     
     Flask --> Dashboard
     AlertEngine --> Notif
     Dashboard --> Cmd
-    Cmd --> Commands
+    Cmd --> SerialReader
 ```
 
 </details>
@@ -125,6 +120,7 @@ ESP32 38-Pin Expansion Board
 │                                                     │
 │  5V  ──────┬── YF-S201 VCC (Red wires)             │
 │  GND ──────┬── All sensor GND (Black wires)        │
+│  USB ──────┬── RPi USB Port (Data + Power)         │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -180,6 +176,7 @@ graph LR
     PSU12 --> Buck[LM2596S<br/>12V to 5V<br/>Buck Converter]
     Buck --> ESPV[ESP32 VIN<br/>(5V)]
     Buck --> SensorV[Flow Sensors<br/>VCC (5V)]
+    USB[RPi USB Port] --> ESP32[ESP32 USB<br/>(Data + 5V Backup)]
 ```
 
 </details>
@@ -187,6 +184,7 @@ graph LR
 > **Power Architecture:**
 > - **220V AC** to **12V 5A Switching Power Supply (S-60-12 / LRS-60-12)**
 > - **12V** to **LM2596S Buck Converter** to **5V** for ESP32 + sensors
+> - **USB** from RPi provides data link + 5V backup power
 > - 12V rail available for future 12V components if needed
 
 ---
@@ -200,12 +198,12 @@ graph LR
 
 ```mermaid
 graph TD
-    Enclosure[Waterproof ABS Enclosure Box<br/>IP67 175x125x75mm<br/>with cable glands for<br/>waterproof sensor cable entry]
+    Enclosure[Waterproof ABS Enclosure Box<br/>IP67 175x125x75mm<br/>with cable glands for<br/>waterproof sensor cable entry<br/>+ USB cable gland for RPi link]
 ```
 
 </details>
 
-> **Enclosure:** Waterproof ABS Enclosure Box IP67 175x125x75mm with cable glands for waterproof sensor cable entry.
+> **Enclosure:** Waterproof ABS Enclosure Box IP67 175x125x75mm with cable glands for waterproof sensor cable entry and USB cable gland for RPi link.
 
 ---
 
@@ -239,6 +237,36 @@ graph TD
 
 ---
 
+## Serial Protocol (ESP32 → RPi)
+
+**Baud Rate:** 921600  
+**Format:** JSON Lines (newline-delimited JSON)  
+**Encoding:** UTF-8
+
+### Data Frame (per sensor reading)
+```json
+{"device_id": "wmldad-001", "ts": 1703123456789, "sensor": 1, "gpio": 26, "pulses": 127, "flow_rate_lpm": 2.34, "volume_ml": 456}
+```
+
+### Alert Frame (local leak detection)
+```json
+{"device_id": "wmldad-001", "ts": 1703123456789, "type": "alert", "level": "major_leak", "sensor": 3, "flow_rate_lpm": 15.2, "duration_sec": 45, "message": "Major leak detected on Fixture 2"}
+```
+
+### Status Frame (periodic, every 30s)
+```json
+{"device_id": "wmldad-001", "ts": 1703123456789, "type": "status", "uptime_sec": 3600, "free_heap": 245760, "wifi_rssi": -45, "sensors_ok": true}
+```
+
+### Command Frame (RPi → ESP32)
+```json
+{"cmd": "calibrate", "sensor": 1, "k_factor": 7.5}
+{"cmd": "reset_counters"}
+{"cmd": "sleep", "duration_sec": 300}
+```
+
+---
+
 ## Wiring Summary for 4 Flow Sensors
 
 Each YF-S201 sensor has 3 wires: **Red (VCC)**, **Black (GND)**, **Yellow (Signal)**
@@ -253,6 +281,7 @@ Each YF-S201 sensor has 3 wires: **Red (VCC)**, **Black (GND)**, **Yellow (Signa
 - **Sensor side:** JST-XH 3-pin **Male** (crimped to sensor wires)
 - **Board/perf board side:** JST-XH 3-pin **Female** (soldered to perf board)
 - **Power input:** Terminal Block 2-pin Blue (5mm pitch) for 5V/GND from buck converter
+- **USB:** Standard USB Micro-B or USB-C to RPi
 
 > **Note:** JST-XH connectors are purchased **pre-crimped / ready-to-use** — no crimp kit or crimping tool needed. Just solder the female connectors to the perf board and plug in the sensor cables.
 
